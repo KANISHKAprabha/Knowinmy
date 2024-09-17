@@ -6,7 +6,7 @@ from .models import *
 # from built-in library
 from django import forms 
 
-class AsanaCreationForm(ModelForm):
+class   AsanaCreationForm(ModelForm):
     class Meta:
         model = Asana
         fields = ['name', 'no_of_postures']
@@ -62,6 +62,8 @@ class StudentCourseMappingForm(ModelForm):
         if self.tenant and self.trainer_user:
             trainee_ids = TrainerLogDetail.objects.filter(tenant=self.tenant,trainer_name=self.trainer_user).first()
             print(trainee_ids,"loesfjkesjh")
+            if  trainee_ids == None:
+                print("ids not found ")
             client_name = trainee_ids.onboarded_by
             print(client_name,"line no 66 in forms s")
             self.fields['user'] = forms.ModelChoiceField(
@@ -72,7 +74,7 @@ class StudentCourseMappingForm(ModelForm):
             print(self.fields['user'],"line no 67 in forms ")
             self.fields['students_added_to_courses'] = forms.ModelMultipleChoiceField(
                 queryset=CourseDetails.objects.filter(tenant=self.tenant,user=self.trainer_user),
-                widget=forms.CheckboxSelectMultiple
+                widget=forms.CheckboxSelectMultiple,initial=self.instance.user if self.instance.pk else None
             )
 
 
@@ -107,7 +109,7 @@ class CourseCreationForm(forms.ModelForm):
             print(self.tenant,"line no 102 ")
             self.fields['asanas_by_trainer'] = forms.ModelMultipleChoiceField(
                 queryset=Asana.objects.filter( tenant=self.tenant,created_by=self.user,),
-                widget=forms.CheckboxSelectMultiple
+                widget=forms.CheckboxSelectMultiple,initial=self.instance.user if self.instance.pk else None
             )
             print(self.user,"line 105 in forms.py")
             print(self.fields['asanas_by_trainer'] ,"line no 102 in forms.py ")

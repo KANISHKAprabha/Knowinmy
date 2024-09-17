@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from sentry_sdk.integrations.celery import CeleryIntegration
 
@@ -27,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2@d_u@j&$$o$l^0z_6p+y#^ewn1a)m#wy0#(0nkw@doy9x0v3p'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -40,6 +44,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'dotenv',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -204,18 +210,13 @@ CSRF_TRUSTED_ORIGINS = ["https://test1.knowinmy.com", "https://staging.knowinmy.
 
 #SMTP CONFIGURATION 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.example.com'  # SMTP server host
-EMAIL_PORT = 587  # SMTP server port (587 for TLS, 465 for SSL)
-EMAIL_HOST_PORT = 25    
-EMAIL_USE_TLS = True  # True for TLS, False for SSL
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.example.com'  # SMTP server host
+# EMAIL_PORT = 587  # SMTP server port (587 for TLS, 465 for SSL)
+# EMAIL_HOST_PORT = 25    
+# EMAIL_USE_TLS = True  # True for TLS, False for SSL
 
-# <<<<<<< HEAD
-# EMAIL_HOST_USER="prabha2563@gmail.com"
-# EMAIL_HOST_USER="aexw ujmc ntvv armp"
-# EMAIL_USE_TLS= True
-# # EMAIL_USE_SSL=False
-# =======
+
 
 
 
@@ -223,8 +224,8 @@ EMAIL_USE_TLS = True  # True for TLS, False for SSL
 
 
 # RAZORPAY INTEGERATION 
-RAZORPAY_KEY_ID='rzp_test_gH8crtxqRW3cZr' 
-RAZORPAY_KEY_SECRET='EMEAVJGJAygp5zbJh5MSjkXY'
+RAZORPAY_KEY_ID=os.getenv('RAZORPAY_KEY_ID') 
+RAZORPAY_KEY_SECRET=os.getenv('RAZORPAY_KEY_SECRET')
 
 #social app custom settings
 AUTHENTICATION_BACKENDS = [
@@ -253,8 +254,18 @@ LOGOUT_REDIRECT_URL = 'login/'
 
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='60405106027-3313c38rudkdq40kbecod7ph6h01kiih.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ='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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET =os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+# EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
 
 
 
@@ -321,3 +332,24 @@ CACHES = {
 
 CELERY_BROKER_URL = "redis://localhost:6380"
 CELERY_RESULT_BACKEND='django-db'
+
+
+
+
+
+
+
+
+JET_THEMES = [
+    {
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme
+        'title': 'Default Theme'  # theme title
+    },
+    # You can add more themes if you want
+]
+
+JET_DEFAULT_THEME = 'default'  # set the default theme
+
+# JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = '/path/to/client_secrets.json'  # if you want to integrate Google Analytics
+JET_INDEX_DASHBOARD = 'users.dashboard.CustomIndexDashboard'

@@ -18,12 +18,14 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
-
+from users.admin import admin_site
 
 
 
 
 urlpatterns = [
+    path('grappelli/', include('grappelli.urls')),
+    path('custom_admin/', admin_site.urls),
     path('admin/', admin.site.urls),
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('',include("users.urls")),

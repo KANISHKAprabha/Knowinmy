@@ -22,6 +22,35 @@ for model in models:
 
 
 
+from django.db.models import Sum
+from .models import CourseDetails, EnrollmentDetails, Subscription, TrainerLogDetail, StudentLogDetail, ClientOnboarding
+
+class CustomAdminSite(admin.AdminSite):
+    site_header = 'Custom Admin Dashboard'
+    index_title = 'Dashboard'
+    site_title = 'My Admin'
+
+    def index(self, request, extra_context=None):
+        # Add custom context here
+        context = {
+            'courses_count': CourseDetails.objects.count(),
+            'enrollments_count': EnrollmentDetails.objects.count(),
+            'subscriptions_count': Subscription.objects.count(),
+            'trainers_count': TrainerLogDetail.objects.count(),
+            'students_count': StudentLogDetail.objects.count(),
+            'asanas_count': TrainerLogDetail.objects.aggregate(total_asanas=Sum('no_of_asanas_created'))['total_asanas'] or 0,
+        }
+        return super().index(request, extra_context={**context, **(extra_context or {})})
+
+admin_site = CustomAdminSite(name='custom_admin')
+
+admin_site.register(CourseDetails)
+admin_site.register(EnrollmentDetails)
+admin_site.register(Subscription)
+admin_site.register(TrainerLogDetail)
+admin_site.register(StudentLogDetail)
+admin_site.register(ClientOnboarding)
+
 
 
 

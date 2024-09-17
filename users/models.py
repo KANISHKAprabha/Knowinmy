@@ -13,16 +13,18 @@ from django.utils.text import slugify
 #enable disable 
 
 
-class Tenant(models.Model):
+class   Tenant(models.Model):
     client_name = models.OneToOneField(User, on_delete=models.CASCADE)
     organization_name = models.CharField(max_length=100)
     domain_name = models.CharField(max_length=100, unique=True)
     organization_email = models.EmailField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
+    full_url = models.URLField(blank=True) 
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.domain_name)
+            self.full_url=f"http://127.0.0.1:8000/.{self.slug}.com"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -102,6 +104,7 @@ class EnrollmentDetails(models.Model):
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
     students_added_to_courses=models.ManyToManyField(CourseDetails,related_name="course_asanas", blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 
     def __str__(self):

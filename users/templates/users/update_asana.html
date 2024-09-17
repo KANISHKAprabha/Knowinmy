@@ -96,6 +96,7 @@
             <form id="asana-update-form" method="post" action="{% url 'create-asana'  slug=tenant.slug  %}">
                 {% csrf_token %}
                 
+                
                 <!-- Form Fields -->
                 <div class="form-group">
                     {{ form.as_p }}

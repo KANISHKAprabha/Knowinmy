@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Custom Dashboard</h1>
+<ul>
+    <li>Total Courses: {{ courses_count }}</li>
+    <li>Total Enrollments: {{ enrollments_count }}</li>
+    <li>Total Subscriptions: {{ subscriptions_count }}</li>
+    <li>Total Trainers: {{ trainers_count }}</li>
+    <li>Total Students: {{ students_count }}</li>
+    <li>Total Asanas Created: {{ asanas_count }}</li>
+</ul>
+{% endblock %}

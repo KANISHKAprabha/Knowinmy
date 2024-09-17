@@ -43,7 +43,7 @@
                     <form method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug  %}" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
-                        <button type="submit" name="delete_course_map_form"id="delete-button-{{ enrollment.id }}" onclick="del_enrollment('{{ enrollment.id }}')" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" id="delete-button-{{ enrollment.id }}"name="delete_course_map_form" onclick="return confirm('Are you sure you want to delete this enrollment?')" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </div>
             </div>

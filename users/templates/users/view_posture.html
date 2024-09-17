@@ -13,7 +13,7 @@
                             <div class="mb-0 font-weight-bold text-gray-800">{% if posture.dataset %} Trained {% else %} Not Trained {% endif %}</div>
                         </div>
                         <div class="col-auto">
-                            <a href="{% url 'edit-posture' posture.id %}" > 
+                            <a href="{% url 'edit-posture' posture_id=posture.id  slug=tenant %}" > 
                             <div class="col-auto">
                                 <i class="fas fa-arrow-right fa-2x text-gray-300"></i>
                             </div>
