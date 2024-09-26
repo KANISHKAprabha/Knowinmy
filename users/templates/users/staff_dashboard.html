@@ -48,9 +48,9 @@
 
             {% for group in request.user.groups.all %}
                 {% if group.name == 'Trainer'  %}
-                {{tenant}} - {{tenant.slug}}
+                
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'view-trained' slug=tenant %}">
+                        <a class="nav-link" href="{% url 'view-trained' slug=tenant.slug %}">
                             <i class="fas fa-fw fa-tachometer-alt"></i>
                             <span>Create Asanas</span>
                         </a>
@@ -62,7 +62,7 @@
             <hr class="sidebar-divider my-0">
 
             <li class="nav-item active">
-                <a class="nav-link" href="{% url  'user-view-asana' slug=tenant %}">
+                <a class="nav-link" href="{% url  'user-view-asana' slug=tenant.slug %}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Trained Courses </span>
                 </a>
@@ -88,7 +88,7 @@
             {% for group in request.user.groups.all %}
                 {% if group.name == 'Trainer' %}
                     <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'create-course' slug=tenant %}">
+                        <a class="nav-link" href="{% url 'create-course' slug=tenant.slug %}">
                             <i class="fas fa-fw fa-tachometer-alt"></i>
                             <span> Trainer Dashboard </span>
                         </a>
@@ -130,16 +130,16 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="{% url 'profile-user' slug=tenant %}">
+                                <a class="dropdown-item" href="{% url 'profile-user' slug=tenant.slug %}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
                        
                                
-                                <a class="dropdown-item" href="{% url 'home' %}">Home</a>
+                                <a class="dropdown-item" href="{% url 'home-slug' slug=tenant.slug %}">Home</a>
                            
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'logout' slug=tenant %}" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="{% url 'log_out' slug=tenant.slug %}" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -188,7 +188,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{% url 'logout' slug=tenant  %}">Logout</a>
+                    <a class="btn btn-primary" href="{% url 'log_out' slug=tenant.slug  %}">Logout</a>
                 </div>
             </div>
         </div>

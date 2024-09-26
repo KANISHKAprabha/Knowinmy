@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.mail import send_mail
 from django.conf import settings
-import time
+from django.views.decorators.csrf import csrf_protect
 from django.db.models import F
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import HttpResponseRedirect
@@ -84,7 +84,7 @@ def register(request):
         user.save()
         
       
-        return redirect('register_organization')
+        return redirect('login')
     return render(request , "users/user_register.html")
 
 
@@ -100,26 +100,31 @@ def profile_view(request,slug):
 @login_required
 @user_passes_test(check_client)
 def subscription_payment(request):
+    print("lidsofkehkfhsjdhfjsbjnb")
     current_user=request.user
-    get_current_user=Tenant.objects.get(client_name=current_user)
-    print(get_current_user,"line no 96")
-    tenant=Tenant.objects.get(slug=get_current_user)  # Assuming the tenant is set in the middleware
-    print(tenant,"line no 95")
+    print(current_user,"jesfhggggggggggggggggggggggggggggggggg")
+   
+   
 
     if request.method == "POST":
-        name = request.POST.get("name")
+        username = request.user
+        get_only_username=User.objects.get(username=username)
+        name=get_only_username.first_name
+        print(name,"line no 111")
         subscription_id = request.POST.get("subscription_id")
         coupon_code = request.POST.get("coupon_code")
-        subscription = Subscription.objects.get(id=subscription_id)  # Filter by tenant
+        subscription = Subscription.objects.get(id=subscription_id)
+          # Filter by tenant
         amount = Decimal(subscription.price)
         discounted_amount_after_negotiation = amount
 
         if coupon_code:
             try:
-                coupon = CouponCodeForNegeotiation.objects.get(code=coupon_code, tenant=tenant)
-                discounted_percentage_for_client = Decimal(coupon.discount_percentage)
-                discounted_amount_after_negotiation = amount - (discounted_percentage_for_client / Decimal(100)) * amount
-                amount = discounted_amount_after_negotiation
+                coupon = CouponCodeForNegeotiation.objects.get(code=coupon_code)
+                
+                
+                amount = coupon.discounted_price
+                print(amount)
             except CouponCodeForNegeotiation.DoesNotExist as e:
                 print("No coupon found")
                 capture_exception(e)
@@ -130,7 +135,7 @@ def subscription_payment(request):
             {"amount": int(amount * 100), "currency": "INR", "payment_capture": "1"}
         )
         order = Order.objects.create(
-            tenant=tenant,
+          
             subscription=subscription,
             name=name,
             amount=amount,
@@ -297,7 +302,7 @@ def onboarding_view(request,slug):
     # Assuming tenant is set in middleware
 
     # Filter the order by tenant and user
-    order_transaction = Order.objects.filter(name=admin_user, status='ACCEPT', tenant=tenant).first()
+    order_transaction = Order.objects.filter(name=admin_user, status='ACCEPT').first()
     # print(Order.objects.get(name=admin_user, status='ACCEPT', tenant=tenant).query)
 
     print(tenant,admin_user,"line no 292")
@@ -372,163 +377,83 @@ def onboarding_view(request,slug):
 
 
 
-   
 
-    # If the user is already authenticated
-    # print("line 354")
- 
+
 def user_login(request):
-    # Print to confirm view is accessed
-    print("Login view accessed", request.method)
-    print(dict(request.session),"line no 377")
-    print(request.COOKIES,"line no 378")
-   
-
-    if request.user.is_authenticated:
-        # User is logged in, get the current user
-        current_user = request.user
-        print(current_user,"line no 362 ifjhif")
-        is_trainer = TrainerLogDetail.objects.filter(trainer_name=request.user).exists()
-        print(is_trainer,"here is trainer")
-
-        is_student = StudentLogDetail.objects.filter(student_name=request.user).exists()
-        print(is_student,"line is student")
-
-        if is_trainer:
-                    #  is_trainer = TrainerLogDetail.objects.filter(trainer_name=request.user).exists()
-                
-                     get_trainer= TrainerLogDetail.objects.get(trainer_name=request.user)
-                     print(get_trainer,"line 422")
-                     get_tenant=get_trainer.tenant
-                     tenant= Tenant.objects.get(slug=get_tenant)
-                     print(is_trainer,"kkkkkkkkkkkkkkkkkkkkkkkkk")
-                     print(tenant.slug,"line 424")
-                     logger.debug(f'Slug received: {tenant}')
-
-                     print(tenant,"line 424")
-                     print(get_tenant,"looooooooooooooooooooooooooooooooooojdnewjhf")
-                     logger.debug(f'Slug received: {tenant}')
-                
-                     return render(request,'users/view_trained.html',{
-                        'tenant':tenant,
-                        'slug':tenant.slug
-                    })
-                
-        elif is_student:
-                    # is_student = StudentLogDetail.objects.filter(student_name=request.user).exists()
-                    get_student=StudentLogDetail.objects.get(student_name=request.user)
-                    print(get_student,"line 433")
-                    get_tenant_for_student=get_student.tenant
-                    print(get_tenant_for_student,"line 435")
-                    tenant= Tenant.objects.get(slug=get_tenant_for_student)
-                    print(tenant.slug,"line 437")
-                    logger.debug(f'Slug received: {tenant}')
-                    return render(request,'users/Trainer_approval_Page.html',{
-                        'tenant':tenant,
-                        'slug':tenant.slug
-                    })
-
-                    
-        else:
-                    get_client=User.objects.get(username=request.user)
-                    print(get_client,"line 430")
-                    get_tenant_for_client=Tenant.objects.get(client_name=request.user)
-                    print(get_tenant_for_client,"line 432")
-                    tenant=get_tenant_for_client.slug
-                    print(tenant,"line 434")
-                    print(get_tenant_for_client,"line 434")
-                    
-                    return render (request,"users/trainer_dashboard.html",{ 'tenant':tenant})
-        
-        
-
-
-        # Check if the user is in StudentLog or TrainerLog
-        
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-        print("Emaillllllllllllllll:", email)
+        print("Email:", email)
         
-        try:
-            user_obj = User.objects.get(email=email)
-            user = authenticate(username=user_obj.username, password=password)
-            
-            if user is not None:
-                auth_login(request, user)
-                
-                # Fetch tenant after successful login
-                # tenant = get_object_or_404(Tenant, client_name=user.username)
-                # slug = tenant.slug
-                # print(slug, "line 382")
-
-                # Check if the user is in StudentLog or TrainerLog
-               
-                
-                is_trainer = TrainerLogDetail.objects.filter(trainer_name=request.user).exists()
-                is_student = StudentLogDetail.objects.filter(student_name=request.user).exists()
-
-                if is_trainer:
-                    #  is_trainer = TrainerLogDetail.objects.filter(trainer_name=request.user).exists()
-                
-                     get_trainer= TrainerLogDetail.objects.get(trainer_name=request.user)
-                     print(get_trainer,"line 422")
-                     get_tenant=get_trainer.tenant
-                     tenant= Tenant.objects.get(slug=get_tenant)
-                     print(is_trainer,"kkkkkkkkkkkkkkkkkkkkkkkkk")
-                     print(tenant.slug,"line 424")
-
-                     print(tenant,"line 424")
-                     print(get_tenant,"looooooooooooooooooooooooooooooooooojdnewjhf")
-                     logger.debug(f'Slug received: {tenant}')
-                
-                     return render(request,'users/view_trained.html',{
-                        'tenant':tenant,
-                        'slug':tenant.slug
-                    })
-                
-                elif is_student:
-                    # is_student = StudentLogDetail.objects.filter(student_name=request.user).exists()
-                    get_student=StudentLogDetail.objects.get(student_name=request.user)
-                    print(get_student,"line 433")
-                    get_tenant_for_student=get_student.tenant
-                    print(get_tenant_for_student,"line 435")
-                    tenant= Tenant.objects.get(slug=get_tenant_for_student)
-                    print(tenant.slug,"line 437")
-                    logger.debug(f'Slug received: {tenant}')
-                    return render(request,'users/Trainer_approval_Page.html',{
-                        'tenant':tenant,
-                        'slug':tenant.slug
-                    })
-
-                    
-                else:
-                    get_client_name=request.user
-                    print(get_client_name,"line no 464")
-                    get_tenant_for_client=Tenant.objects.get(client_name=get_client_name)
-                    print(get_tenant_for_client,"line 466")
-                    get_tenant_slug=get_tenant_for_client.slug
-                    tenant=Tenant.objects.get(slug=get_tenant_slug)
-                    print(tenant.slug,"line 468")
-                    print(tenant,"line no 470")
-                    logger.debug(f'Slug received: {tenant}')
-
-                    return render (request,"users/trainer_dashboard.html",{
-                      
-                        "tenant":tenant,
-                        "slug":tenant.slug,
-                  
-
-                    })
-            else:
-                sweetify.warning(request, "Invalid credentials", button="OK")
-                return render(request, "users/login.html")
-        except User.DoesNotExist:
-            sweetify.warning(request, "User not found", button="OK")
+        user_obj = User.objects.filter(email=email).first()
+        if user_obj is None:
+            messages.error(request, "User not found")
             return render(request, "users/login.html")
 
-    # Render login page if not authenticated and not POST request
+        user = authenticate(username=user_obj.username, password=password)
+        if user is not None:
+            auth_login(request, user)  # Log in the user
+            return redirect("role_based_dashboard")
+        else:
+            
+            return render(request, "users/login.html")
+
     return render(request, "users/login.html")
+
+@login_required
+def role_based_dashboard(request):
+  try:
+    if not request.user.is_authenticated:
+        print("User not authenticated")
+        return redirect('login')  # Redirect to login if not authenticated
+
+    current_user = request.user
+    print("Current user:", current_user)
+    is_trainer = TrainerLogDetail.objects.filter(trainer_name=current_user).exists()
+    is_student = StudentLogDetail.objects.filter(student_name=current_user).exists()
+    is_client = User.objects.filter(username=current_user).exists()
+    print(is_client,"loooooooooooooooooooooooooooo")
+
+    print("is_trainer", is_trainer, "is_student", is_student)
+    if is_trainer:
+        get_trainer = TrainerLogDetail.objects.get(trainer_name=current_user)
+        slug=get_trainer.tenant
+        print(slug,"loogjerojjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
+        tenant = Tenant.objects.get(slug=slug)
+        print(tenant,"trainer")
+        return render(request, 'users/view_trained.html', {
+            'tenant': tenant,
+            'slug': tenant.slug
+        })
+
+    elif is_student:
+        get_student = StudentLogDetail.objects.get(student_name=current_user)
+        slug=get_student.tenant
+        print(slug,"lllllllllllllllllllllllllllllllllllll")
+        tenant = Tenant.objects.get(slug=slug)
+        print(tenant.slug,"lineeeeeeeeeeeeeee")
+        print(tenant,"student")
+        return render(request, 'users/student_mapping.html', {
+            'tenant': tenant,
+            'slug': tenant.slug
+        })
+
+    else:
+        print("here is the error")
+        get_tenant_for_client = Tenant.objects.get(client_name=current_user)
+        tenant = get_tenant_for_client
+        print(tenant,"client")
+        print(tenant.slug,"lineeeeeeeeeeeeeee")
+        return render(request, "users/Trainer_approval_Page.html", {
+            'tenant': tenant,
+            'slug': tenant.slug
+        })
+  except:
+      return render (request,"home_page.html")
+
+        # Check if the user is in StudentLog or TrainerLog
+        
+    
 
     # If the user is not authenticated and POST request is received
 
@@ -536,25 +461,26 @@ def user_login(request):
   
 
 
-@login_required(login_url='login')
+
 def log_out(request,slug):
     try:
         tenant = Tenant.objects.get(slug=slug)
+        print(tenant,"linwe 543")
         auth.logout(request)  # Logout the user
         sweetify.success(request, "User logged out successfully", button="OK")
         
-        # Redirect based on the presence of tenant slug in the URL
+       
         if hasattr(request, 'tenant') and request.tenant:
-            return redirect('home', slug=request.tenant.slug)
+            return redirect('home-slug', slug=slug)
         else:
-            return redirect('home')  # Redirect to the normal home page if no tenant slug
+            return redirect('home-slug',slug=slug)  # Redirect to the normal home page if no tenant slug
     except Exception as e:
         # messages.error(request, 'An error occurred while logging out.')
         print(e)
-        return redirect('home')  # Redirect to the home page in case of error
+        return redirect('home-slug',slug=slug)  # Redirect to the home page in case of error
 
 
-@user_passes_test(check_trainer or check_client)
+@user_passes_test(check_trainer )
 def view_trained(request,slug):
 
     # tenant = getattr(request, 'tenant', None)
@@ -568,7 +494,7 @@ def view_trained(request,slug):
    
     return render(request, "users/view_trained.html", {
         "trained_asanas": trained_asanas,
-        'is_trainer': True,
+        # 'is_trainer': True,
         'tenant':tenant,    
     })
 
@@ -596,10 +522,13 @@ def view_posture(request, asana_id,slug):
 class CreateAsanaView(UserPassesTestMixin, View):
 
     def test_func(self):
-        return check_trainer(self.request.user)
+        print(self.request.user.groups.filter(name="Trainer").exists())
+        return self.request.user.groups.filter(name="Trainer").exists()
 
-    def get_max_forms(self, request,slug):
-        trainee_name = self.request.user
+    def get_max_forms(self,request,slug):
+        trainee_name = request.user
+        print(trainee_name,"ooooooooooooooooooooooooooo")
+
         tenant = Tenant.objects.get(slug=slug)
         # tenant = getattr(request, 'tenant', None)
         print(tenant,"line 459")
@@ -656,10 +585,11 @@ class CreateAsanaView(UserPassesTestMixin, View):
                 'form': form,
                 'asana_id': asana_id,
                 'is_trainer': True,
-                'tenant':tenant
+                'tenant':tenant.slug
             })
 
         else:
+            tenant =  Tenant.objects.get(slug=slug)
             formset = AsanaCreationFormSet()
             return render(request, "users/create_asana.html", {
                 'formset': formset,
@@ -689,7 +619,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
             created_asanas_by_trainer.no_of_asanas_created -= 1
             created_asanas_by_trainer.save()
             asana.delete()
-            return redirect("view-trained",slug=slug if slug else '')
+            return redirect("view-trained",slug=tenant.slug if slug else '')
         if asana_id:
             asana_id = request.POST.get('asana_id')
             print(asana_id,"lollllllllllllll")
@@ -698,7 +628,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
             
             form = AsanaCreationForm(request.POST, instance=asana)
             
-            print(form,"line 443")
+            
             if form.is_valid():
                 form.save()
                 no_of_postures_for_asanas = form.cleaned_data['no_of_postures']
@@ -707,14 +637,14 @@ class CreateAsanaView(UserPassesTestMixin, View):
    
                 if no_of_postures_for_asanas > existing_postures.count():
                     
-                    #  for i, posture in enumerate(existing_postures, 1):
-                    #     print("sjdje")
-                    #     posture.name = "Step-" + str(i)
-                    #     print("Step no is saved ")
-                    #     posture.step_no = i
+                     for i, posture in enumerate(existing_postures, 1):
+                        print("sjdje")
+                        posture.name = "Step-" + str(i)
+                        print("Step no is saved ")
+                        posture.step_no = i
                         
 
-                    #     posture.save()
+                        posture.save()
         
         
                      for i in range(existing_postures.count() + 1, no_of_postures_for_asanas + 1):
@@ -736,7 +666,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
                
                 
                 
-                return redirect("view-trained",slug=slug if slug else '')
+                return redirect("view-trained",slug=tenant.slug if slug else '')
 
         else:
             formset = AsanaCreationFormSet(request.POST)
@@ -765,8 +695,9 @@ class CreateAsanaView(UserPassesTestMixin, View):
                         no_of_asanas_created_by_trainee += 1
                         remaining_forms -= 1
                         print(remaining_forms, "line 579")
-                        return redirect("view-trained",slug=slug if slug else '')
+                        return redirect("view-trained",slug=tenant.slug if slug else '')
                     else:
+                        print(formset.errors,"error in formset")
                         break
 
                     
@@ -834,7 +765,7 @@ class CourseCreationView(UserPassesTestMixin, View):
             print("line 620")
             if form.is_valid():
                 form.save()
-                return redirect('view-trained',slug=slug if slug else '')
+                return redirect('view-trained',slug=tenant.slug if slug else '')
                 
                
             else:
@@ -965,9 +896,11 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request,slug, *args, **kwargs):
         print(slug,"line 916")
+        user=self.request.user
+        print(user,"line no 897")
         tenant =  Tenant.objects.get(slug=slug)
         print(tenant,"line no 918")
-        enrollment_detailss = self.get_enrollment_details(request.user,slug)
+        enrollment_detailss = self.get_enrollment_details(user,slug)
         enrollment_details=EnrollmentDetails.objects.filter(created_by=self.request.user,tenant=tenant)
         print(enrollment_details,"line 958")
         print(enrollment_details,"line no 776")
@@ -1152,20 +1085,27 @@ def subscription_plans(request):
     current_user=request.user
     print(current_user,"line 1030")
     if current_user:
-        get_current_user=Tenant.objects.get(client_name=current_user)
-        print(get_current_user,"lone 1033")
-        if get_current_user:
-            subscriptions= Subscription.objects.all()
-        else:
-            return render(request,"users/register.html")
-    else:
-         return render(request,"users/register.html")
+
+        subscriptions= Subscription.objects.all()
+        print(subscriptions,"line 1009  ")
+        return render(request,'users/subscription_plans.html',{'subscriptions':subscriptions}) 
 
 
+
+
+def client_crud_dashboard(request):
+    current_user=request.user
+    print(current_user,"line 1098")
+    get_tenant_for_client=Tenant.objects.get(client_name=current_user)
+    print(get_tenant_for_client,"line 1100")
+    get_tenant_name=get_tenant_for_client.slug
+    print(get_tenant_name,"line 1102")
+    get_trainers=TrainerLogDetail.objects.filter(tenant=get_tenant_name)
+    print(get_trainers,"line 1104")
     
-    print(subscriptions,"line 1009  ")
-    return render(request,'users/subscription_plans.html',{'subscriptions':subscriptions}) 
-
+    get_students=StudentLogDetail.objects.filter(tenant=get_tenant_name)
+    print(get_students,"line 1106")
+    return render(request,)
 
 
 
@@ -1244,7 +1184,7 @@ def delete_client(request, order_id):
 # @login_required
 def register_organisation(request):
     if request.method == 'POST':
-        form = OrganisationForm(request.POST)
+        form = OrganisationForm(request.POST,user=request.user)
         if form.is_valid():
             form.save()  # Save the form data to the Tenant model
             print("Form is valid. Redirecting to login.")
@@ -1252,7 +1192,7 @@ def register_organisation(request):
         else:
             print("Form is invalid. Errors:", form.errors)
     else:
-        form = OrganisationForm()
+        form = OrganisationForm(user=request.user)
 
     return render(request, 'users/register_organization.html', {'form': form})
 
@@ -1389,3 +1329,20 @@ def send_mail_page(request):
             context['result'] = 'All fields are required'
 
     return render(request, "home_page.html", context)
+
+
+def home_slug(request, slug):
+    if slug:
+        tenant = get_object_or_404(Tenant, slug=slug)
+        print(tenant,"line 1397")
+        # Fetch subscriptions if tenant exists
+        subscriptions =Tenant.objects.filter(slug=tenant)
+        return render(request, "users/home.html", {'subscriptions': subscriptions, 'tenant': tenant})
+    else:
+        # Render the normal home page if no slug is provided or tenant does not exist
+        return render(request, "users/home.html")
+
+
+
+
+

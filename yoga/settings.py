@@ -88,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    # 'users.middleware.ExceptionHandlingMiddleware',
 ]
 
 ROOT_URLCONF = 'yoga.urls'
@@ -276,25 +277,24 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Don't expire the session when the bro
 SESSION_SAVE_EVERY_REQUEST = True  # Save the session to extend its expiry on every request
 
 
-
-
-
-
-
-
-
-
 sentry_sdk.init(
-    dsn="https://28471d1821c73d7bd3d41744c4f43765@o4507736382636032.ingest.us.sentry.io/4507736387616768",
+    dsn="https://7fda52fc6249a1f543034e6c3df80f34@o4507980104400896.ingest.us.sentry.io/4507980105973760",
     # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,integrations=[DjangoIntegration()],
-   
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
     # Set profiles_sample_rate to 1.0 to profile 100%
     # of sampled transactions.
     # We recommend adjusting this value in production.
     profiles_sample_rate=1.0,
 )
+
+
+
+
+
+
+
+
 
 sentry_sdk.init(
     # same as above

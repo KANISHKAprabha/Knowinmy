@@ -15,18 +15,21 @@ from .views import CreateAsanaView
 urlpatterns = [
     # Base path with slug
     path('', home, name='home'),
+    path('home/<slug:slug>/',home_slug,name="home-slug"),
     path('send-mail/', send_mail_page, name='send_mail_page'),
     path('register/', register, name='register'),
     path('register-organisation/', register_organisation, name='register_organization'),
     path('subscription_plans/',subscription_plans,name='subscriptions_plans'),
     path('login/', user_login, name='login'),
+    path('dashboard/', role_based_dashboard, name='role_based_dashboard'),
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='users/password_reset_form.html'), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
     path('payment/', subscription_payment, name='subscription-payment'),
     path('razorpay/callback/', callback, name='callback'),
-    path('<slug:slug>/logout/', log_out, name='logout'),
+    path('<slug:slug>/logout/', log_out, name='log_out'),
+    # see with the path of log_out name in url 
     path('<slug:slug>/create_asana/', CreateAsanaView.as_view(), name='create-asana'),
     path('<slug:slug>/update_asana/<int:asana_id>/', CreateAsanaView.as_view(), name='update_asana'),
     path('<slug:slug>/staff_dashboard/', staff_dashboard_function, name='staff_dashboard'),
@@ -49,6 +52,7 @@ urlpatterns = [
     path('<slug:slug>/get_posture_dataset/', get_posture_dataset, name='get-posture-dataset'),
     path('<slug:slug>/client_dashboard/', client_dashboard, name='client_dashboard'),
     path('tenant_not_found/',tenant_not_found,name=" "),
+    path('<slug:slug>/get_client_crud_dashboard/',client_crud_dashboard,name='client-crud-dashboard'),
     # Define a URL for tenant-specific data
     # path('<slug:slug>/tenant-data/', tenant_data, name='tenant-data'),
 ]

@@ -171,15 +171,23 @@ class OrganisationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)
+        self.user = kwargs.pop('user', None)  # Get the user from the kwargs
         super(OrganisationForm, self).__init__(*args, **kwargs)
         
+        if self.user:
+            self.fields['client_name'].initial = self.user  # Set client_name to the request.user
+            self.fields['client_name'].widget = forms.HiddenInput()  
+
     def save(self, commit=True):
         instance = super(OrganisationForm, self).save(commit=False)
         if self.tenant:
             instance.tenant = self.tenant  # Assign the tenant
+        if self.user:
+            instance.client_name = self.user  # Assign request.user to client_name
         if commit:
             instance.save()
         return instance
+
 
 
 

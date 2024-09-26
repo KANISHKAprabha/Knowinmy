@@ -59,6 +59,10 @@ class Posture(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+    def __str__(self):
+        return self.name
+
+
 status_choices = (
         (
             'PENDING','PENDING'
@@ -121,7 +125,7 @@ class EnrollmentDetails(models.Model):
 
 
 class Subscription(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,default=None)
+   
 
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=100)
@@ -133,8 +137,12 @@ class Subscription(models.Model):
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
 
 
+    def __str_(self):
+        return self.name
+
+
 class Order(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,default=None)
+  
 
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name='orders')
     name = models.CharField(_("Customer Name"), max_length=254, blank=False, null=False)
@@ -160,12 +168,11 @@ class Order(models.Model):
 
 
 class CouponCodeForNegeotiation(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,default=None)
-
+    
 
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='coupon_code_for_client')
     subscription_for_coupon_code=models.ForeignKey(Subscription,on_delete=models.CASCADE)
-    discount_percentage=models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=0)
+    discounted_price=models.FloatField(null=False, blank=False,default=0)
     code=models.CharField(max_length=8, blank=True, null=True, unique=True)
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
@@ -249,4 +256,4 @@ class ClientOnboarding(models.Model):
     students_onboarded = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.client.username} Onboarding"
+        return f"{self.client.username}"
