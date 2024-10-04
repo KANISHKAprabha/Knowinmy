@@ -48,11 +48,26 @@ urlpatterns = [
     path('<slug:slug>/student_mapping/', StudentCourseMapView.as_view(), name='student-mapp-courses'),
     path('<slug:slug>/update_student_course/<int:enrollment_id>/', StudentCourseMapView.as_view(), name='student-course-update'),
     path('<slug:slug>/clients/', client_list, name='client_list'),
-    path('<slug:slug>/clients/<int:order_id>/delete/', delete_client, name='delete_client'),
+  
     path('<slug:slug>/get_posture_dataset/', get_posture_dataset, name='get-posture-dataset'),
     path('<slug:slug>/client_dashboard/', client_dashboard, name='client_dashboard'),
     path('tenant_not_found/',tenant_not_found,name=" "),
-    path('<slug:slug>/get_client_crud_dashboard/',client_crud_dashboard,name='client-crud-dashboard'),
+    
+    path('<slug:slug>/trainers/', trainer_dashboard, name='trainer_dashboard'),
+   
+    path('trainer/edit/<int:trainer_id>/<slug:slug>/', edit_trainer, name='edit_trainer'),
+    path('<slug:slug>/trainer/delete/<int:trainer_id>/', delete_trainer, name='delete_trainer'),
+     path('<slug:slug>/edit_user/<int:user_id>/', edit_user, name='edit_user'),
+    path('<slug:slug>/students/', student_dashboard, name='student_dashboard'),
+    path('<slug:slug>/students/delete/<int:student_id>/', delete_student, name='delete_student'),
+    path('organizations/', organization_list_view, name='organization_list'),
+    path('organizations/<int:tenant_id>/asanas/', asanas_view, name='asanas_view'),
+    
+    path('organizations/<int:tenant_id>/send-email/', send_email_view, name='send_email_view'),
+    path('asanas/<int:asana_id>/remove/', remove_asana_view, name='remove_asana_view'),
+    path('organizations/<int:tenant_id>/create-coupon/', create_coupon_view, name='create_coupon_view'),
+
+
     # Define a URL for tenant-specific data
     # path('<slug:slug>/tenant-data/', tenant_data, name='tenant-data'),
 ]

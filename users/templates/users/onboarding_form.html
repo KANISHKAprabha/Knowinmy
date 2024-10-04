@@ -7,13 +7,17 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <!-- Onboarding users formset -->
-            <form method="post"id="onboard-user-form" action="{% url 'onboard-users-form' slug=tenant.slug %}" class="p-4 border rounded shadow">
+            <form method="post" id="onboard-user-form" action="{% url 'onboard-users-form' slug=tenant.slug %}" class="p-4 border rounded shadow">
                 {% csrf_token %}
                 {{ formset.management_form }}
+
                 {% for form in formset %}
                     <div class="form-group">
                         <label class="font-weight-bold">Onboard User {{ forloop.counter }}</label>
                         {{ form.as_p }}
+
+                        <!-- Conditionally show the mentor field if the role is student -->
+                       
                     </div>
                 {% endfor %}
                 
@@ -42,9 +46,31 @@
         </div>
     {% endif %}
 </div>
+
+<!-- JavaScript to handle dynamic mentor field display -->
 <script>
-    function submit_form() {
-        $("#onboard-user-form").submit();
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all role fields and iterate through them
+        var roleFields = document.querySelectorAll('select[id^="id_role"]');
+        
+        roleFields.forEach(function(roleField, index) {
+            var mentorField = document.getElementById('mentor-field-' + (index + 1));  // Get mentor field for the respective form
+            
+            // Show/hide mentor field based on role selection
+            roleField.addEventListener('change', function() {
+                if (roleField.value === 'student') {
+                    mentorField.style.display = 'block';
+                } else {
+                    mentorField.style.display = 'none';
+                }
+            });
+
+            // Initial check to set visibility based on pre-selected role
+            if (roleField.value === 'student') {
+                mentorField.style.display = 'block';
+            }
+        });
+    });
 </script>
 {% endblock %}
+

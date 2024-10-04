@@ -1,0 +1,273 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+:root {
+  --bodyColor: #222222;
+  --bodyBg: #fbfbfb;
+  --bodyBg1: #F7F7F7;
+  --whiteColor: #ffffff;
+  --whitegrey: #6A7C92;
+  --whitegrey1: #EDEDED;
+  --whitegrey2: #F2F6F7;
+  --whitegrey3: #E7DEFF;
+  --headingColor: #222222;
+  --contentColor: #5F6C76;
+  --contentColor2: #5C727D;
+  --primaryColor: #5F2DED;
+  --secondaryColor: #F2277E;
+  --secondaryColor2: #FF275A;
+  --secondaryColor3: #FF2828;
+  --blackColor: #000000;
+  --blackColor2: #191B1E;
+  --darkblack: #0C0E2B;
+  --darkcolor: #263546;
+  --darkgray: #9FA2CE;
+  --deepgray: #202942;
+  --lightGrey: #7B8696;
+  --lightGrey2: #7B8697;
+  --lightGrey3: #7E858B;
+  --lightGrey4: #A2A9B6;
+  --lightGrey5: #F0F0F5;
+  --lightGrey8: #F0F1F3;
+  --lightGrey6: #6D6E75;
+  --lightGrey7: #F3F4FD;
+  --lightGrey9: #9F98B2;
+  --lightGrey10: #F5F5FE;
+  --lightGrey11: #F7F8FD;
+  --lightGrey12: #f0f4f7;
+  --greencolor: #44CEA9;
+  --greencolor2: #1EC902;
+  --greencolor3: #2EC14A;
+  --orange: #FE2323;
+  --borderColor: #eeeeee;
+  --borderColor1: #E5E5E5;
+  --borderColor2: #dddddd;
+  --borderColor3: #f8f8f8;
+  --borderColor4: #cacaca;
+  --darkdeep1: #170F2F;
+  --darkdeep2: #37404E;
+  --darkdeep3: #F4F4F8;
+  --darkdeep4: #949392;
+  --darkdeep5: #62605D;
+  --darkdeep6: #7E8285;
+  --darkdeep7: #C4C4C4;
+  --indigo: #B13BFF;
+  --deepgreen: #133344;
+  --deepblue: #505975;
+  --deepred: #DC164D;
+  --skycolor: #03A9F4;
+  --yellow: #FFA41C;
+  --yellow1: #F0B410;
+  --blue: #2864FF;
+  --naveBlue: #17093e;
+  --borderRadius: 4px;
+  --borderRadius2: 20px;
+  --borderRadius3: 10px;
+  --transition: .3s;
+  --bodyFont: "Inter", sans-serif;
+  --headingFont: "Hind", sans-serif;
+  --contentFont: "Inter", sans-serif;
+}
+
+.is_dark {
+  --bodyColor: #fff;
+  --bodyBg: #0C0E2B;
+  --bodyBg1: #0C0E2B;
+  --headingColor: #fff;
+  --blackColor: #fff;
+  --blackColor2: #fff;
+  --whiteColor: #0C0E2B;
+  --darkdeep2: #fff;
+  --darkblack: #fff;
+  --lightGrey: #0C0E2B;
+  --lightGrey7: #170F2F;
+  --lightGrey10: #170F2F;
+  --lightGrey11: #170F2F;
+  --contentColor: #fff;
+  --darkdeep5: #fff;
+  --borderColor: #312a57;
+  --whitegrey: #fff;
+  --whitegrey1: #312a57;
+  --whitegrey2: #312a57;
+  --deepgray: #fff;
+  --borderColor2: #fff;
+  --darkdeep3: #17093e;
+  --contentColor2: #fff;
+  --deepgreen: #fff;
+}
+
+.single-zoom-meeting-area {
+  padding: 30px;
+  border-radius: 6px;
+  border: 1px solid #EFECFF;
+  background: #FFF;
+  box-shadow: 0px 4px 30px 0px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+@media only screen and (max-width: 575px) {
+  .single-zoom-meeting-area {
+    padding: 15px;
+  }
+}
+.single-zoom-meeting-area .thumbnail {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  border-radius: 6px;
+}
+.single-zoom-meeting-area .thumbnail img {
+  transition: 0.3s;
+}
+.single-zoom-meeting-area .inner-content {
+  padding-top: 24px;
+}
+.single-zoom-meeting-area .inner-content .head {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+}
+@media only screen and (max-width: 575px) {
+  .single-zoom-meeting-area .inner-content .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+.single-zoom-meeting-area .inner-content .head .single {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.single-zoom-meeting-area .inner-content .head .single i {
+  color: var(--primaryColor);
+}
+.single-zoom-meeting-area .inner-content a {
+  display: block;
+  margin-top: 10px;
+}
+.single-zoom-meeting-area .inner-content a .title {
+  color: var(--titleColor);
+  font-size: 23px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 34px;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+.single-zoom-meeting-area .inner-content a:hover .title {
+  color: var(--primaryColor);
+}
+.single-zoom-meeting-area .inner-content .bottom {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+@media only screen and (max-width: 575px) {
+  .single-zoom-meeting-area .inner-content .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+.single-zoom-meeting-area .inner-content .bottom .left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.single-zoom-meeting-area .inner-content .bottom a {
+  margin: 0;
+  color: var(--titleColor);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 34px;
+}
+.single-zoom-meeting-area:hover .thumbnail img {
+  transform: scale(1.15);
+}
+
+.zoom-meeting-left-content-details p.disc {
+  margin-bottom: 30px;
+}
+.zoom-meeting-left-content-details .events-details-single-area {
+  margin-bottom: 0px;
+}
+.zoom-meeting-left-content-details .key-takeways-wrapper ul {
+  padding: 0;
+  list-style-type: circle;
+  list-style: circle;
+  list-style-position: inside;
+}
+.zoom-meeting-left-content-details .key-takeways-wrapper ul li {
+  margin: 13px 0;
+}
+
+.zoom-meeting-information-details {
+  padding: 40px;
+  border-radius: 6px;
+  border: 1px solid #DDD8F9;
+  background: #FFF;
+}
+@media only screen and (max-width: 575px) {
+  .zoom-meeting-information-details {
+    padding: 20px;
+  }
+}
+.zoom-meeting-information-details .single-information {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #DDD8F9;
+}
+.zoom-meeting-information-details p {
+  color: #737477;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+  margin-top: 15px;
+}
+.zoom-meeting-information-details p span {
+  color: var(--titleColor);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+}
+.zoom-meeting-information-details button {
+  min-width: 100%;
+}
+.zoom-meeting-information-details button:last-child {
+  margin-top: 20px;
+}
+
+@media only screen and (min-width: 1400px) {
+  .single-zoom-meetings .container {
+    padding: 0;
+  }
+}
+
+.dpn-zvc-single-content-wrapper .dpn-zvc-sidebar-wrapper .dpn-zvc-timer .dpn-zvc-timer-cell {
+  background: var(--primaryColor) !important;
+}
+.dpn-zvc-single-content-wrapper .thumbnail-wrapper {
+  margin-bottom: 85px;
+}
+.dpn-zvc-single-content-wrapper .thumbnail-wrapper img {
+  border-radius: 6px;
+}/*# sourceMappingURL=zoom-grid.css.map */

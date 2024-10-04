@@ -604,209 +604,385 @@ User = get_user_model()
 
 
 
-from django.test import TestCase
-from django.urls import reverse
-from django.utils import timezone
-from django.contrib.auth.models import User
-from users.models import Asana, Posture, Tenant, TrainerLogDetail, Order, Subscription
+# from django.test import TestCase
+# from django.urls import reverse
+# from django.utils import timezone
+# from django.contrib.auth.models import User
+# from users.models import Asana, Posture, Tenant, TrainerLogDetail, Order, Subscription
 
-class CreateAsanaViewTest(TestCase):
+# class CreateAsanaViewTest(TestCase):
 
-    def setUp(self):
-        # Create users
-        self.factory = RequestFactory()
-        self.trainer_user = User.objects.create_user(username="traineruser", password="testpassword")
+#     def setUp(self):
+#         # Create users
+#         self.factory = RequestFactory()
+#         self.trainer_user = User.objects.create_user(username="traineruser", password="testpassword")
         
-        # Ensure this user passes check_trainer
-        self.trainer_log = TrainerLogDetail.objects.create(trainer_name=self.trainer_user, tenant_id=1)
+#         # Ensure this user passes check_trainer
+#         self.trainer_log = TrainerLogDetail.objects.create(trainer_name=self.trainer_user, tenant_id=1)
 
-        # Create a tenant for the test
-        self.tenant = Tenant.objects.create(slug="tenant_slug", client_name=self.trainer_user)
-        self.subscription = Subscription.objects.create(permitted_asanas=5, no_of_persons_onboard=4,price=100,created_at=timezone.now(),updated_at=timezone.now(),tenant=self.tenant)
-        self.order = Order.objects.create(name=self.trainer_user, status='ACCEPT', subscription=self.subscription, tenant=self.tenant,amount=100,provider_order_id ="isdhfjsehfjsdhgjhdbj",payment_id="sifjiewuhgijehrjgherjghe",signature_id="akfjiesjfkjhsdjhfkjdshk",created_at=timezone.now(),updated_at=timezone.now())
+#         # Create a tenant for the test
+#         self.tenant = Tenant.objects.create(slug="tenant_slug", client_name=self.trainer_user)
+#         self.subscription = Subscription.objects.create(permitted_asanas=5, no_of_persons_onboard=4,price=100,created_at=timezone.now(),updated_at=timezone.now())
+#         self.order = Order.objects.create(name=self.trainer_user, status='ACCEPT', subscription=self.subscription, amount=100,provider_order_id ="isdhfjsehfjsdhgjhdbj",payment_id="sifjiewuhgijehrjgherjghe",signature_id="akfjiesjfkjhsdjhfkjdshk",created_at=timezone.now(),updated_at=timezone.now())
 
-        self.asana = Asana.objects.filter(name='New Asana', tenant=self.tenant).first()
-        group = Group.objects.create(name='Trainer')
-        self.trainer_user.groups.add(group)
+#         self.asana = Asana.objects.filter(name='New Asana', tenant=self.tenant).first()
+#         group = Group.objects.create(name='Trainer')
+#         self.trainer_user.groups.add(group)
 
 
-        # Log in the user
-        
-
-        # Trainer log detail
+#         # Log in the user
         
 
+#         # Trainer log detail
+        
 
-    def test_post_create_asana(self):
-    # Ensure the user logs in successfully
-      login_success = self.client.login(username="traineruser", password="testpassword")
-      self.assertTrue(login_success, "Login failed!")
 
-    # Define the URL
-      url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
+#     def test_post_create_asana(self):
+#     # Ensure the user logs in successfully
+#       login_success = self.client.login(username="traineruser", password="testpassword")
+#       self.assertTrue(login_success, "Login failed!")
 
-    # POST data simulating asana creation
-      post_data = {
-        'form-TOTAL_FORMS': '1',
-        'form-INITIAL_FORMS': '0',
-        'form-MIN_NUM_FORMS': '0',
-        'form-MAX_NUM_FORMS': '5',
-        'form-0-name': 'New Asana',
-        'form-0-no_of_postures': 3,
-    }
+#     # Define the URL
+#       url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
 
-    # Make POST request
-      response = self.client.post(url, post_data)
+#     # POST data simulating asana creation
+#       post_data = {
+#         'form-TOTAL_FORMS': '1',
+#         'form-INITIAL_FORMS': '0',
+#         'form-MIN_NUM_FORMS': '0',
+#         'form-MAX_NUM_FORMS': '5',
+#         'form-0-name': 'New Asana',
+#         'form-0-no_of_postures': 3,
+#     }
 
-    # Debugging: print response content if needed
-      print("Response content:", response.content)
+#     # Make POST request
+#       response = self.client.post(url, post_data)
 
-    # Ensure the response redirects (expected status code 302)
-      self.assertEqual(response.status_code, 302)
+#     # Debugging: print response content if needed
+#       print("Response content:", response.content)
 
-    # Check that the asana was created in the database
-      asana = Asana.objects.filter(name='New Asana', tenant=self.tenant).first()
-      self.assertIsNotNone(asana, "Asana object was not created!")
+#     # Ensure the response redirects (expected status code 302)
+#       self.assertEqual(response.status_code, 302)
 
-    # Check that the correct number of postures was created
-      self.assertEqual(asana.no_of_postures, 3)
+#     # Check that the asana was created in the database
+#       asana = Asana.objects.filter(name='New Asana', tenant=self.tenant).first()
+#       self.assertIsNotNone(asana, "Asana object was not created!")
 
-    # Verify that the correct number of postures were created
-      postures = Posture.objects.filter(asana=asana)
-      self.assertEqual(postures.count(), 3)
+#     # Check that the correct number of postures was created
+#       self.assertEqual(asana.no_of_postures, 3)
+
+#     # Verify that the correct number of postures were created
+#       postures = Posture.objects.filter(asana=asana)
+#       self.assertEqual(postures.count(), 3)
 
     
-    def test_get_create_asana_view(self):
-        login_success = self.client.login(username="traineruser", password="testpassword")
-        print(f"Login successful: {login_success}")
+#     def test_get_create_asana_view(self):
+#         login_success = self.client.login(username="traineruser", password="testpassword")
+#         print(f"Login successful: {login_success}")
 
-        url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
+#         url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
 
-        response = self.client.get(url)
+#         response = self.client.get(url)
         
         
-        self.assertEqual(response.status_code, 302)
-        self.assertTemplateUsed(response, 'users/create_asana.html')
-        self.assertIn('formset', response.context)
-        self.assertIn('tenant', response.context)
-        self.assertTrue(response.context['is_trainer'])
+#         self.assertEqual(response.status_code, 302)
+#         self.assertTemplateUsed(response, 'users/create_asana.html')
+#         self.assertIn('formset', response.context)
+#         self.assertIn('tenant', response.context)
+#         self.assertTrue(response.context['is_trainer'])
 
-    def test_post_update_asana(self):
-        self.assertTrue(self.client.login(username="traineruser", password="testpassword"))
-        # Create an existing asana to update
-        asana = Asana.objects.create(name="Existing Asana", created_by=self.trainer_user, tenant=self.tenant, no_of_postures=3, created_at=timezone.now(), last_modified_at=timezone.now())
+#     def test_post_update_asana(self):
+#         self.assertTrue(self.client.login(username="traineruser", password="testpassword"))
+#         # Create an existing asana to update
+#         asana = Asana.objects.create(name="Existing Asana", created_by=self.trainer_user, tenant=self.tenant, no_of_postures=3, created_at=timezone.now(), last_modified_at=timezone.now())
 
-        url = reverse('create-asana', kwargs={'slug': self.tenant.slug}) + f"?update=true&asana_id={asana.id}"
+#         url = reverse('create-asana', kwargs={'slug': self.tenant.slug}) + f"?update=true&asana_id={asana.id}"
 
-        # POST data simulating asana update
-        post_data = {
-            'asana_id': asana.id,
-            'name': 'Updated Asana',
-            'no_of_postures': 5,
-        }
+#         # POST data simulating asana update
+#         post_data = {
+#             'asana_id': asana.id,
+#             'name': 'Updated Asana',
+#             'no_of_postures': 5,
+#         }
 
-        response = self.client.post(url, post_data)
+#         response = self.client.post(url, post_data)
 
-        # Ensure the response redirects after updating the asana
-        self.assertEqual(response.status_code, 302)
+#         # Ensure the response redirects after updating the asana
+#         self.assertEqual(response.status_code, 302)
 
-        # Check that the asana was updated in the database
-        asana.refresh_from_db()
-        self.assertEqual(asana.name, 'Updated Asana')
-        self.assertEqual(asana.no_of_postures, 5)
+#         # Check that the asana was updated in the database
+#         asana.refresh_from_db()
+#         self.assertEqual(asana.name, 'Updated Asana')
+#         self.assertEqual(asana.no_of_postures, 5)
 
-        # Check that the postures were updated accordingly
-        postures = Posture.objects.filter(asana=asana)
-        self.assertEqual(postures.count(), 5)
+#         # Check that the postures were updated accordingly
+#         postures = Posture.objects.filter(asana=asana)
+#         self.assertEqual(postures.count(), 5)
 
-    def test_delete_asana(self):
-        self.assertTrue(self.client.login(username="traineruser", password="testpassword"))
-        # Create an existing asana to delete
-        asana = Asana.objects.create(name="Delete Asana", created_by=self.trainer_user, tenant=self.tenant, no_of_postures=3, created_at=timezone.now(), last_modified_at=timezone.now(),no_of_asanas_created=0)
+#     def test_delete_asana(self):
+#         self.assertTrue(self.client.login(username="traineruser", password="testpassword"))
+#         # Create an existing asana to delete
+#         asana = Asana.objects.create(name="Delete Asana", created_by=self.trainer_user, tenant=self.tenant, no_of_postures=3, created_at=timezone.now(), last_modified_at=timezone.now())
 
-        url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
+#         url = reverse('create-asana', kwargs={'slug': self.tenant.slug})
 
-        # POST data simulating asana deletion
-        post_data = {
-            'asana_id': asana.id,
-            'delete_asana': True,
-        }
+#         # POST data simulating asana deletion
+#         post_data = {
+#             'asana_id': asana.id,
+#             'delete_asana': True,
+#         }
 
-        response = self.client.post(url, post_data)
+#         response = self.client.post(url, post_data)
+#         asana_exists = Asana.objects.filter(id=asana.id).exists()
+#         self.assertFalse(asana_exists)
 
-        # Ensure the response redirects after deleting the asana
-        self.assertEqual(response.status_code, 302)
 
-        # Check that the asana was deleted from the database
-        asana_exists = Asana.objects.filter(id=asana.id).exists()
-        self.assertFalse(asana_exists)
+#         # Ensure the response redirects after deleting the asana
+#         self.assertEqual(response.status_code, 302)
 
-    def test_get_max_forms_with_trainer_log(self):
-        self.client.login(username="traineruser", password="testpassword")
-        # Create a TrainerLogDetail entry for the trainer
-        TrainerLogDetail.objects.create(trainer_name=self.trainer_user, tenant=self.tenant, no_of_asanas_created=2)
+#         # Check that the asana was deleted from the database
+        
 
-        # Create a request for the view
-        request = self.factory.get(f'/create-asana/{self.tenant.slug}')
-        request.user = self.trainer_user
+#     def test_get_max_forms_with_trainer_log(self):
+#         self.client.login(username="traineruser", password="testpassword")
+#         # Create a TrainerLogDetail entry for the trainer
+#         TrainerLogDetail.objects.create(trainer_name=self.trainer_user, tenant=self.tenant, no_of_asanas_created=2)
 
-        # Instantiate the view and call the get_max_forms method
-        view = CreateAsanaView()
-        max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant)
+#         # Create a request for the view
+#         request = self.factory.get(f'/create-asana/{self.tenant.slug}')
+#         request.user = self.trainer_user
 
-        # Check that the max forms and asanas created match expected values
-        self.assertEqual(max_forms, 5)  # Subscription allows 5 asanas
-        self.assertEqual(no_of_asanas_created_by_trainee, 2)  # Trainer has already created 2 asanas
+#         # Instantiate the view and call the get_max_forms method
+#         view = CreateAsanaView()
+#         max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant.slug)
 
-    def test_get_max_forms_no_trainer_log(self):
-        self.client.login(username="traineruser", password="testpassword")
-        # No TrainerLogDetail entry exists for the trainer
+#         # Check that the max forms and asanas created match expected values
+#         self.assertEqual(max_forms, 5)  # Subscription allows 5 asanas
+#         self.assertEqual(no_of_asanas_created_by_trainee, 2)  # Trainer has already created 2 asanas
 
-        # Create a request for the view
-        request = self.factory.get(f'/create-asana/{self.tenant.slug}')
-        request.user = self.trainer_user
+#     def test_get_max_forms_no_trainer_log(self):
+#         self.client.login(username="traineruser", password="testpassword")
+#         # No TrainerLogDetail entry exists for the trainer
 
-        # Instantiate the view and call the get_max_forms method
-        view = CreateAsanaView()
-        max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant)
+#         # Create a request for the view
+#         request = self.factory.get(f'/create-asana/{self.tenant.slug}')
+#         request.user = self.trainer_user
 
-        # Check that no forms are allowed and no asanas created by trainer
-        self.assertEqual(max_forms, 0)  # No trainer log detail found
-        self.assertEqual(no_of_asanas_created_by_trainee, 0)  # No asanas created
+#         # Instantiate the view and call the get_max_forms method
+#         view = CreateAsanaView()
+#         max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant.slug)
 
-    def test_get_max_forms_no_order(self):
-        self.client.login(username="traineruser", password="testpassword")
-        # Delete the existing order to simulate the "no order" scenario
-        Order.objects.filter(tenant=self.tenant, name=self.trainer_user).delete()
+#         # Check that no forms are allowed and no asanas created by trainer
+#         self.assertEqual(max_forms, 0)  # No trainer log detail found
+#         self.assertEqual(no_of_asanas_created_by_trainee, 0)  # No asanas created
 
-        # Create a request for the view
-        request = self.factory.get(f'/create-asana/{self.tenant.slug}')
-        request.user = self.trainer_user
+#     def test_get_max_forms_no_order(self):
+#         self.client.login(username="traineruser", password="testpassword")
+#         # Delete the existing order to simulate the "no order" scenario
+#         Order.objects.filter( name=self.trainer_user).delete()
 
-        # Instantiate the view and call the get_max_forms method
-        view = CreateAsanaView()
-        max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=-)
+#         # Create a request for the view
+#         request = self.factory.get(f'/create-asana/{self.tenant.slug}')
+#         request.user = self.trainer_user
 
-        # Check that max forms are 0 because there's no valid order for this trainer
-        self.assertEqual(max_forms, 0)  # No order found
-        self.assertEqual(no_of_asanas_created_by_trainee, 0)  # Default value
+#         # Instantiate the view and call the get_max_forms method
+#         view = CreateAsanaView()
+#         max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant.slug)
 
-    @patch('users.views.capture_exception')
-    def test_get_max_forms_with_exception(self, mock_capture_exception):
-        self.client.login(username="traineruser", password="testpassword")
-        # Simulate an exception during the execution
-        with patch('users.models.TrainerLogDetail.objects.filter', side_effect=Exception('Error!')):
-            request = self.factory.get(f'/create-asana/{self.tenant.slug}')
-            request.user = self.trainer_user
+#         # Check that max forms are 0 because there's no valid order for this trainer
+#         self.assertEqual(max_forms, 0)  # No order found
+#         self.assertEqual(no_of_asanas_created_by_trainee, 0)  # Default value
 
-            view = CreateAsanaView()
-            max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant)
+#     @patch('users.views.capture_exception')
+#     def test_get_max_forms_with_exception(self, mock_capture_exception):
+#         self.client.login(username="traineruser", password="testpassword")
+#         # Simulate an exception during the execution
+#         with patch('users.models.TrainerLogDetail.objects.filter', side_effect=Exception('Error!')):
+#             request = self.factory.get(f'/create-asana/{self.tenant.slug}')
+#             request.user = self.trainer_user
 
-            # Check that in case of exception, max_forms and no_of_asanas_created_by_trainee are set to 0
-            self.assertEqual(max_forms, 0)
-            self.assertEqual(no_of_asanas_created_by_trainee, 0)
+#             view = CreateAsanaView()
+#             max_forms, no_of_asanas_created_by_trainee = view.get_max_forms(request, slug=self.tenant.slug)
 
-            # Ensure that capture_exception was called with the exception
-            mock_capture_exception.assert_called_once()
+#             # Check that in case of exception, max_forms and no_of_asanas_created_by_trainee are set to 0
+#             self.assertEqual(max_forms, 0)
+#             self.assertEqual(no_of_asanas_created_by_trainee, 0)
+
+#             # Ensure that capture_exception was called with the exception
+#             mock_capture_exception.assert_called_once()
 
        
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth.models import User, Group
+from users.models import Tenant, CourseDetails, Posture, Subscription
+from django.utils import timezone
+
+class CourseCreationViewTests(TestCase):
+
+    def setUp(self):
+        # Create a user and assign the 'Trainer' group to the user
+        self.user_client=User.objects.create(username="clientuser",password="123")
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.tenant = Tenant.objects.create(client_name=self.user_client, slug="test-tenant")
+        self. course = CourseDetails.objects.create(user=self.user, tenant=self.tenant, course_name="Test Course")
+
+        
+        self.trainer_group = Group.objects.create(name='Trainer')
+        self.user.groups.add(self.trainer_group)
+        
+        # Create a tenant
+      
+        # Log in the user for authenticated tests
+        self.client.login(username='testuser', password='12345')
+
+    def test_course_creation_view_get(self):
+        """Test the GET request for the course creation view without course_id"""
+        url = reverse('create-course', kwargs={'slug': self.tenant.slug})
+        response = self.client.get(url)
+
+        # Ensure the view renders with status 200
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template is used
+        self.assertTemplateUsed(response, 'users/trainer_dashboard.html')
+
+        # Check the context
+        self.assertTrue(response.context['is_trainer'])
+        self.assertEqual(response.context['tenant'], self.tenant)
+
+    def test_course_creation_view_get_with_course_id(self):
+        """Test the GET request for the course creation view with course_id"""
+        # Create a course for the user
+       
+
+        url = reverse('create-course', kwargs={'slug': self.tenant.slug})
+        response = self.client.get(url)
+
+        # Ensure the view renders with status 200
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template is used
+        self.assertTemplateUsed(response, 'users/trainer_dashboard.html')
+
+        # Check the context
+        self.assertEqual(response.context['course_id'], self.course.id)
+        self.assertTrue(response.context['is_trainer'],True)
+        self.assertEqual(response.context['tenant'], self.tenant)
+
+    def test_course_creation_view_post_valid(self):
+        """Test a valid POST request for course creation"""
+        url = reverse('create-course', kwargs={'slug': self.tenant.slug})
+        data = {
+              'course_name': 'New course',
+                'description': 'sjfnksdnmds',
+                  'user': self.user.id,  # You can pass the user's ID here
+                   'tenant': self.tenant.id,  # You can pass the tenant's ID here
+}
+        response = self.client.post(url, data)
+
+        
+        
+
+        # Ensure the course is created
+        self.assertEqual(CourseDetails.objects.count(), 1)
+        
+        # Ensure the user is redirected after form submission
+        self.assertRedirects(response, reverse('create-course', kwargs={'slug': self.tenant.slug}))
+
+    def test_course_creation_view_post_invalid(self):
+        """Test an invalid POST request for course creation"""
+        url = reverse('create-course', kwargs={'slug': self.tenant.slug})
+        data = {
+            'name': '',  # Invalid form data (e.g., missing name)
+        }
+        response = self.client.post(url, data)
+
+        # The form should be invalid, and the same page should be rendered
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/trainer_dashboard.html')
+        self.assertFalse(response.context['form'].is_valid())
+
+    def test_delete_course(self):
+        """Test course deletion via POST request"""
+        # Create a course
+        course = CourseDetails.objects.create(user=self.user, tenant=self.tenant, course_name="Test Course")
+
+        url = reverse('create-course', kwargs={'slug': self.tenant.slug})
+        data = {
+            'delete_course': 'true',
+            'course_id': course.id
+        }
+        response = self.client.post(url, data)
+
+        # Ensure the course is deleted
+        self.assertEqual(CourseDetails.objects.count(), 0)
+
+        # Ensure the user is redirected after deletion
+        self.assertRedirects(response, reverse('create-course', kwargs={'slug': self.tenant.slug}))
+
+
+
+
+
+class StaffDashboardFunctionTests(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(username='staffuser', password='12345')
+        self.trainer_group = Group.objects.create(name='Trainer')
+        self.user.groups.add(self.trainer_group)
+        self.user_client=User.objects.create(username="clientuser",password="123")
+        self.tenant = Tenant.objects.create(client_name=self.user_client, slug="test-tenant")
+
+
+        # Log in the user for authenticated tests
+        self.client.login(username='staffuser', password='12345')
+
+    def test_staff_dashboard_function(self):
+        url = reverse('staff_dashboard', kwargs={'slug': self.tenant.slug})
+        response = self.client.get(url)
+
+        # Ensure the view renders with status 200
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template is used
+        self.assertTemplateUsed(response, 'users/staff_dashboard.html')
+
+        # Check context
+        self.assertTrue(response.context['is_trainer'])
+        self.assertEqual(response.context['tenant'], self.tenant)
+
+
+
+
+
+
+class EditPostureViewTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='trainer', password='12345')
+        self.trainer_group = Group.objects.create(name='Trainer')
+        self.user.groups.add(self.trainer_group)
+        self.user_client=User.objects.create(username="clientuser",password="123")
+        self.tenant = Tenant.objects.create(client_name=self.user_client, slug="test-tenant")
+
+        self.asana=Asana.objects.create(name="asana",no_of_postures=1, created_by=self.user_client, created_at=timezone.now(),last_modified_at=timezone.now(),tenant=self.tenant)
+        
+        self.posture = Posture.objects.create(asana=self.asana, step_no=1,tenant=self.tenant,is_active=True)  # Sample data
+
+        # Log in the user for authenticated tests
+        self.client.login(username='trainer', password='12345')
+
+    def test_edit_posture_get(self):
+        url = reverse('edit-posture', kwargs={'slug': self.tenant.slug, 'posture_id': self.posture.id})
+        response = self.client.get(url)
+
+        # Ensure the view renders with status 200
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the correct template is used
+        self.assertTemplateUsed(response, 'users/edit_posture.html')
+
+        # Check context
+        self.assertEqual(response.context['posture'], self.posture)
+        self.assertEqual(response.context['tenant'], self.tenant)

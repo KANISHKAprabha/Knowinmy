@@ -61,16 +61,16 @@ class StudentCourseMappingForm(ModelForm):
         
         if self.tenant and self.trainer_user:
             trainee_ids = TrainerLogDetail.objects.filter(tenant=self.tenant,trainer_name=self.trainer_user).first()
-            print(trainee_ids,"loesfjkesjh")
+            print(trainee_ids,"loesfjkesjh")    
             if  trainee_ids == None:
                 print("ids not found ")
             client_name = trainee_ids.onboarded_by
             print(client_name,"line no 66 in forms s")
             self.fields['user'] = forms.ModelChoiceField(
-                queryset=StudentLogDetail.objects.filter(added_by=client_name, tenant=self.tenant),
+                queryset=StudentLogDetail.objects.filter(mentor=self.trainer_user, tenant=self.tenant),
                 initial=self.instance.user if self.instance.pk else None
             )
-            print("shgkjdhgggggggggggggggg",self.fields['user'])
+            
             print(self.fields['user'],"line no 67 in forms ")
             self.fields['students_added_to_courses'] = forms.ModelMultipleChoiceField(
                 queryset=CourseDetails.objects.filter(tenant=self.tenant,user=self.trainer_user),
@@ -205,18 +205,57 @@ class UserOnboardingForm(forms.ModelForm):
         ('student', 'Student')
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES)
+    mentor=forms.EmailField(required=True,label="Mentor Name")
 
     class Meta:
         model = User
-        fields = ['username','first_name', 'last_name', 'email', 'role']
+        fields = ['username','first_name', 'last_name', 'email', 'role','mentor']
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)  # Extract tenant from kwargs
+       
         super(UserOnboardingForm, self).__init__(*args, **kwargs)
         
     def save(self, commit=True):
         instance = super(UserOnboardingForm, self).save(commit=False)
+        # self.fields['mentor']=forms.CheckboxInput(queryset=StudentLogDetail.objects.create(tenant=self.tenant,mentor=))
         if self.tenant:
-            instance.tenant = self.tenant  # Assign the tenant to the instance
+            instance.tenant = self.tenant 
+
+        
+           
+           
+
         if commit:
             instance.save()
         return instance
+
+
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name','last_name']
+    def __init__(self, *args, **kwargs):
+        self.tenant = kwargs.pop('tenant', None)
+        print(kwargs,"line 93")
+        print(args,"line 94")
+        print(self.tenant,"line 93 forms.py")
+        self.user = kwargs.pop('user', None)
+        print(self.user,"line 94")
+        super(UserEditForm, self).__init__(*args, **kwargs)
+
+        
+            
+        
+
+    def save(self, commit=True):
+        instance = super(UserEditForm, self).save(commit=False)
+        if self.tenant:
+            instance.tenant = self.tenant  # Assign the tenant
+        if commit:
+            instance.save()
+        return instance
+
+
+

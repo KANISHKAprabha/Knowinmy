@@ -1,0 +1,79 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+/*Logo CSS-----------------
+--------------------------*/
+.rt-grid-figure .logo-img {
+  text-align: center;
+}
+.rt-grid-figure .logo-img a {
+  transition: all 0.5s;
+}
+.rt-grid-figure .logo-img img {
+  margin: 0 auto;
+  transition: all 0.5s;
+}
+.rt-grid-figure .logo-img:hover img {
+  opacity: 1;
+}
+.rt-grid-figure .logo-img:hover a.back {
+  display: block;
+}
+.rt-grid-figure .logo-img:hover a.back-exists {
+  display: none;
+}
+
+.rt_logo_slider .swipper-bulet-pagination {
+  padding: 15px 0;
+}
+.rt_logo_slider .swipper-bulet-pagination .swiper-pagination-bullets {
+  position: absolute;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  margin: auto;
+  left: 50% !important;
+  bottom: 10px !important;
+  width: 100%;
+  transform: translate(-50%, 10px);
+}
+.rt_logo_slider .swipper-bulet-pagination .swiper-pagination-bullets span {
+  background: var(--primaryColor);
+  width: 8px;
+  height: 8px;
+}
+.rt_logo_slider .rt-logo-slider-nav {
+  padding-top: 15px;
+}
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-prev,
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-next {
+  color: var(--primaryColor);
+  font-size: 25px;
+  bottom: 10px;
+  top: auto;
+}
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-prev::after,
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-next::after {
+  display: none;
+}
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-prev {
+  left: 43%;
+  right: auto;
+}
+.rt_logo_slider .rt-logo-slider-nav .swiper-button-next {
+  right: 43%;
+  left: auto;
+}/*# sourceMappingURL=logo.css.map */

@@ -4,8 +4,8 @@
 <div class="container mt-5">
     <div class="row">
         {% for asana in trainer_asanas %}
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4"> <!-- Responsive columns: 4 on large screens, 6 on medium, 12 on small -->
+            <div class="card shadow h-100 py-2" style="border-bottom: 4px solid #553CDF;">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -16,7 +16,7 @@
                                 <ul>
                                     {% for asana_detail in asana.asanas_by_trainer.all %}
                                     <li>
-                                        <a href="{% url 'user-view-posture' asana_id=asana_detail.id slug=asana.tenant.slug %}">
+                                        <a href="{% url 'user-view-posture' asana_id=asana_detail.id slug=tenant.slug %}">
                                             {{ asana_detail.name }}
                                         </a>
                                     </li>
@@ -34,3 +34,4 @@
 </div>
 
 {% endblock %}
+    

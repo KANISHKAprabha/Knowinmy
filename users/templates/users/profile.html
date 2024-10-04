@@ -1,11 +1,10 @@
-
 {% load static %}
 
 {% block style %}
-<!-- Additional styles for this specific page -->
+<!-- Additional styles for the profile page -->
 <style>
   body {
-    background-color: #f8f9fa;
+    background-color: #8d86f0;
   }
 
   .container {
@@ -19,7 +18,7 @@
 
   h2 {
     margin-bottom: 20px;
-    color: #007bff;
+    color: #553CDF;
   }
 
   p {
@@ -53,11 +52,32 @@
     background: #d4edda;
     color: #155724;
   }
+
+  /* Styling for the back button */
+  .back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #553CDF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .back-button:hover {
+    background-color: #432ABF; /* Darker shade on hover */
+  }
+
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
+  <!-- Back button -->
+
+
   <h2>Personal Information</h2>
   <p><span class="label">Username:</span> {{ user.username }}</p>
   <p><span class="label">Email:</span> {{ user.email }}</p>
@@ -65,11 +85,27 @@
   <p><span class="label">Last Name:</span> {{ user.last_name }}</p>
   <p><span class="label">Role:</span> 
     {% for group in request.user.groups.all %}
-      {{ group.name }}{% if not forloop.last %}, {% endif %}
+      {{ group.name }}
+      
+      {% if not forloop.last %}, {% endif %}
+     
     {% empty %}
       No groups 
     {% endfor %}
   </p>
+  <p><span class="label">Mentor:</span> 
+    {% for group in request.user.groups.all %}
+     {% if group.name = 'Student' %}
+     
+      {% if not forloop.last %}, {% endif %}
+     
+    {% empty %}
+      No groups 
+    {% endfor %}
+  </p>
+  <div>
+    <a href="{% url 'role_based_dashboard'  %}" class="back-button">Back</a>
+  </div>
 
   {% if messages %}
   <ul class="messages">
@@ -82,7 +118,5 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Additional scripts for this specific page -->
+<!-- Additional scripts for the profile page -->
 {% endblock %}
-
- 

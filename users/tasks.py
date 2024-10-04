@@ -35,7 +35,8 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                 email = row['email']
                 first_name = row['first_name']
                 last_name = row['last_name']
-                password = row['password']
+                mentor=row['mentor']
+              
                 role = row['roles'].lower()
 
                 user_details = User(
@@ -44,7 +45,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                     first_name=first_name,
                     last_name=last_name,
                 )
-                user_details.set_password(password)
+               
                 user_objs.append(user_details)
                 role_dict[username] = role
 
@@ -77,6 +78,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                             no_of_asanas_created=0,
                             created_at=timezone.now(),
                             updated_at=timezone.now(),
+
                             tenant=tenant
                         )
                         trainer_count += 1
@@ -86,6 +88,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                         StudentLogDetail.objects.create(
                             student_name=user,
                             added_by=admin_user,
+                            added_trainer_to_student=mentor,
                             created_at=timezone.now(),
                             updated_at=timezone.now(),
                             tenant=tenant

@@ -55,5 +55,3 @@ admin_site.register(ClientOnboarding)
 
 
 
-class PersonAdmin(ImportExportModelAdmin):
-    resource_class = PersonResource

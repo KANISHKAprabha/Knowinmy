@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization List</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .table {
+            margin: 20px auto;
+            width: 90%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        thead {
+            background-color: #553CDF;
+            color: white;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+        .btn {
+            color: white;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #553CDF;
+        }
+        .btn-primary:hover {
+            background-color: #4729a8;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-4">Organization List</h2>
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>Organization Name</th>
+                    <th>Email</th>
+                    <th>No. of Students</th>
+                    <th>No. of Trainers</th>
+                    <th>Subscription Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for organization in organizations %}
+                <tr>
+                    <td>{{ organization.organization_name }}</td>
+                    <td>{{ organization.organization_email }}</td>
+                    <td>{{ organization.students_onboarded }}</td>
+                    <td>{{ organization.trainers_onboarded }}</td>
+                    <td>{{ organization.subscription }}</td>
+                    <td>
+                        <a href="{% url 'asanas_view' organization.id %}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> View Asanas
+                        </a>
+                        <a href="{% url 'send_email_view' organization.id %}" class="btn btn-secondary">
+                            <i class="fas fa-envelope"></i> Send Email
+                        </a>
+                        <a href="{% url 'create_coupon_view' organization.id %}" class="btn btn-success">
+                            <i class="fas fa-tag"></i> Create Coupon
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Include Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

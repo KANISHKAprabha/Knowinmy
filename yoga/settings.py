@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    
     'dotenv',
     'grappelli',
     'django.contrib.admin',
@@ -353,3 +354,9 @@ JET_DEFAULT_THEME = 'default'  # set the default theme
 
 # JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = '/path/to/client_secrets.json'  # if you want to integrate Google Analytics
 JET_INDEX_DASHBOARD = 'users.dashboard.CustomIndexDashboard'
+
+
+
+
+
+

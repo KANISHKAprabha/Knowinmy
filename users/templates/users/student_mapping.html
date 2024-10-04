@@ -3,18 +3,20 @@
 
 {% block body %}
 <div class="container mt-5">
-    <!-- Buttons at the top -->
+    <!-- Buttons and Heading Section -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Create/Update Enrollment Button aligned left -->
-        <button class="btn btn-success" data-toggle="modal" data-target="#enrollmentModal">
-          Create Enrollment
+        <!-- Create Enrollment Button -->
+        <button class="btn" style="background-color: #553CDF; border-color: #553CDF; color: white;" data-toggle="modal" data-target="#enrollmentModal">
+            Create Enrollment
         </button>
+        <!-- Enrollment Details Heading in the Center -->
+        <h2 class="text-center mx-auto mb-0" style="color: #553CDF;">Enrollment Details</h2>
     </div>
 
-    <!-- Heading -->
-    <h2 class="text-center mb-4">Enrollment Details</h2>
-    
     <!-- Enrollment Details Section -->
+     <br>
+     <br>
+     <br>
     <div class="row">
         {% for enrollment in enrollment_details %}
         <div class="col-xl-4 col-md-6 mb-4">
@@ -40,10 +42,10 @@
                         Last modified at: {{ enrollment.updated_at }}
                     </p>
                     <a href="{% url 'student-mapp-courses' slug=tenant.slug %}?enrollment_id={{ enrollment.id }}" class="btn btn-info btn-sm">Edit</a>
-                    <form method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug  %}" style="display:inline;">
+                    <form method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug %}" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
-                        <button type="submit" id="delete-button-{{ enrollment.id }}"name="delete_course_map_form" onclick="return confirm('Are you sure you want to delete this enrollment?')" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" id="delete-button-{{ enrollment.id }}" name="delete_course_map_form" onclick="return confirm('Are you sure you want to delete this enrollment?')" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </div>
             </div>
@@ -62,14 +64,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="enrollmentModalLabel">
-                   Create Enrollment
+                    Create Enrollment
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="enrollment_form" method="POST" action="{% url 'student-mapp-courses'  slug=tenant.slug %}">
+                <form id="enrollment_form" method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug %}">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary">
@@ -80,7 +82,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     function submit_form() {

@@ -1,32 +1,35 @@
 {% extends 'users/staff_dashboard.html' %}
 {% load static %}
+
 {% block body %}
 <div class="container mt-5">
-    <div class="container">
+    <div class="mb-5">
         <a href="{% url 'create-asana' slug=tenant.slug %}" id="create-asana-link">
-            <button type="button" id="create-asana-button" class="btn btn-primary mb-5">Create Asana</button>
+            <button type="button" id="create-asana-button" style="background-color: #6d5ccf; border-color: #6d5ccf;" class="btn btn-primary">Create Asana</button>
         </a>
     </div>
     
     <div class="row">
-        <p class="col-12">Your Asanas</p>
+        <div class="col-12 mb-3">
+            <p class="font-weight-bold">Your Asanas</p>
+        </div>
         {% for trained_asana in trained_asanas %}
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2" id="asana-container-{{ trained_asana.id }}">
-                            <div class="font-weight-bold text-primary mb-1"id="asana-name-{{ trained_asana.id }}">{{ trained_asana.name }}</div>
+                            <div class="font-weight-bold text-primary mb-1" id="asana-name-{{ trained_asana.id }}">{{ trained_asana.name }}</div>
                             <div class="mb-0 font-weight-bold text-gray-800" id="asana-posture-{{ trained_asana.id }}">{{ trained_asana.no_of_postures }} postures</div>
-                            <a href="{% url 'create-asana' slug=tenant.slug  %}?update=1&asana_id={{ trained_asana.id }}"class="btn btn-info btn-sm">Edit</a>
-                            <form method="post" id="asana_form" action="{% url 'create-asana' slug=tenant.slug  %}" style="display:inline;">
+                            <a href="{% url 'create-asana' slug=tenant.slug %}?update=1&asana_id={{ trained_asana.id }}" class="btn btn-info btn-sm">Edit</a>
+                            <form method="post" id="asana_form_{{ trained_asana.id }}" action="{% url 'create-asana' slug=tenant.slug %}" style="display:inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="asana_id" value="{{ trained_asana.id }}">
-                                <button type="submit"id="delete-button-{{ trained_asana.id }}" name="delete_asana" onclick="del_asana('{{ trained_asana.id }}')" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" id="delete-button-{{ trained_asana.id }}" name="delete_asana" onclick="del_asana('{{ trained_asana.id }}')" class="btn btn-danger btn-sm">Delete</button>
                             </form>
                         </div>
                         <div class="col-auto">
-                            <a href="{% url 'view-posture' slug=tenant.slug asana_id=trained_asana.id %}">
+                            <a href="{% url 'view-posture' asana_id=trained_asana.id  slug=tenant.slug  %}">
                                 <i class="fas fa-arrow-right fa-2x text-gray-300"></i>
                             </a>
                         </div>
@@ -41,34 +44,42 @@
 </div>
 
 
+    <script>
+        function del_asana(asana_id) {
+            console.log(asana_id);
 
-<script>
-    function del_asana(asana_id) {
-    console.log(asana_id);
-
-    // Get the delete button element by its ID
-    var deleteButton = document.getElementById  ('delete-button-' + asana_id);
-    console.log(deleteButton);
-    
-   
-    if (deleteButton) {
-       deleteButton.addEventListener('click',function(e){
-        deleteButton.disabled = true;
-        e.preventDefault()
+            // Get the delete button element by its ID
+            var deleteButton = document.getElementById('delete-button-' + asana_id);
+            console.log(deleteButton);
+            
+            if (deleteButton) {
+                deleteButton.addEventListener('click', function(e) {
+                    deleteButton.disabled = true;
+                    e.preventDefault();
+                }, { once: true });
+            } else {
+                console.error('Delete button not found!');
+            }
+        }
         
-       },{once:true})
-       
-    } else {
-        console.error('Delete button not found!');
-    }
-}
- 
-    
-        function submit_form() {
-        $("#asana_form").submit();
+    </script>
+    <!-- Stylesheets -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
-    }
+        <!-- Core plugin JavaScript -->
+        <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
+        <!-- Custom scripts for all pages -->
+        <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
 
-</script>
-{% endblock %}
+        <!-- Page level plugins -->
+        <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+        <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+
+    {% endblock %}

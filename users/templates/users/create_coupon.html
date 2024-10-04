@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Coupon Code</title>
+</head>
+<body>
+    <h2>Create a Coupon Code for {{ tenant.organization_name }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="discounted_price">Discounted Price:</label>
+            <input type="number" name="discounted_price" id="discounted_price" required>
+        </div>
+
+        <div>
+            <label for="subscription_id">Select Subscription:</label>
+            <select name="subscription_id" id="subscription_id" required>
+                {% for subscription in subscriptions %}
+                <option value="{{ subscription.id }}">{{ subscription.name }} - ${{ subscription.price }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Coupon</button>
+    </form>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
+

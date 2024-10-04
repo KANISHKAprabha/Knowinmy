@@ -1,0 +1,49 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+.react-button {
+  display: flex;
+}
+.react-button a {
+  display: inline-block;
+  color: #fff;
+  padding: 6px 20px;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: var(--bodyFont);
+  line-height: 26px;
+  text-align: center;
+  text-transform: capitalize;
+  border-radius: 4px;
+  border: 1px solid var(--primaryColor);
+  background: var(--primaryColor);
+  transition: 0.3s;
+  overflow: hidden;
+}
+.react-button a:hover {
+  background: var(--whiteColor);
+  color: var(--primaryColor);
+}
+.react-button.secondary_btn a {
+  border: 1px solid #fff;
+  box-sizing: border-box;
+}
+.react-button.secondary_btn a:hover {
+  color: #fff;
+  background: var(--primaryColor);
+  border: 1px solid #fff;
+}/*# sourceMappingURL=button.css.map */

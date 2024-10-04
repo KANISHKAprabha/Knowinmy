@@ -20,6 +20,7 @@ class   Tenant(models.Model):
     organization_email = models.EmailField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
     full_url = models.URLField(blank=True) 
+    # phone nuber
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -233,6 +234,7 @@ class StudentLogDetail(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="enrollments_added", null=True, blank=True)
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
+    mentor=models.EmailField(null=True,blank=True)
    
 
     def __str__(self):
