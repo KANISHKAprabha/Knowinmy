@@ -30,6 +30,7 @@
                             <div class="form-group">
                                 <input type="hidden" name="subscription_id" value="{{ subscription.id }}">
                                 <label for="coupon-{{ subscription.id }}">Coupon Code (optional)</label>
+                                {{request.user}}
                                 <input type="text" name="coupon_code" class="form-control" id="coupon-{{ subscription.id }}" placeholder="Enter coupon code if any">
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Pay Now</button>

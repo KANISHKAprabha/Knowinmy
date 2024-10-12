@@ -15,5 +15,11 @@ def check_student(user):
         return True
     return user.groups.filter(name="Student").exists() or check_trainer(user) or user.is_superuser or check_client(user) 
 
+
+def check_knowinmy(user):
+    if user.is_superuser:
+        return True
+    return user.groups.filter(name="Knowinmy").exists() or check_knowinmy  (user) or user.is_superuser or check_client(user) 
+
 def check_superuser(user):
     return user.is_superuser

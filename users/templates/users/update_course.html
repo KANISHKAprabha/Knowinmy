@@ -1,7 +1,7 @@
 {% extends 'users/staff_dashboard.html' %}
 {% load static %}
 
-{% block body %}
+{% block content %}
 <div class="container mt-5">
     <!-- Heading -->
     <h2 class="text-center mb-4">Update Course</h2>
@@ -30,13 +30,16 @@
                     {{ form.asanas_by_trainer.label_tag }}
                     {{ form.asanas_by_trainer }}
                 </div>
+                
+                
 
                 <!-- Hidden Course ID Field -->
                 <!-- <input type="hidden" name="course_id" value="{{ course_id }}"> -->
 
                 <!-- Buttons at the bottom, aligned to the right -->
                 <div class="d-flex justify-content-between">
-                    <input type="hidden" name="course_id" value="{{ course.id }}">
+                   
+                    <input type="hidden" name="course_id" value="{{ course_id }}">
                     <button type="submit" name="update_course" class="btn btn-primary btn-sm" onclick="this.disabled=true;submit_form()">Update Course</button>
                     <a href="{% url 'create-course' slug=tenant.slug  %}" class="btn btn-secondary btn-sm ml-2">Back to Courses</a>
                 </div>
@@ -52,7 +55,7 @@
 </script>
 
 <style>
-    /* Ensure both buttons have the same styling */
+    
     .btn-sm {
         padding: 0.375rem 0.75rem;
         font-size: 0.875rem;

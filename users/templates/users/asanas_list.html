@@ -11,67 +11,155 @@
             background-color: #f4f4f4;
             color: #333;
         }
+
         h2 {
             text-align: center;
             margin: 20px 0;
             color: #553CDF;
         }
+
         .table {
-            width: 100%; /* Full width for the table */
+            width: 100%;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            table-layout: fixed; /* Ensures equal spacing */
+            table-layout: fixed;
+            margin-bottom: 20px; /* Add margin between the tables */
         }
+
         thead {
             background-color: #553CDF;
             color: white;
         }
+
         th, td {
             padding: 15px;
             text-align: center;
-            word-wrap: break-word; /* Prevent overflow */
+            word-wrap: break-word;
         }
+
+        /* Ensure responsiveness */
+        @media (max-width: 768px) {
+            .table th, .table td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            /* Stack table rows for very small screens */
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        /* Additional styling for buttons */
         .btn {
             color: white;
             border-radius: 5px;
             padding: 10px 15px;
-            margin: 5px; /* Added margin for spacing between buttons */
+            margin: 5px;
             transition: background-color 0.3s;
         }
-        .btn-danger {
-            background-color: #dc3545;
+
+        .btn-primary {
+            background-color: #173f5e; /* Light shade of violet */
         }
-        .btn-danger:hover {
-            background-color: #c82333;
+
+        
+       
+
+        
+
+        /* Styling for the space between tables */
+        .table-container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            margin-top: 20px; /* Spacing above the back button */
+            float: right; /* Align to the right */
         }
     </style>
 </head>
 <body>
-    <h2>Asanas for {{ tenant.organization_name }}</h2>
+    
     <div class="container">
-        <table class="table table-responsive">
-            <thead>
-                <tr>
-                    <th style="width: 25%;">Asana Name</th>
-                    <th style="width: 25%;">No. of Postures</th>
-                    <th style="width: 25%;">Created At</th>
-                    <th style="width: 25%;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for asana in asanas %}
-                <tr>
-                    <td>{{ asana.name }}</td>
-                    <td>{{ asana.no_of_postures }}</td>
-                    <td>{{ asana.created_at }}</td>
-                    <td>
-                        <a href="{% url 'remove_asana_view' asana.id %}" class="btn btn-danger">Remove Asana</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <div class="table-container">
+                <h2>Subscription Details</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 33%;">Number of Students</th>
+                            <th style="width: 33%;">Number of Trainers</th>
+                            <th style="width: 33%;">Subscription Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ get_stud_count }}</td>
+                            <td>{{ get_trainer_count }}</td>
+                            <td>{{ get_subs }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table class="table">
+                <h2>Courses created by  {{ tenant.organization_name }}</h2>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Course Name</th>
+                        <th style="width: 25%;">Trainer name</th>
+                        <th style="width: 25%;">Asana Name</th>
+                        <th style="width: 25%;">No of postures</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for courses in courses %}
+                    <tr>
+                        <td>{{ courses.course_name }}</td>
+                        <td>{{ courses.user.username }}</td>
+                        {% for asana in courses.asanas_by_trainer.all %}
+                        <td>{{ asana.name }}</td>
+                        <td>{{ asana.no_of_postures }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table class="table">
+                <h2>Asanas created by  {{ tenant.organization_name }}</h2>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Asana Name</th>
+                        <th style="width: 25%;">No. of Postures</th>
+                        <th style="width: 25%;">Created At</th>
+                        <th style="width: 25%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asana in asanas %}
+                    <tr>
+                        <td>{{ asana.name }}</td>
+                        <td>{{ asana.no_of_postures }}</td>
+                        <td>{{ asana.created_at }}</td>
+                        <td>
+                            <a href="{% url 'remove_asana_view' asana_id=asana.id %}" class="btn btn-danger">Remove Asana</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-button">
+            <a href="{% url 'organization_list' %}" class="btn btn-primary">Back</a> <!-- Adjust the URL as necessary -->
+        </div>
+    </div>
     </div>
 
     <!-- Include Bootstrap JS (optional) -->

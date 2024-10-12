@@ -1,6 +1,7 @@
 from celery import shared_task
 from django.db import transaction
 from django.contrib.auth.models import User, Group
+from django.shortcuts import get_object_or_404
 import pandas as pd
 from .models import *
 from django.core.files.storage import default_storage
@@ -27,6 +28,9 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
         role_dict = {}
         trainer_count = 0
         student_count = 0
+        
+                    
+
 
         with transaction.atomic():
             for i, row in df.iterrows():
@@ -49,6 +53,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                 user_objs.append(user_details)
                 role_dict[username] = role
 
+
             # Bulk create users
             User.objects.bulk_create(user_objs)
             print("Users created")
@@ -56,11 +61,22 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
             # Fetch admin_user instance
             admin_user = User.objects.get(id=admin_user_id)
             print(admin_user, "Admin user fetched")
-
+            
             # Fetch or create ClientOnboarding record for admin_user
             client_onboarding, created = ClientOnboarding.objects.get_or_create(
                 client=admin_user, tenant=tenant)
             print(client_onboarding, "ClientOnboarding fetched or created")
+            if mentor:
+                try:
+                  mentor_user = User.objects.get(email=mentor)
+                  stud_mentor = TrainerLogDetail.objects.get(trainer_name=mentor_user)
+                except User.DoesNotExist:
+                    print(f"No mentor found with email: {mentor}")
+                    mentor_user = None
+                except TrainerLogDetail.DoesNotExist:
+                       print(f"No TrainerLogDetail found for mentor: {mentor_user}")
+                       stud_mentor = None
+
 
             if client_onboarding:
                 print("Entered if block")
@@ -71,7 +87,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                     user.groups.add(group)
                     print(f"Added {user.username} to group {group.name}")
 
-                    if role == 'trainer':
+                    if role == 'Trainer':
                         TrainerLogDetail.objects.create(
                             trainer_name=user,
                             onboarded_by=admin_user,
@@ -88,7 +104,7 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                         StudentLogDetail.objects.create(
                             student_name=user,
                             added_by=admin_user,
-                            added_trainer_to_student=mentor,
+                              mentor=stud_mentor,
                             created_at=timezone.now(),
                             updated_at=timezone.now(),
                             tenant=tenant

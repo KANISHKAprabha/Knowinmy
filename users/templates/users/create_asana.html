@@ -1,8 +1,15 @@
 {% extends 'users/staff_dashboard.html' %}
 {% load crispy_forms_tags %}
-{% block body %}
+{% load sweetify %}
+{% block content %}
+
+
 <div class="container">
+  
+    {% sweetify %}
+
     <form method="post" id="asana_form" action="">
+        {% sweetify %}
         {% csrf_token %}
         
         {{ formset.management_form }}
@@ -24,10 +31,12 @@
     </ul>
 {% endif %}
 <script>
+    
         function submit_form() {
         $("#asana_form").submit();
 
     }
 
 </script>
+
 {% endblock %}

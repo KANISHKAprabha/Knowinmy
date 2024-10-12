@@ -1,136 +1,115 @@
+{% extends 'users/staff_dashboard.html' %}
 {% load custom_filters %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ tenant.client_name }} - Trainer Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
+{% block content %}
+<div class="container mt-5">
 
-        h1 {
-            color: #6d5ccf;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    <!-- Buttons at the top -->
+    
+    <!-- Heading -->
+    <h2 class="text-center mb-4">Trainer List</h2>
 
-        .trainer-container {
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        h3 {
-            color: #6d5ccf;
-            margin-bottom: 10px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 10px 0;
-        }
-
-        ul li {
-            margin-bottom: 8px;
-        }
-
-        ul li ul {
-            margin-top: 5px;
-        }
-
-        button, a {
-            background-color: #6d5ccf;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        button:hover, a:hover {
-            background-color: #574bbb;
-        }
-
-        form {
-            display: inline-block;
-        }
-
-        .no-content {
-            color: #999;
-        }
-
-        .action-buttons {
-            margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>{{ tenant.client_name }} - Trainer Dashboard</h1>
-
-    {% for trainer in trainers %}
-    <div class="trainer-container">
-        <h3>{{ trainer.trainer_name.username }}</h3>
-        
-        <ul>
-            <li><strong>Asanas Created:</strong> {{ trainer.no_of_asanas_created }}</li>
-            <li><strong>Courses Created:</strong> {{ course_counts|get_item:trainer.trainer_name.id }}</li>
-            <li><strong>Enrollments:</strong> {{ enrollment_counts|get_item:trainer.trainer_name.id }}</li>
-        </ul>
-
-        <h3>Courses Created by {{ trainer.trainer_name.username }}</h3>
-        <ul>
-            {% for course in trainer_courses|get_item:trainer.trainer_name.id %}
-                <li>
-                    <strong>Course: {{ course.course_name }}</strong>
-                    <ul>
-                        <li><strong>Description:</strong> {{ course.description }}</li>
-                        <li><strong>Asanas:</strong></li>
-                        <ul>
-                            {% for asana in course.asanas_by_trainer.all %}
-                                <li>{{ asana.name }}</li>
+    <!-- Responsive Table Section -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr style="background-color: #f9f9f9;">
+                    <th scope="col">Trainer Name</th>
+                    <th scope="col">Asanas Created</th>
+                    <th scope="col">Courses Created</th>
+                    <th scope="col">Enrollments</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trainer in trainers %}
+                <tr>
+                    <td>{{ trainer.trainer_name.username }}</td>
+                    <td>{{ trainer.no_of_asanas_created }}</td>
+                    <td>
+                        <ol class="list-unstyled">
+                            {% for course in trainer_courses|get_item:trainer.trainer_name.id %}
+                                <li>{{ course.course_name }}</li>
+                                  
                             {% empty %}
-                                <li class="no-content">No asanas available for this course.</li>
+                                <li class="no-content">No courses created by this trainer.</li>
                             {% endfor %}
-                        </ul>
-                    </ul>
-                </li>
-            {% empty %}
-                <li class="no-content">No courses created by this trainer.</li>
-            {% endfor %}
-        </ul>
+                        </ol>
+                    </td>
+                    <td>
+                        <ol class="list-unstyled">
+                            {% for enrollment in trainer_enrollments|get_item:trainer.trainer_name.id %}
+                                <li>{{ enrollment.user.username }} enrolled in {{ enrollment.students_added_to_courses.all|join:", " }}</li>
+                            {% empty %}
+                                <li class="no-content">No enrollments for this trainer.</li>
+                            {% endfor %}
+                        </ol>
+                    </td>
+                    <td >
+                        <div class="d-flex justify-content-center">
+                            <br>
+                            <form action="{% url 'delete_trainer' trainer_id=trainer.id slug=tenant.slug %}" method="post" onsubmit="return confirm('Are you sure you want to delete this trainer?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <br>
+                            </form>
+                            
+                            <a href="{% url 'edit_trainer' user_id=trainer.trainer_name.id slug=tenant.slug %}" class="btn btn-warning btn-sm">Edit</a>
+                            
+                      
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No trainers available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        <h3>Enrollments Done by {{ trainer.trainer_name.username }}</h3>
-        <ul>
-            {% for enrollment in trainer_enrollments|get_item:trainer.trainer_name.id %}
-                <li>{{ enrollment.user.username }} enrolled in {{ enrollment.students_added_to_courses.all|join:", " }}</li>
-            {% empty %}
-                <li class="no-content">No enrollments for this trainer.</li>
-            {% endfor %}
-        </ul>
+    <!-- Back Button -->
+    <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-light mt-3 float-right">Back</a>
 
-        <div class="action-buttons">
-            <form action="{% url 'delete_trainer' trainer_id=trainer.id slug=tenant.slug %}" method="post" onsubmit="return confirm('Are you sure you want to delete this trainer and their enrollments?');">
-                {% csrf_token %}
-                <button type="submit">Delete Trainer</button>
-            </form>
+</div>
 
-            <a href="{% url 'edit_trainer' trainer_id=trainer.id slug=tenant.slug %}">Edit Trainer</a>
+<!-- Modal for Course Creation/Update -->
+<div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="courseModalLabel">
+                    {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="course-creation-form" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.course_name.label_tag }}
+                        {{ form.course_name }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+                    <button type="submit" name="create_course" class="btn btn-primary">
+                        {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    {% endfor %}
+</div>
 
-</body>
-</html>
-
+<!-- JavaScript for modal form -->
+<script>
+    function submit_form() {
+        $("#course-creation-form").submit();
+    }
+</script>
+{% endblock %}

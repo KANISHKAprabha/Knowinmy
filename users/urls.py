@@ -29,6 +29,7 @@ urlpatterns = [
     path('payment/', subscription_payment, name='subscription-payment'),
     path('razorpay/callback/', callback, name='callback'),
     path('<slug:slug>/logout/', log_out, name='log_out'),
+    path('logout/', log_out, name='log_out'),
     # see with the path of log_out name in url 
     path('<slug:slug>/create_asana/', CreateAsanaView.as_view(), name='create-asana'),
     path('<slug:slug>/update_asana/<int:asana_id>/', CreateAsanaView.as_view(), name='update_asana'),
@@ -42,9 +43,12 @@ urlpatterns = [
     path('<slug:slug>/trainer_approval/', Trainer_approval_function, name='Trainer-approval'),
     path('<slug:slug>/onboarding_users_form/', onboarding_view, name='onboard-users-form'),
     path('<slug:slug>/client_table/', client_list, name='client-list'),
-    path('<slug:slug>/trainer_dashboard/', CourseCreationView.as_view(), name='create-course'),
+    path('<slug:slug>/trainer_dashboard/',CourseCreationView.as_view(), name='create-course'),
     path('<slug:slug>/update_course/<int:course_id>/', CourseCreationView.as_view(), name='update_course'),
     path('<slug:slug>/profile/', profile_view, name='profile-user'),
+    path('<slug:slug>/update_profile/', update_profile, name='update_profile'),
+    path('<slug:slug>/show_subs/', get_subscription_details_for_client, name='get-subs-for-client'),
+
     path('<slug:slug>/student_mapping/', StudentCourseMapView.as_view(), name='student-mapp-courses'),
     path('<slug:slug>/update_student_course/<int:enrollment_id>/', StudentCourseMapView.as_view(), name='student-course-update'),
     path('<slug:slug>/clients/', client_list, name='client_list'),
@@ -55,7 +59,7 @@ urlpatterns = [
     
     path('<slug:slug>/trainers/', trainer_dashboard, name='trainer_dashboard'),
    
-    path('trainer/edit/<int:trainer_id>/<slug:slug>/', edit_trainer, name='edit_trainer'),
+    path('trainer/edit/<int:user_id>/<slug:slug>/', edit_trainer, name='edit_trainer'),
     path('<slug:slug>/trainer/delete/<int:trainer_id>/', delete_trainer, name='delete_trainer'),
      path('<slug:slug>/edit_user/<int:user_id>/', edit_user, name='edit_user'),
     path('<slug:slug>/students/', student_dashboard, name='student_dashboard'),

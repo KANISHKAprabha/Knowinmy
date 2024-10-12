@@ -1,0 +1,67 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Page Title -->
+    <h1 class="text-center text-primary">{{ tenant.client_name }} - Subscription Details</h1>
+    <br>
+    <p><strong>Tenant Slug:</strong> {{ slug }}</p>
+<br>
+    <!-- Subscription Information Table -->
+    <h2>Subscription Information</h2>
+    {% if get_order %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order Name</th>
+                        <th>Status</th>
+                        <th>Number of asanas</th>
+                        <th>Number persons onboarded</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ get_order }}</td>
+                        <td>{{ get_subs }}</td>
+                        <td>{{ get_asana_count }}</td>
+                        <td>{{ get_no_of_persons_onboard }}</td>
+                        <td>{{ get_order.amount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No subscription information available.</p>
+    {% endif %}
+<br>
+    <!-- Existing Details Table -->
+    <h2>Existing Details</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Trainers Count</th>
+                    <th>Students Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ get_count_trainer }}</td>
+                    <td>{{ get_count_stud }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+</div>
+{% endblock %}

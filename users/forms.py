@@ -6,7 +6,7 @@ from .models import *
 # from built-in library
 from django import forms 
 
-class   AsanaCreationForm(ModelForm):
+class AsanaCreationForm(ModelForm):
     class Meta:
         model = Asana
         fields = ['name', 'no_of_postures']
@@ -61,13 +61,15 @@ class StudentCourseMappingForm(ModelForm):
         
         if self.tenant and self.trainer_user:
             trainee_ids = TrainerLogDetail.objects.filter(tenant=self.tenant,trainer_name=self.trainer_user).first()
+            trainer=TrainerLogDetail.objects.get(trainer_name=self.trainer_user)
+            print(trainer,"line 65 forms ")
             print(trainee_ids,"loesfjkesjh")    
             if  trainee_ids == None:
                 print("ids not found ")
             client_name = trainee_ids.onboarded_by
             print(client_name,"line no 66 in forms s")
             self.fields['user'] = forms.ModelChoiceField(
-                queryset=StudentLogDetail.objects.filter(mentor=self.trainer_user, tenant=self.tenant),
+                queryset=StudentLogDetail.objects.filter(mentor=trainer, tenant=self.tenant),
                 initial=self.instance.user if self.instance.pk else None
             )
             
@@ -98,8 +100,8 @@ class CourseCreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)
-        print(kwargs,"line 93")
-        print(args,"line 94")
+        print(kwargs,"line 9333")
+        print(args,"line 944444")
         print(self.tenant,"line 93 forms.py")
         self.user = kwargs.pop('user', None)
         print(self.user,"line 94")
@@ -205,15 +207,34 @@ class UserOnboardingForm(forms.ModelForm):
         ('student', 'Student')
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES)
-    mentor=forms.EmailField(required=True,label="Mentor Name")
+   
 
     class Meta:
         model = User
-        fields = ['username','first_name', 'last_name', 'email', 'role','mentor']
+        fields = ['username','first_name', 'last_name', 'email', 'role']
     def __init__(self, *args, **kwargs):
-        self.tenant = kwargs.pop('tenant', None)  # Extract tenant from kwargs
-       
+        print(args,"arguments")
+        print(kwargs,"line no 217")
+        self.user = kwargs.pop('user', None)
+        print(self.user,"pppppppppppppppppp")
+        self.tenant = kwargs.pop('tenant', None)
+        
         super(UserOnboardingForm, self).__init__(*args, **kwargs)
+
+        # Debug print statement to see if user and tenant are provided
+        print(f"User: {self.user}, Tenant: {self.tenant}")
+
+        # Ensure the user and tenant are valid
+        if self.user and  self.tenant :
+            print("Adding mentor field")
+
+            self.fields['mentor'] = forms.ModelChoiceField(
+                queryset=TrainerLogDetail.objects.filter(tenant=self.tenant, onboarded_by=self.user),
+                widget=forms.Select,  # Change to a dropdown
+                empty_label="Select a mentor"  # Optional placeholder
+            )
+        else:
+            print("User or tenant is missing. Mentor field not added.")
         
     def save(self, commit=True):
         instance = super(UserOnboardingForm, self).save(commit=False)
@@ -259,3 +280,12 @@ class UserEditForm(forms.ModelForm):
 
 
 
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['address', 'city', 'state', 'country', 'phone_number']
+
+    def __init__(self, *args, **kwargs):
+        self.tenant = kwargs.pop('tenant', None)
+        super().__init__(*args, **kwargs)  

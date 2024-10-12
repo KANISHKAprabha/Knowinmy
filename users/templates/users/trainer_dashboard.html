@@ -1,90 +1,113 @@
-{% extends 'users/staff_dashboard.html' %}
-{% load static %}
+    {% extends 'users/staff_dashboard.html' %}
+    {% load static %}
 
-{% block body %}
-<div class="container mt-5">
-    <!-- Buttons at the top -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Create Course Button aligned left -->
-        <button class="btn btn-success" data-toggle="modal" data-target="#courseModal">
-            {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
-        </button>
-        <!-- Courses for Student Button aligned right -->
-        <a href="{% url 'student-mapp-courses' slug=tenant.slug %}" class="btn btn-primary">Courses for Student</a>
+    {% block content %}
+    <div class="container mt-5">
+        <!-- Buttons at the top -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Create Course Button aligned left -->
+            <button class="btn btn-success" data-toggle="modal" data-target="#courseModal">
+                {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
+            </button>
+            <!-- Courses for Student Button aligned right -->
+            <a href="{% url 'student-mapp-courses' slug=tenant.slug %}" class="btn btn-primary">Courses for Student</a>
+        </div>
+
+        <!-- Heading -->
+        <h2 class="text-center mb-4">Your Courses</h2>
+
+        <!-- Responsive Courses Section -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr style="background-color: #f9f9f9;">
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.course_name }}</td>
+                        <td>{{ course.description|truncatewords:15 }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'create-course' slug=tenant.slug %}?course_id={{ course.id }}" class="btn btn-info btn-sm">Edit</a>
+                            <form method="post" action="{% url 'create-course' slug=tenant.slug %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="course_id" value="{{ course.id }}">
+                                <button type="submit" name="delete_course" id="delete-button-{{ course.id }}" onclick="del_asana('{{ course.id }}')" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No courses available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Heading -->
-    <h2 class="text-center mb-4">Your Courses</h2>
-    
-    <!-- Courses Section -->
-    <div class="row">
-        {% for course in courses %}
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title font-weight-bold text-primary">
-                        {{ course.course_name }}
+    <!-- Modal for Course Creation/Update -->
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="courseModalLabel">
+                        {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
                     </h5>
-                    <p class="card-text text-muted">
-                        {{ course.description|truncatewords:15 }}
-                    </p>
-                    <a href="{% url 'create-course'  slug=tenant.slug  %}?course_id={{ course.id }}" class="btn btn-info btn-sm">Edit</a>
-                    <form method="post" action="{% url 'create-course' slug=tenant.slug %}" style="display:inline;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="course-creation-form" method="POST">
                         {% csrf_token %}
-                        <input type="hidden" name="course_id" value="{{ course.id }}">
-                        <button type="submit" name="delete_course" id="delete-button-{{ course.id }}" onclick="del_asana('{{ course.id }}')" class="btn btn-danger btn-sm">Delete</button>
+                        
+                        <!-- Course Name -->
+                        <div class="form-group">
+                            {{ form.course_name.label_tag }}
+                            {{ form.course_name }}
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="form-group">
+                            {{ form.description.label_tag }}
+                            {{ form.description}}
+                        </div>
+
+                        <!-- Asanas by Trainer -->
+                        <div class="form-group">
+                            {{ form.asanas_by_trainer.label_tag }}
+                            {{ form.asanas_by_trainer }}
+                        </div>
+
+                        <button type="submit" name="create_course" onclick="this.disabled=true;submit_form()" class="btn btn-primary">
+                            {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12">
-            <p>No courses available.</p>
-        </div>
-        {% endfor %}
     </div>
-</div>
 
-<!-- Modal for Course Creation/Update -->
-<div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="courseModalLabel">
-                    {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="course-creation-form" method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" name="create_course" onclick="this.disabled=true;submit_form()" class="btn btn-primary">
-                        {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function submit_form() {
-        $("#course-creation-form").submit();
-    }
-    
-    function del_asana(course_id) {
-        var deleteButton = document.getElementById('delete-button-' + course_id);
-        if (deleteButton) {
-            deleteButton.addEventListener('click', function(e) {
-                deleteButton.disabled = true;
-                e.preventDefault();
-            }, { once: true });
-        } else {
-            console.error('Delete button not found!');
+    <script>
+        function submit_form() {
+            $("#course-creation-form").submit();
         }
-    }
-</script>
-{% endblock %}
+        
+        function del_asana(course_id) {
+            var deleteButton = document.getElementById('delete-button-' + course_id);
+            if (deleteButton) {
+                deleteButton.addEventListener('click', function(e) {
+                    deleteButton.disabled = true;
+                    e.preventDefault();
+                }, { once: true });
+            } else {
+                console.error('Delete button not found!');
+            }
+        }
+    </script>
+    {% endblock %}

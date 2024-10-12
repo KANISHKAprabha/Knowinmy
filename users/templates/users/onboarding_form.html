@@ -1,6 +1,6 @@
 {% extends 'users/staff_dashboard.html' %}
 
-{% block body %}
+{% block content %}
 <div class="container mt-5">
     <h1 class="text-center mb-4">Onboard Users</h1>
     
@@ -10,19 +10,31 @@
             <form method="post" id="onboard-user-form" action="{% url 'onboard-users-form' slug=tenant.slug %}" class="p-4 border rounded shadow">
                 {% csrf_token %}
                 {{ formset.management_form }}
-
+            
                 {% for form in formset %}
                     <div class="form-group">
                         <label class="font-weight-bold">Onboard User {{ forloop.counter }}</label>
-                        {{ form.as_p }}
-
-                        <!-- Conditionally show the mentor field if the role is student -->
-                       
+            
+                        {{ form.username.label_tag }} {{ form.username }}
+                        {{ form.first_name.label_tag }} {{ form.first_name }}
+                        {{ form.last_name.label_tag }} {{ form.last_name }}
+                        {{ form.email.label_tag }} {{ form.email }}
+                        {{ form.role.label_tag }} {{ form.role }}
+            
+                        <!-- Render Mentor field manually to ensure it shows -->
+                        {% if form.mentor %}
+                            {{ form.mentor.label_tag }} {{ form.mentor }}
+                        {% else %}
+                            <p class="text-danger">Mentor field not found!</p>
+                        {% endif %}
                     </div>
                 {% endfor %}
                 
                 <button type="submit" class="btn btn-primary btn-block mt-4">Onboard Users</button>
+                {{request.user}}
             </form>
+            
+            
 
             <!-- Back Button -->
             <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-secondary btn-block mt-4">Back to Trainer Approval</a>
@@ -49,28 +61,36 @@
 
 <!-- JavaScript to handle dynamic mentor field display -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get all role fields and iterate through them
-        var roleFields = document.querySelectorAll('select[id^="id_role"]');
-        
-        roleFields.forEach(function(roleField, index) {
-            var mentorField = document.getElementById('mentor-field-' + (index + 1));  // Get mentor field for the respective form
-            
-            // Show/hide mentor field based on role selection
-            roleField.addEventListener('change', function() {
-                if (roleField.value === 'student') {
-                    mentorField.style.display = 'block';
-                } else {
-                    mentorField.style.display = 'none';
-                }
-            });
+  
+document.addEventListener('DOMContentLoaded', function () {
+    const formsetForms = document.querySelectorAll('#onboard-user-form .form-group');
+    
+    formsetForms.forEach(function (formGroup, index) {
+        const roleField = formGroup.querySelector('select[name$="-role"]');
+        const mentorField = formGroup.querySelector('.mentor-field');
 
-            // Initial check to set visibility based on pre-selected role
-            if (roleField.value === 'student') {
-                mentorField.style.display = 'block';
-            }
-        });
+        if (roleField && mentorField) {
+            // Initial display of mentor field based on selected role
+            toggleMentorField(roleField, mentorField);
+
+            // Attach event listener to dynamically show/hide mentor field
+            roleField.addEventListener('change', function () {
+                toggleMentorField(roleField, mentorField);
+            });
+        }
     });
+
+    // Function to show/hide mentor field based on role selection
+    function toggleMentorField(roleField, mentorField) {
+    if (roleField.value === 'student') {
+        mentorField.style.display = 'block';  // Show the mentor field for students
+    } else {
+        mentorField.style.display = 'none';   // Hide the mentor field for trainers
+    }
+}
+
+});
+</script>
 </script>
 {% endblock %}
 

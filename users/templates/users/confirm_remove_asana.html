@@ -4,13 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Remove Asana</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4; /* Light background color */
+            color: #333; /* Text color */
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove default margin */
+        }
+
+        .card {
+            width: 100%; /* Full width for responsiveness */
+            max-width: 400px; /* Set a maximum width for the card */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .card-header {
+            background-color: #dc3545; /* Red background for the header */
+            color: white; /* White text color */
+            text-align: center; /* Center the header text */
+            font-weight: bold; /* Bold header text */
+            border-top-left-radius: 10px; /* Rounded corners for the header */
+            border-top-right-radius: 10px; /* Rounded corners for the header */
+        }
+
+        .btn {
+            width: 100%; /* Full width buttons */
+            border-radius: 5px; /* Rounded corners */
+            margin-top: 10px; /* Space above buttons */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* Red color for remove button */
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker shade on hover */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Gray color for cancel button */
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Darker shade on hover */
+        }
+    </style>
 </head>
 <body>
-    <h2>Are you sure you want to remove "{{ asana.name }}"?</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Yes, Remove</button>
-        <a href="{% url 'organization_list' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+    <div class="card">
+        <div class="card-header">
+            <h4>Confirm Remove Asana</h4>
+        </div>
+        <div class="card-body text-center">
+            <h5>Are you sure you want to remove "{{ asana.name }}"?</h5>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Remove</button>
+                <a href="{% url 'organization_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+

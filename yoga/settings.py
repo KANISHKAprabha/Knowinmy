@@ -79,7 +79,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-   
+     
     
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,9 +87,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'users.middleware.TenantMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-    # 'users.middleware.ExceptionHandlingMiddleware',
+   
+    'users.middleware.ExceptionHandlingMiddleware',
 ]
 
 ROOT_URLCONF = 'yoga.urls'
@@ -207,7 +209,7 @@ CSRF_TRUSTED_ORIGINS = ["https://test1.knowinmy.com", "https://staging.knowinmy.
 
 
 
-
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
 
 
 #SMTP CONFIGURATION 
@@ -279,7 +281,8 @@ SESSION_SAVE_EVERY_REQUEST = True  # Save the session to extend its expiry on ev
 
 
 sentry_sdk.init(
-    dsn="https://7fda52fc6249a1f543034e6c3df80f34@o4507980104400896.ingest.us.sentry.io/4507980105973760",
+    
+    dsn="https://28471d1821c73d7bd3d41744c4f43765@o4507736382636032.ingest.us.sentry.io/4507736387616768",
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for tracing.
     traces_sample_rate=1.0,

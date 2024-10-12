@@ -14,12 +14,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 
 {% endblock %}
-{% block body %}
+{% block content %}
 <div class="container mt-5">
     <div class="row">
         {% for posture in postures %}
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card violet-border shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -50,6 +50,13 @@
 
         {% endfor%}
     </div>
+    <style>
+        .violet-border {
+    border-left: 5px solid #8a2be2; /* Violet color */
+    box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.5); /* Shadow with violet tone */
+}
+
+    </style>
     <div>
         <h4 id = "distance_bt_camera_man_tag_id" ></h4>
         <h2 id = "current_distance_tag_id" ></h2>
