@@ -1,82 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Form</title>
-    <!-- Include Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% extends 'users/staff_dashboard.html' %}
+
+{% block content %}
     <style>
-        body {
-            background-color: #f4f4f4;
-            color: #333;
+       
+        .content-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0;
+            min-height: 80vh; /* Adjust height as needed */
         }
 
         .card {
             width: 100%; /* Make card responsive */
             max-width: 500px; /* Set a maximum width */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            
         }
 
         .card-header {
-            background-color: #553CDF; /* Header background color */
+            background-color: #5f52aa; /* Header background color */
             color: white; /* Header text color */
             text-align: center; /* Center the header text */
-            font-weight: bold; /* Bold header text */
-            border-top-left-radius: 10px; /* Rounded corners for the header */
-            border-top-right-radius: 10px; /* Rounded corners for the header */
+            font-size: 1.5rem; /* Slightly larger font size */
+            font-weight: bold;
+            padding: 15px 20px;
+            border-top-left-radius: 15px; /* Rounded corners for the header */
+            border-top-right-radius: 15px; /* Rounded corners for the header */
         }
 
         textarea {
             resize: none; /* Disable resizing */
             width: 100%; /* Full width */
             height: 150px; /* Set a fixed height */
-            border-radius: 5px; /* Rounded corners */
-            border: 1px solid #ccc; /* Border color */
-            padding: 10px; /* Padding inside textarea */
-            margin-bottom: 15px; /* Space below textarea */
+            border-radius: 8px; /* Rounded corners */
+            border: 1px solid #ddd; /* Border color */
+            padding: 12px; /* Padding inside textarea */
+            margin-bottom: 20px; /* Space below textarea */
+            font-size: 1rem; /* Comfortable font size */
+            background-color: #fdfdfd; /* Lighter background */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        textarea:focus {
+            border-color: #553CDF; /* Highlight border on focus */
+            box-shadow: 0 0 5px rgba(85, 60, 223, 0.3); /* Soft glow effect */
+            outline: none;
         }
 
         button {
             width: 100%; /* Full width button */
-            border-radius: 5px; /* Rounded corners */
-            background-color: #553CDF; /* Button background color */
+            border-radius: 8px; /* Rounded corners */
+            background-color:  #5f52aa; /* Button background color */
             color: white; /* Button text color */
             border: none; /* Remove border */
-            padding: 10px; /* Padding inside button */
-            transition: background-color 0.3s; /* Transition effect */
-            margin-bottom: 10px; /* Space below the button */
+            padding: 12px; /* Padding inside button */
+            font-size: 1rem; /* Larger button text */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth transition */
         }
 
         button:hover {
             background-color: #4729a8; /* Darker shade on hover */
+            transform: translateY(-2px); /* Slightly lift the button */
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(85, 60, 223, 0.5); /* Focus effect */
         }
 
         .btn-back {
-           
+            background-color: #6c757d; /* Back button color */
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            width: 100%; /* Full width */
             margin-top: 20px; /* Spacing above the back button */
-            float: right;
-            text-align: right; /* Align to the right */
-        
+            font-size: 1rem;
         }
 
         .btn-back:hover {
-            background-color: #5a6268; /* Darker shade on hover for back button */
+            background-color: #5a6268; /* Darker shade on hover */
+            text-decoration: none;
         }
 
         .d-flex {
             justify-content: space-between; /* Space between buttons */
             align-items: flex-end; /* Align items to the bottom */
         }
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+            }
+
+            input[type="number"], select {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
     </style>
-</head>
-<body>
+
+<div class="content-container">
     <div class="card">
         <div class="card-header">
             <h4>Send Email</h4>
@@ -85,18 +117,14 @@
             <form method="POST">
                 {% csrf_token %}
                 <textarea name="message" placeholder="Write your query" required></textarea>
-                <div class="d-flex">
-                    <button type="submit">Send Email</button>
-                   
-                </div>
+                <button type="submit">Send Email</button>
             </form>
-            <a href="{% url 'organization_list' %}" class="btn btn-back">Back</a> 
+            <a href="{% url 'organization_list' %}" class="btn btn-back">Back</a>
         </div>
     </div>
+</div>
 
     <!-- Include Bootstrap JS (optional) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+    
+    {% endblock %}
+

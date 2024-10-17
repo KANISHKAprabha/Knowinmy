@@ -1,562 +1,555 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knowinmy - AI Assisted Yoga Training Platform</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      :root {
+        --violet-1: #5a3fd1;
+        --violet-2: #553cdf;
+        --violet-3: #4a2fbb;
+        --violet-4: #4219a0;
+        --violet-5: #3b0090;
+        --accent-color: #0073e6;
+        --background-color: #f8f9fa;
+        --text-color: #333333;
+      }
 
-    <!DOCTYPE html>
-    <html lang="en">
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--text-color);
+        background-color: var(--background-color);
+        margin: 0;
+        padding: 0;
+      }
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
-        <!-- it will load fast so i have pasted in file -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
 
-        <link rel="stylesheet" href="{% static 'css/home_page_style.css' %}" />
-        <title>KNOWINMY</title>
-    </head>
+      /* Navbar */
+      .navbar {
+        background: linear-gradient(45deg, #ffffff, #f3f3f3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 15px 0;
+        border-bottom: 2px solid var(--violet-3);
+      }
 
-    <body data-spy="scroll" data-target="#navbarNav" data-offset="50">
+      .navbar .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
+      .navbar-brand {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--violet-2);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-        <!-- nav bar starts -->
-        <div class="navbar navbar-expand-lg fixed-top" style="background-color: #4e73df;">
-            <div class="container">
-                <a href="" class="navbar-brand">KNOWINMY</a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-lg-auto">
-                        <li class="nav-item">
-                            <a href="#home" class="nav-link smoothScroll">Home</a>
-                        </li>
+      .nav-links {
+        display: flex;
+        gap: 20px;
+      }
 
-                        <li class="nav-item">
-                            <a href="#about" class="nav-link smoothScroll">About</a>
-                        </li>
+      .nav-links a {
+        color: var(--violet-2);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 10px 15px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
 
-                        <li class="nav-item">
-                            <a href="#gallery" class="nav-link smoothScroll">Gallery</a>
-                        </li>
+      .nav-links a:hover {
+        background-color: black;
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
 
-                        <li class="nav-item">
-                            <a href="#class" class="nav-link smoothScroll">Services</a>
-                        </li>
-                        <!--
-                        <li class="nav-item">
-                            <a href="#schedule" class="nav-link smoothScroll">Schedules</a>
-                        </li>
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(to right, var(--violet-1), var(--violet-2));
+        color: #ffffff;
+        padding: 80px 0;
+        text-align: center;
+        box-shadow: inset 0 -4px 20px rgba(0, 0, 0, 0.3);
+      }
 
-                        <li class="nav-item">
-                            <a href="#team" class="nav-link smoothScroll">Our Team</a>
-                        </li>
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+      }
 
-                        <li class="nav-item">
-                            <a href="#event" class="nav-link smoothScroll">Events</a>
-                        </li>
-                        -->
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+      }
 
-                        <li class="nav-item">
-                            <a href="#contact" class="nav-link smoothScroll">Contacts</a>
-                        </li>
-                        <li class="nav-item">
-                           
-                            
-                                <a href="{% url 'login' %}" class="nav-link smoothScroll">Login</a>
-                            
-                        </li>
-                        
-                        
+      .btn-primary {
+        background-color: #ffffff;
+        color: var(--violet-2);
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      }
 
+      .btn-primary:hover {
+        background-color: black;
+        color: #ffffff;
+      }
+      .hero {
+        background-image: url("static/img/wp6841484.webp"); /* Adjust the path if necessary */
+        background-size: cover; /* Makes sure the image covers the entire section */
+        background-position: center; /* Center the image */
+        height: 400px; /* Set a height for the hero section */
+        display: flex; /* Enables flexbox for centering content */
+        align-items: center; /* Center content vertically */
+        justify-content: center; /* Center content horizontally */
+        color: #ffffff; /* Text color for better contrast against the background */
+        text-align: center; /* Center align text */
+        padding: 20px; /* Add some padding */
+      }
+      /* "static/img/1191714.webp" */
+      /* Features Section */
+      .features {
+        padding: 30px 0;
+      }
 
-                        <li class="nav-item">
-                            <a href="{% url 'register' %}"  class="nav-link smoothScroll">Sign Up</a>
-                        </li>
+      .features h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+      }
 
-                    </ul>
-                </div>
-            </div>
-        </div>
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
 
+      .feature {
+        background-color: #ffffff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        text-align: center;
+      }
 
-        <!-- navbar ends -->
+      .feature:hover {
+        transform: translateY(-5px);
+      }
 
+      .feature i {
+        font-size: 2rem;
+        color: var(--violet-2);
+        margin-bottom: 10px;
+      }
 
-        <!-- section 1 -->
+      .feature h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
 
-        <section class="hero d-flex flex-column justify-content-center align-items-center" id="home">
-            <div class="bg-overlay">
-                <video autoplay muted loop id="myVideo">
-                    <source src="{% static 'home_page_images/video.mp4' %}" type="video/mp4">
-                </video>
-            </div>
+      .btn:hover {
+        transform: translateY(-5px);
+      }
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-md-10 mx-auto col-12">
-                        <div class="hero-text mt-5 text-center">
-                            <h4 data-aos="fade-up" data-aos-delay="300"
-                                style="font-family: 'Lora', serif; font-weight: 600; letter-spacing: 2px;">For your Inner
-                                Peace</h4>
+      /* Pricing Section */
+      .price-list {
+        padding: 80px 0;
+      }
 
-                            <h1 data-aos="fade-up" data-aos-delay="500" class="text-white"
-                                style="font-family: 'Labrador', cursive;">
-                                Be Alive. Be Strong. Be Fit. Be Relaxed. Be Happy. Just be.
-                            </h1>
+      .price-list h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+      }
 
-                            <!-- <img data-aos="fade-up" data-aos-delay="600" src="Apple_Store.png" alt="Apple_Store" -->
-                                <!-- class="mt-3 down apple"> -->
-                            <!-- <img data-aos="fade-up" data-aos-delay="700" src="google-play-app.png" alt="Play_store"
-                                class="mt-3 down play-store"> -->
+      .price-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
 
+      .price-option {
+        background-color: #ffffff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .price-option i {
+        font-size: 3rem; /* Increased icon size for emphasis */
+        color: var(--violet-2);
+        margin-bottom: 10px;
+      }
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+      .price-option:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      }
 
-        </section>
-        <!-- section 1 ends -->
+      .price-option h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
 
+      .price-option .price {
+        font-size: 1.8rem;
+        color: var(--violet-2);
+        margin-bottom: 20px;
+      }
+      .subscription-form {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
 
-        <!-- section-2 starts -->
+/* Coupon Label */
+.coupon-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
 
-        <section class="ftco-section bg-light" id="feature">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
-                        <div class="offer-deal text-center">
-                            <div class="img" style="background-image: url('{% static "home_page_images/gallery-1.jpg" %}')"></div>
-                        
+/* Coupon Input Styling */
+.coupon-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+    transition: border-color 0.3s ease;
+}
 
-                            <div class="text mt-4">
-                                <h3 class="mb-4">Power Yoga</h3>
-                                <p class="mb-5">
-                                    Power Yoga is an energetic and dynamic form of yoga that combines strength, flexibility, and breath to create a vigorous and revitalizing practice.
-                                </p>
-                                <p>
-                                    <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up" data-aos-delay="100"
-                                        data-toggle="modal" data-target="#membershipForm">
-                                        Learn more</span></a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="400">
-                        <div class="offer-deal text-center">
-                            <div class="img" style="background-image: url('{% static "home_page_images/gallery-2.jpg" %}')"></div>
-                            <div class="text mt-4">
-                                <h3 class="mb-4">Meditation Class</h3>
-                                <p class="mb-5">
-                                    Meditation Class offers a tranquil space to cultivate mindfulness, promoting mental clarity and inner peace through guided or silent meditation.
-                                </p>
-                                <p>
-                                    <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up" data-aos-delay="100"
-                                        data-toggle="modal" data-target="#membershipForm">
-                                        Learn more <span class="fa fa-arrow-right"></span></a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="500">
-                        <div class="offer-deal text-center">
-                            <div class="img" style="background-image: url('{% static "home_page_images/gallery-3.jpg" %}')"></div>
-                            <div class="text mt-4">
-                                <h3 class="mb-4">Aerobics Class</h3>
-                                <p class="mb-5">
-                                    Aerobics class combines rhythmic movements, music, and focuses on cardiovascular fitness for overall well-being and holistic health.
-                                </p>
-                                <p>
-                                    <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up" data-aos-delay="100"
-                                        data-toggle="modal" data-target="#membershipForm">
-                                        Learn more <span class="fa fa-arrow-right"></span></a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="600">
-                        <div class="offer-deal text-center">
-                            <div class="img" style="background-image: url('{% static "home_page_images/gallery-4.jpg" %}')"></div>
-                            <div class="text mt-4">
-                                <h3 class="mb-4">Spiritual Yoga</h3>
-                                <p class="mb-5">
-                                    Spiritual Yoga blends traditional postures with mindfulness, fostering a deeper spiritual connection to harmonize body, mind, and inner awakening.
-                                </p>
-                                <p>
-                                    <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up" data-aos-delay="100"
-                                        data-toggle="modal" data-target="#membershipForm">
-                                        Learn more <span class="fa fa-arrow-right"></span></a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+.coupon-input:focus {
+    border-color: #553cdf;
+    outline: none;
+    box-shadow: 0 0 5px rgba(85, 60, 223, 0.3);
+}
 
-        <!-- section-2 sends -->
+      .btn-pay {
+        background-color: var(--violet-2);
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
 
+      .btn-pay:hover {
+        background-color: var(--violet-3);
+      }
 
-        <section class="home-about spad" id="about">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-7">
-                        <div class="home_about_pic">
-                            <div class="home_about_pic_item large-item set-bg" data-setbg="{% static 'home_page_images/long1.jpg' %}" data-aos="fade-up"
-                                data-aos-delay="300"></div>
-                            <div class="home_about_pic_item">
-                                <div class="home_about_pic_item_inner set-bg" data-setbg="{% static 'home_page_images/long2.jpg' %}" data-aos="fade-up"
-                                    data-aos-delay="400"></div>
-                                <div class="home_about_pic_item_inner set-bg" data-setbg="{% static 'home_page_images/long3.jpg' %}" data-aos="fade-up"
-                                    data-aos-delay="500"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="home_about_text" data-aos="fade-up" data-aos-delay="300">
-                            <div class="section-title">
-                                <h2>Welcome to <br>KNOWINMY</h2>
-                            </div>
-                            <span>"What hurts today makes you stronger tomorrow."</span>
-                            <p>Thank you very much. We may, indeed, be guilty of such things as softness, some flattery. He hates all the great things, he will be less, of life than I will explain the duties, but he is often held because he who seeks to open the matter in flight!</p>
-                            <p class="para-2">
-                                The company itself is a very successful company. The accusers of refusing to be softened and the troubles of the great, but it repels the great to assume flees or!
-                                <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up"
-                                    data-aos-delay="400">More About Us &rarrhk;</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+      /* Testimonials Section */
+      /* Testimonials Section */
+      .testimonials {
+        padding: 80px 0;
+        background-color: var(--violet-1);
+        color: #fff;
+      }
 
-        <!-- section 4 starts -->
-        <body>
-            <!-- About Section -->
-            <section class="home-about spad" id="about">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-7">
-                            <div class="home_about_pic">
-                                <div class="home_about_pic_item large-item set-bg" data-setbg="{% static 'home_page_images/long1.jpg' %}" data-aos="fade-up"
-                                    data-aos-delay="300"></div>
-                                <div class="home_about_pic_item">
-                                    <div class="home_about_pic_item_inner set-bg" data-setbg="{% static 'home_page_images/long2.jpg' %}" data-aos="fade-up"
-                                        data-aos-delay="400"></div>
-                                    <div class="home_about_pic_item_inner set-bg" data-setbg="{% static 'home_page_images/long3.jpg' %}" data-aos="fade-up"
-                                        data-aos-delay="500"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="home_about_text" data-aos="fade-up" data-aos-delay="300">
-                                <div class="section-title">
-                                    <h2>Welcome to <br>KNOWINMY</h2>
-                                </div>
-                                <span>"What hurts today makes you stronger tomorrow."</span>
-                                <p>Thank you very much. We may, indeed, be guilty of such things as softness, some flattery. He hates all the great things, he will be less, of life than I will explain the duties, but he is often held because he who seeks to open the matter in flight!</p>
-                                <p class="para-2">
-                                    The company itself is a very successful company. The accusers of refusing to be softened and the troubles of the great, but it repels the great to assume flees or!
-                                    <a href="#" class="btn custom-btn bg-color mt-3" data-aos="fade-up"
-                                        data-aos-delay="400">More About Us &rarrhk;</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        
-            <!-- Gallery Section -->
-            <section class="ftco-section ftco-no-pt ftco-no-pb" id="gallery">
-                <div class="container">
-                    <div class="row no-gutters justify-content-center mb-5 pb-2">
-                        <div class="col-md-6 text-center heading-section">
-                            <span class="subheading">Gallery</span>
-                            <h2 class="mb-4">Our Gallery</h2>
-                            <p>The customer himself, the customer will be able to pursue the adipiscing of the company. They are the great benefit of exercise and do not know the pain. For?</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="container-fluid p-0">
-                    <div class="row no-gutters">
-                        <div class="col-md-6 col-lg-3">
-                            <div class="project">
-                                <img src="{% static 'home_page_images/s1.jpg' %}" alt="" class="img-fluid">
-                                <div class="text">
-                                    <span>Asana</span>
-                                    <h3><a href="#">Yoga</a></h3>
-                                </div>
-                                <a href="s1.jpg" class="d-flex justify-content-center align-items-center"></a>
-                            </div>
-                        </div>
-                        <!-- Add the other gallery items here -->
-                    </div>
-                </div>
-            </section>
-        
-    <!-- Subscription Plans Section -->
-    <section class="subscription-plans mt-5">
-        
-        <a href="{% url 'subscriptions_plans' %}"> Click Here</a>
+      .testimonials h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2rem;
+        color: #fff;
+      }
+
+      .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+      }
+
+      .testimonial-card {
+        background-color: #fff;
+        color: var(--text-color);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+      }
+
+      .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      }
+
+      .testimonial-card p {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+      }
+
+      .testimonial-card span {
+        font-style: italic;
+        color: var(--violet-2);
+      }
+
+      .testimonial-card img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .testimonial-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+      }
+
+      /* Footer */
+      .footer {
+        background-color: var(--violet-2);
+        color: #ffffff;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .social-links a {
+        font-size: 1.5rem;
+        color: #ffffff;
+        margin: 0 10px;
+        transition: color 0.3s ease;
+      }
+
+      .social-links a:hover {
+        color: #0073e6;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .hero p {
+          font-size: 1rem;
+        }
+
+        .feature,
+        .testimonial-card,
+        .price-option {
+          margin-bottom: 20px;
+        }
+
+        .nav-links {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <a class="navbar-brand" href="#">Knowinmy</a>
+        <ul class="nav-links">
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Signup</a></li>
+          <li><a href="{% url 'register_organization' %}">Create an Organizations</a></li>
+         
+          <li><a href="#testimonials">Testimonials</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="container">
+        <h1>AI-Powered Yoga Training Platform</h1>
+        <p>
+          Achieve your fitness goals with personalized yoga sessions powered by
+          AI.
+        </p>
+        <a href="#pricing" class="btn-primary">Explore Pricing</a>
+      </div>
     </section>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-        
-
-        <!-- section 4 ends -->
-
-        <!-- section 5 starts -->
-
-        <section class="class section style-cards" id="class">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 col-12 text-center mb-5">
-                        <h6 data-aos="fade-up">Get a Perfect Body</h6>
-                        <h1 data-aos="fade-up" data-aos-delay="200">Our Training Classes</h1>
-                    </div>
-
-                    <div class="card-3" data-aos="fade-up" data-aos-delay="200">
-                        <div class="desc-3">
-                            <h3 class="mb-2">Yoga Training</h3>
-                            <p>
-                                The word “Yoga” essentially means, “that which brings you to reality”. Literally, it means
-                                “union.” Union means it
-                                brings you to the ultimate reality, where individual manifestations of life are surface
-                                bubbles in the process of
-                                creation.
-                            </p>
-                        </div>
-                        <img src="{% static 'home_page_images/tv.png' %}" alt="Yoga" data-aos="fade-up" data-aos-delay="500">
-                        <video data-aos="fade-up" data-aos-delay="500" autoplay playsinline muted loop>
-                            <source src="{% static 'home_page_images/Pexels Videos 2790143.mp4' %}" ></video>
-                    </div>
-                    <div class="card-2" data-aos="fade-up" data-aos-delay="200">
-                        <img src="{% static 'home_page_images/tv.png' %}" alt="Yoga" data-aos="fade-up" data-aos-delay="500">
-                        <video data-aos="fade-up" data-aos-delay="500" autoplay playsinline muted loop>
-                            <source src="{% static 'home_page_images/production ID_4612365.mp4' %}" ></video>
-
-                        <div class="desc-2">
-                            <h3 class="mb-2">Cardio Training</h3>
-                            <p>
-                                Cardio Yoga is a type of yoga class that combines Yoga moves with cardiovascular exercises.
-                                The workout takes classic
-                                yoga moves and makes them a bit faster, with a more rapid flow between sequences.
-                                The non-stop movement gets your heart beating and your muscles burning.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="card-3" data-aos="fade-up" data-aos-delay="200">
-                        <div class="desc-3">
-                            <h3 class="mb-2">Yoga Training</h3>
-                            <p>
-                                "Meditation, which is the practice of focused concentration, bringing yourself back to the
-                                moment over and over again,
-                                actually addresses stress, whether positive or negative." Meditation can also reduce the
-                                areas of anxiety, chronic pain,
-                                depression, heart disease and high blood pressure.
-                            </p>
-                        </div>
-                        <img src="{% static 'home_page_images/tv.png' %}" alt="Yoga" data-aos="fade-up" data-aos-delay="500">
-                        <video data-aos="fade-up" data-aos-delay="500" autoplay playsinline muted loop>
-                            <source src="{% static 'home_page_images/1.mp4' %}"></video>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+    <section id="features" class="features">
+      <div class="container">
+        <h2>Features</h2>
+        <div class="feature-grid">
+          <div class="feature">
+            <i class="fas fa-chart-line"></i>
+            <h3>Personalized Workouts</h3>
+            <p>
+              Get workouts tailored to your goals and progress with our
+              AI-powered system.
+            </p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-video"></i>
+            <h3>Live Sessions</h3>
+            <p>
+              Join live sessions with expert trainers and connect with a
+              community of yogis.
+            </p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Mobile Friendly</h3>
+            <p>Access your yoga sessions on any device, anytime, anywhere.</p>
+          </div>
+        </div>
+      </div>
+    </section>
     
 
-        <!-- section 9  starts-->
-        <section class="contact section" id="contact">
-            <div class="container">
-                <div class="row">
-                    <div class="ml-auto col-lg-5 col-md-6 col-12">
-                        <h2 style="font-family: 'Lora', serif; letter-spacing: 2px;" class="mb-4 pb-2" data-aos="fade-up"
-                            data-aos-delay="200">
-                            Feel Free to ask anything
-                        </h2>
-<!-- line no 380 emaail functionality -->
-<form action="{% url 'send_mail_page' %}" method="post" class="contact-form webform" data-aos-delay="400" data-aos="fade-up" role="form">
-
-    {% csrf_token %}
-    <input type="text" name="cf-name" class="form-control" placeholder="Name">
-    <input type="email" name="cf-email" class="form-control" placeholder="Email">
-    <textarea name="cf-message" rows="5" class="form-control" placeholder="Message"></textarea> <!-- Fixed typo -->
-    <button type="submit" class="form-control" id="submit-button" name="submit">Send Message</button>
-</form>
-<p>{{ result }}</p>
-
-
-                    <div class="mx-auto mt-4 mt-lg-0 mt-md-0 col-lg-5 col-md-6 col-12">
-                        <h2 style="font-family: 'Lora', serif; letter-spacing: 2px;" class="mb-4" data-aos="fade-up"
-                            data-aos-delay="600">
-                            Where you can <span>find us</span>
-                        </h2>
-                        <p data-aos="fade-up" data-aos-delay="800">
-                            <i class="fa fa-map-marker mr-1"></i> Athipalayam Rd, Chinnavedampatti, Coimbatore, Tamil Nadu 641049
-                        </p>
-                        <div class="google-map" data-aos="fade-up" data-aos-delay="900">
-                            <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3915.4772124467545!2d76.9870922741088!3d11.07776735356501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba8f81b7514a15f%3A0x155e29f8d14154fc!2sKumaraguru%20College%20of%20Technology!5e0!3m2!1sen!2sin!4v1700232659607!5m2!1sen!2sin"
-                                width="1920" height="250" frameborder="0" style="border:0;" allowfullscreen=""
-                                aria-hidden="false" tabindex="0"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- section 9  ends-->
-
-        <!-- section 10 starts -->
-
-        <section class="footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="footer_about">
-                            <span>KNOWINMY</span>
-                            <p style="color: rgb(197, 192, 192);" > Feel Free to ask anything</p>
-                            <form action="#" class="subscribe-form">
-                                <input type="text" placeholder="Your Email">
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
-                        <div class="footer_widget">
-                            <h5>Inspiration</h5>
-                            <ul>
-                                <li><a href="#">Yoga</a></li>
-                                <li><a href="#">Spiritual</a></li>
-                                <li><a href="#">Karate</a></li>
-                                <li><a href="#">Aerobics</a></li>
-                                <li><a href="#">Medetation</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="footer_widget">
-                            <h5>About Us</h5>
-                            <ul>
-                                <li><a href="#">Our Vision</a></li>
-                                <li><a href="#">Our Mission</a></li>
-                                <li><a href="#">Meet the team</a></li>
-                                <li><a href="#">Introduce</a></li>
-                                <li><a href="#">Customer Service</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="footer_widget">
-                            <h5>Contact Us</h5>
-                            <ul class="footer-address">
-                                <li><i class="fa fa-phone"></i>888 7777 6666</li>
-                                <li><i class="fa fa-envelope"></i>knowinmy@gmail.com</li>
-                                <li><i class="fa fa-location-arrow"></i> Athipalayam Rd, Chinnavedampatti, Coimbatore, Tamil Nadu 641049</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="footer_copyright">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="footer_copyright_text">
-                                <p>Copyright &copy; 2023 KNOWINMY - All Rights Reserved</p>
+    <section id="pricing" class="price-list">
+      <div class="container">
+          <h2>Pricing Plans</h2>
+          <div class="price-options">
+              {% for subscription in subscriptions %}
+              <div class="price-option">
+                  <i class="fas fa-crown"></i>
+                  <h3>{{ subscription.name }}</h3>
+                  <p><strong>{{ subscription.description }}</strong></p>
+                  <p class="price">{{ subscription.price }}</p>
+                  <p>Access to all basic features</p>
+                  <p><strong>No. of Asanas:</strong> {{ subscription.permitted_asanas }}</p>
+                  <p><strong>No. of Persons:</strong> {{ subscription.no_of_persons_onboard }}</p>
+  
+                  <!-- Payment buttons -->
+                  <div class="payment-button">
+                      {% if forloop.counter == 3 %}
+                          <!-- Button to trigger the modal for the third subscription -->
+                          <form action="{% url 'subscription-payment' %}" method="POST" class="subscription-form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <!-- Hidden Input for Subscription ID -->
+                                <input type="hidden" name="subscription_id" value="{{ subscription.id }}" />
+                                
+                                <!-- Label and Input for Coupon Code -->
+                                <label for="coupon-{{ subscription.id }}" class="coupon-label">Coupon Code (optional)</label>
+                                <input type="text" name="coupon_code" class="form-control coupon-input" id="coupon-{{ subscription.id }}" placeholder="Enter coupon code if any">
                             </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="footer_copyright_social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- section 10 ends -->
-
-
-        <!-- section 11 starts  -->
-        <div class="modal fade" id="membershipForm" tabindex="-1" role="dialog" aria-labelledby="membershipFormLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title" id="membershipFormLabel">
-                            Membership Form
-                        </h2>
-
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <form class="membership-form webform" role="form">
-                            <input type="text" class="form-control" name="cf-name" placeholder="John Doe" />
-
-                            <input type="email" class="form-control" name="cf-email" placeholder="Johndoe@gmail.com" />
-
-                            <input type="tel" class="form-control" name="cf-phone" placeholder="123-456-7890"
-                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
-
-                            <textarea class="form-control" rows="3" name="cf-message"
-                                placeholder="Additional Message"></textarea>
-
-                            <button type="submit" class="form-control" id="submit-button" name="submit">
-                                Submit Button
-                            </button>
-
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="signup-agree" />
-                                <label class="custom-control-label text-small text-muted" for="signup-agree">I agree to the
-                                    <a href="#">Terms &amp;Conditions</a>
-                                </label>
-                            </div>
+                            
+                            <!-- Pay Now Button -->
+                            <button type="submit" class="btn btn-primary btn-pay">Pay Now</button>
                         </form>
-                    </div>
+                        
+                          
+                      {% else %}
+                          <form action="{% url 'subscription-payment' %}" method="POST">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                  <input type="hidden" name="subscription_id" value="{{ subscription.id }}" />
+                              </div>
+                              <button type="submit" class="btn-pay">Pay Now</button>
+                          </form>
+                      {% endif %}
+                  </div>
+              </div>
+              {% empty %}
+              <p>No subscription plans available.</p>
+              {% endfor %}
+          </div>
+      </div>
+      
+  </section>
+  
+  <!-- Modal for coupon code -->
+  
+  
+  
+  
+  
+  <!-- Modal for coupon code -->
+  
+  
+  
+  
+    
 
-                    <div class="modal-footer"></div>
-                </div>
-            </div>
+    <section id="testimonials" class="testimonials">
+      <div class="container">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <img src="/static/wp-content/uploads/2024/05/07.jpg" alt="hello" />
+            <p>"This platform changed my yoga practice completely. Love it!"</p>
+            <span>– Adam</span>
+          </div>
+          <div class="testimonial-card">
+            <img src="/static/wp-content/uploads/2024/05/06.jpg" alt="hello" />
+            <p>
+              "The AI personalization is spot on. I feel more motivated than
+              ever!"
+            </p>
+            <span>– John</span>
+          </div>
+          <div class="testimonial-card">
+            <img
+              src="/static/wp-content/uploads/2024/05/frame-45-1.jpg"
+              alt="hello"
+            />
+            <p>
+              "Being able to attend live sessions anytime is a game changer."
+            </p>
+            <span>– Nick</span>
+          </div>
+          <div class="testimonial-card">
+            <img src="/static/wp-content/uploads/2024/05/09.jpg" alt="hello" />
+            <p>
+              "Great community and support. I’ve grown in my practice so much!"
+            </p>
+            <span>– Sophia</span>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <!-- section 11 ends  -->
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2024 Knowinmy. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </footer>
+    
+  </body>
+  <script>
+    // Use jQuery to handle the modal's button click
+    $(document).ready(function() {
+        $('#couponModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var subscriptionId = button.data('subscription-id'); // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('#modal_subscription_id').val(subscriptionId); // Set the subscription ID in the modal form
+        });
+    });
+</script>
 
-
-        <!-- scripts -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/16.1.3/smooth-scroll.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/3.3.1/mixitup.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.10/jquery.slicknav.js"></script>
-        <script src="{% static 'js/Home_page_script.js' %}"></script>
-    </body>
-
-    </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</html>

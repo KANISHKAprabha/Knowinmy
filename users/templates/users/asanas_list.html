@@ -28,7 +28,7 @@
         }
 
         thead {
-            background-color: #553CDF;
+            background-color:  #5f52aa;
             color: white;
         }
 
@@ -79,9 +79,23 @@
         }
 
         .back-button {
-            margin-top: 20px; /* Spacing above the back button */
-            float: right; /* Align to the right */
-        }
+    margin-top: 20px; /* Adds some space above the button */
+    display: flex; /* Flexbox layout for better alignment */
+    justify-content: flex-end; /* Aligns the button to the right */
+}
+
+.back-button .btn-primary {
+    padding: 12px 25px; /* Increases the padding for a larger button */
+    font-size: 18px; /* Increases the font size for better readability */
+    background-color: #5244a3; /* Adjust the color to match your overall theme */
+    border-radius: 8px; /* Adds a smooth, rounded corner */
+    transition: background-color 0.3s ease; /* Adds smooth color transition */
+}
+
+.back-button .btn-primary:hover {
+    background-color: #4729a8; /* Darker shade for hover effect */
+}
+
     </style>
 </head>
 <body>

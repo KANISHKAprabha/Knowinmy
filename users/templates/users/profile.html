@@ -5,59 +5,116 @@
 <style>
   body {
     background-color: #8d86f0;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+    color: #444;
+    margin: 0;
+    padding: 0;
   }
 
   .container {
-    max-width: 800px;
-    margin: 50px auto;
+    max-width: 550px;
+    margin: 60px auto;
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
   h2 {
-    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #553CDF;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    color: #555;
+  }
+
+  .profile-info {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+  }
+
+  .profile-info p {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .profile-info p strong {
+    font-weight: 500;
     color: #553CDF;
   }
 
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 10px;
+  }
+
   .back-button {
-    display: inline-block;
-    padding: 10px 20px;
+    flex: 1;
+    padding: 10px 18px;
     background-color: #553CDF;
     color: #fff;
     text-decoration: none;
-    border-radius: 5px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .back-button:hover {
+    background-color: #4330b5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 
   /* Modal styles */
   .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1050;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7);
   }
 
   .modal-content {
     background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 50%;
-    max-width: 500px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 10px;
+    width: 450px;
+    max-width: 80%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    color: #553CDF;
   }
 
   .close {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
   }
 
@@ -66,48 +123,79 @@
     color: #000;
     cursor: pointer;
   }
+
+  .btn-primary {
+    background-color: #553CDF;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    color: #fff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: #4330b5;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .messages {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .messages li {
+    background-color: #f2f2f2;
+    padding: 12px;
+    border-left: 4px solid #553CDF;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .messages li.success {
+    border-color: green;
+  }
+
+  .messages li.error {
+    border-color: red;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
   <h2>Personal Information</h2>
-  <p><strong>Username:</strong> {{ user.username }}</p>
-  <p><strong>Email:</strong> {{ user.email }}</p>
-  <p><strong>First Name:</strong> {{ user.first_name }}</p>
-  <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-  <p><strong>Role</strong>:</span> 
-    {% for group in request.user.groups.all %}
-      {{ group.name }}
-      {% if not forloop.last %}, {% endif %}
-    {% empty %}
-      No groups
-    {% endfor %}
-  </p>
-
-  
-    <p><strong>Address:</strong>{{ profile.address }}</p>
-    <p><strong>City:</strong>{{ profile.city }}</p>
-    <p><strong>State:</strong>{{ profile.state}}</p>
-    <p><strong>Country:</strong>{{ profile.country}}</p>
-    <p><strong>Phone number:</strong>{{ profile.phone_number }}</p>
-  
-   
- <div>
-
- <div>
-
-
-  
-
+  <div class="profile-info">
+    <p><strong>Username:</strong> <span>{{ user.username }}</span></p>
+    <p><strong>Email:</strong> <span>{{ user.email }}</span></p>
+    <p><strong>First Name:</strong> <span>{{ user.first_name }}</span></p>
+    <p><strong>Last Name:</strong> <span>{{ user.last_name }}</span></p>
+    <p><strong>Role:</strong>
+      <span>
+        {% for group in request.user.groups.all %}
+          {{ group.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          No groups
+        {% endfor %}
+      </span>
+    </p>
+    <p><strong>Address:</strong> <span>{{ profile.address }}</span></p>
+    <p><strong>City:</strong> <span>{{ profile.city }}</span></p>
+    <p><strong>State:</strong> <span>{{ profile.state }}</span></p>
+    <p><strong>Country:</strong> <span>{{ profile.country }}</span></p>
+    <p><strong>Phone Number:</strong> <span>{{ profile.phone_number }}</span></p>
+  </div>
 
   <div class="button-container">
-    <button class="back-button" onclick="window.history.back()">Go Back</button>
+    
     <button id="updateProfileBtn" class="back-button" data-toggle="modal" data-target="#profileModal">Update Profile</button>
   </div>
 
-
-  <!-- The Modal for Profile Update -->
+  <!-- Modal for Profile Update -->
   <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -118,18 +206,16 @@
           </button>
         </div>
         <div class="modal-body">
-           <form method="POST" action="{% url 'profile-user' slug=tenant.slug  %}">
+          <form method="POST" action="{% url 'profile-user' slug=tenant.slug %}">
             {% csrf_token %}
-           
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Save Changes</button>
-          </form> 
+          </form>
         </div>
       </div>
-      
     </div>
   </div>
-  
+
   {% if messages %}
   <ul class="messages">
     {% for message in messages %}

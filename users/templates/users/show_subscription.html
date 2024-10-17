@@ -6,21 +6,22 @@
 <div class="container mt-5">
 
     <!-- Page Title -->
-    <h1 class="text-center text-primary">{{ tenant.client_name }} - Subscription Details</h1>
+    <h1 class="text-center" style="color: #5f52aa;">{{ tenant.client_name }} - Subscription Details</h1>
     <br>
     <p><strong>Tenant Slug:</strong> {{ slug }}</p>
-<br>
+    <br>
+
     <!-- Subscription Information Table -->
-    <h2>Subscription Information</h2>
+    <h2 style="color: #5f52aa;">Subscription Information</h2>
     {% if get_order %}
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead>
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead style="background-color: #5f52aa; color: white;">
                     <tr>
                         <th>Order Name</th>
                         <th>Status</th>
-                        <th>Number of asanas</th>
-                        <th>Number persons onboarded</th>
+                        <th>Number of Asanas</th>
+                        <th>Number of Persons Onboarded</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
@@ -38,12 +39,13 @@
     {% else %}
         <p class="text-center">No subscription information available.</p>
     {% endif %}
-<br>
+    <br>
+
     <!-- Existing Details Table -->
-    <h2>Existing Details</h2>
+    <h2 style="color: #5f52aa;">Existing Details</h2>
     <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead>
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
                 <tr>
                     <th>Trainers Count</th>
                     <th>Students Count</th>
@@ -60,7 +62,9 @@
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-center mt-4">
-        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-secondary">Back to Dashboard</a>
+        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Back to Dashboard
+        </a>
     </div>
 
 </div>

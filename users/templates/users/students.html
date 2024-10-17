@@ -5,17 +5,14 @@
 {% block content %}
 <div class="container mt-5">
 
-    <!-- Top Buttons for Create/Update Course -->
-   
-
     <!-- Page Title -->
-    <h2 class="text-center mb-4">{{ tenant.client_name }} - Student Enrollment Dashboard</h2>
+    <h2 class="text-center mb-4" style="color: #5f52aa;">{{ tenant.client_name }} - Student Enrollment Dashboard</h2>
 
     <!-- Responsive Table -->
     <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr style="background-color: #f9f9f9;">
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
+                <tr>
                     <th>Student Name</th>
                     <th>Enrolled Courses</th>
                     <th>Asanas</th>
@@ -41,15 +38,13 @@
                         <ul class="nested-list">
                             {% for enrollment in enrollments %}
                                 {% for course in enrollment.students_added_to_courses.all %}
-                                    <div>
-                                        <ul class="nested-list">
-                                            {% for asana in course.asanas_by_trainer.all %}
-                                                <li>{{ asana.name }}</li>
-                                            {% empty %}
-                                                <li class="no-content">No asanas available for this course.</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
+                                    <ul class="nested-list">
+                                        {% for asana in course.asanas_by_trainer.all %}
+                                            <li>{{ asana.name }}</li>
+                                        {% empty %}
+                                            <li class="no-content">No asanas available for this course.</li>
+                                        {% endfor %}
+                                    </ul>
                                 {% endfor %}
                             {% endfor %}
                         </ul>
@@ -74,7 +69,11 @@
     </div>
 
     <!-- Back Button -->
-    <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-light mt-3 float-right">Back</a>
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Back to Dashboard
+        </a>
+    </div>
 
 </div>
 
@@ -82,7 +81,7 @@
 <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #5f52aa; color: white;">
                 <h5 class="modal-title" id="courseModalLabel">
                     {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
                 </h5>
@@ -101,7 +100,7 @@
                         {{ form.description.label_tag }}
                         {{ form.description }}
                     </div>
-                    <button type="submit" name="create_course" class="btn btn-primary">
+                    <button type="submit" name="create_course" class="btn btn-primary" style="background-color: #5f52aa; border-color: #5f52aa;">
                         {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
                     </button>
                 </form>
@@ -117,3 +116,4 @@
     }
 </script>
 {% endblock %}
+    

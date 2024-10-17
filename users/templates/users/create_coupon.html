@@ -13,17 +13,26 @@
         /* Form container */
         form {
             background-color: white;
-            padding: 20px;
+            padding: 0; /* Remove padding from form to make header part of card */
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
+        }
+
+        .card-header {
+            background-color: #5f52aa; /* Darker shade of purple */
+            color: white; /* White text */
+            text-align: center; /* Center the header text */
+            font-size: 1.5rem; /* Larger font size */
+            font-weight: bold;
+            padding: 20px 0; /* Adjusted padding for more space */
+            border-top-left-radius: 10px; /* Rounded corners for the header */
+            border-top-right-radius: 10px; /* Rounded corners for the header */
         }
 
         h2 {
-            color: #553CDF;
-            text-align: center;
-            margin-bottom: 20px;
+            margin: 0; /* Remove margin from h2 inside the header */
         }
 
         label {
@@ -47,8 +56,16 @@
             outline: none;
         }
 
-        button {
-            background-color: #553CDF;
+        /* Button container to align buttons vertically */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Space between buttons */
+            margin-top: 20px;
+        }
+
+        button, .btn-back {
+            background-color:  #5244a3;
             color: white;
             padding: 10px 15px;
             border: none;
@@ -57,9 +74,13 @@
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .btn-back {
+            background-color: #6c757d; /* Darker gray for the back button */
         }
 
-        button:hover {
+        button:hover, .btn-back:hover {
             background-color: #4729a8;
         }
 
@@ -68,11 +89,6 @@
             font-size: 14px;
             margin-top: 10px;
             text-align: center;
-        }
-        .back-button {
-            margin-top: 20px; /* Spacing above the back button */
-            float: right;
-            text-align: right; /* Align to the right */
         }
 
         /* Make form elements and error message responsive */
@@ -86,7 +102,7 @@
                 font-size: 14px;
             }
 
-            button {
+            button, .btn-back {
                 padding: 8px;
                 font-size: 14px;
             }
@@ -95,32 +111,37 @@
 
     <div class="content-container">
         <form method="POST">
-            <h2>Create a Coupon Code for {{ tenant.organization_name }}</h2>
+            <div class="card-header">
+                <h2>Create a Coupon Code for {{ tenant.organization_name }}</h2>
+            </div>
+
             {% csrf_token %}
-            <div>
-                <label for="discounted_price">Discounted Price:</label>
-                <input type="number" name="discounted_price" id="discounted_price" required>
+            <div style="padding: 20px;">
+                <div>
+                    <label for="discounted_price">Discounted Price:</label>
+                    <input type="number" name="discounted_price" id="discounted_price" required>
+                </div>
+
+                <div>
+                    <label for="subscription_id">Select Subscription:</label>
+                    <select name="subscription_id" id="subscription_id" required>
+                        {% for subscription in subscriptions %}
+                        <option value="{{ subscription.id }}">{{ subscription.name }} - ${{ subscription.price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Button container for both buttons -->
+                <div class="button-container">
+                    <button type="submit">Create Coupon</button>
+                    <a href="{% url 'organization_list' %}" class="btn-back">Back</a>
+                </div>
+
+                {% if error %}
+                <p class="error">{{ error }}</p>
+                {% endif %}
             </div>
-
-            <div>
-                <label for="subscription_id">Select Subscription:</label>
-                <select name="subscription_id" id="subscription_id" required>
-                    {% for subscription in subscriptions %}
-                    <option value="{{ subscription.id }}">{{ subscription.name }} - ${{ subscription.price }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Create Coupon</button>
-
-            {% if error %}
-            <p class="error">{{ error }}</p>
-            {% endif %}
         </form>
-        
     </div>
-    <div class="back-button">
-        <a href="{% url 'organization_list' %}" class="btn btn-primary">Back</a> <!-- Adjust the URL as necessary -->
-    </div>
-    
+
 {% endblock %}
