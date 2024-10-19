@@ -91,7 +91,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
    
-    'users.middleware.ExceptionHandlingMiddleware',
+    #  'users.middleware.ExceptionHandlingMiddleware',
 ]
 
 ROOT_URLCONF = 'yoga.urls'

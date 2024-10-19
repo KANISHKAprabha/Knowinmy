@@ -70,6 +70,7 @@ urlpatterns = [
     path('organizations/<int:tenant_id>/send-email/', send_email_view, name='send_email_view'),
     path('asanas/<int:asana_id>/remove/', remove_asana_view, name='remove_asana_view'),
     path('organizations/<int:tenant_id>/create-coupon/', create_coupon_view, name='create_coupon_view'),
+    path('<slug:slug>/students_to_trainers/', student_dashboard_for_trainer, name='student_dashboard_trainer'),
 
 
     # Define a URL for tenant-specific data

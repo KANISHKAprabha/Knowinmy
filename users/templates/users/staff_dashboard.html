@@ -163,7 +163,7 @@
         <div id="nav-content">
             <div class="nav-container">
                 <!-- Home Link -->
-                <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                <a href="{% url 'home'  %}">
                     <div class="nav-button">
                         <i class="fas fa-home"></i>
                         <span>Home</span>
@@ -181,6 +181,13 @@
                         <div class="nav-button">
                             <i class="fas fa-palette"></i>
                             <span>Trainer Dashboard</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'student_dashboard_trainer' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            
+                            <i class="fas fa-palette"></i>
+                            <span>Student Info</span>
                         </div>
                     </a>
                     {% endif %}

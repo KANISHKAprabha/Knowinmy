@@ -387,6 +387,10 @@ def client_list(request):
 def onboarding_view(request,slug):
   try:
     admin_user = request.user
+    user_email=User.objects.get(email=admin_user)
+    print(user_email,"pppppppppjij")
+    username_client=user_email.first_name
+    print(username_client,"oooooooooooo")
     print(admin_user,"line no 281")
     tenant_name = Tenant.objects.get(slug=slug)
     
@@ -395,7 +399,7 @@ def onboarding_view(request,slug):
     # Assuming tenant is set in middleware
 
     # Filter the order by tenant and user
-    order_transaction = Order.objects.filter(name=admin_user, status='ACCEPT').first()
+    order_transaction = Order.objects.filter(name=username_client, status='ACCEPT').first()
     print(order_transaction,"llllllllllllllllllllllllllllllllll")
 
     print(tenant,admin_user,"line no 292")
@@ -410,6 +414,7 @@ def onboarding_view(request,slug):
     subscription = order_transaction.subscription
     print(subscription, "Subscription Details")
     no_of_persons_onboard_by_client = subscription.no_of_persons_onboard
+    print(no_of_persons_onboard_by_client)
     
     no_of_persons_needed_to_onboard=ClientOnboarding.objects.filter(client=request.user,tenant=tenant).first()
     x=no_of_persons_needed_to_onboard.trainers_onboarded
@@ -504,7 +509,8 @@ def onboarding_view(request,slug):
 
     return render(request, 'users/onboarding_form.html', {'formset': formset,'tenant':tenant})
   except  Exception as e:
-       return render(request,'error.html')
+       print(e)
+       return render(request,'users/error.html')
 
 
 
@@ -608,7 +614,7 @@ def role_based_dashboard(request):
   except Exception as e:
       print("error",e)
     
-      return render (request,"users/error.html")
+      return render (request,"home_page.html")
   
 
   
@@ -1030,7 +1036,7 @@ def home(request, slug=None):
         return render(request, "home_page.html",{'subscriptions':subscriptions})
     else:
         subscriptions=Subscription.objects.all()
-        # Render the normal home page if no slug is provided or tenant does not exist
+       
         return render(request, "home_page.html",{'subscriptions':subscriptions})
 
 @user_passes_test(check_student or check_client or check_trainer)
@@ -1649,7 +1655,7 @@ def send_mail_page(request):
                     message=message,
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=['prabha2563@gmail.com'],
-                )
+                fail_silently=False)
                 context['result'] = 'Email sent successfully'
             except Exception as e:
                 context['result'] = f'Error sending email: {e}'
@@ -1669,7 +1675,7 @@ def home_slug(request, slug):
         print(tenant,"line 1397")
         # Fetch subscriptions if tenant exists
         subscriptions =Subscription.objects.all()
-        return render(request, "home_page.html", {'subscriptions': subscriptions, 'tenant': tenant})
+        return render(request, "home_page.html")
     else:
         # Render the normal home page if no slug is provided or tenant does not exist
         return render(request, "home_page.html")
@@ -1833,3 +1839,37 @@ def get_subscription_details_for_client(request,slug):
  except Exception as e:
       return render(request,'error.html')
 
+
+
+
+@login_required
+@user_passes_test(check_trainer)
+def  student_dashboard_for_trainer(request, slug):
+ try:
+    tenant=Tenant.objects.get(slug=slug)
+
+    current_user=request.user
+    
+    
+    enrollments = EnrollmentDetails.objects.filter(created_by=current_user).prefetch_related('students_added_to_courses', 'students_added_to_courses__asanas_by_trainer')
+    print(enrollments,"skdjfffffffffffffffffff")
+
+
+    student_enrollment_map = {}
+    for enrollment in enrollments:
+        if enrollment.user not in student_enrollment_map:
+            student_enrollment_map[enrollment.user] = []
+        student_enrollment_map[enrollment.user].append(enrollment)
+        print(student_enrollment_map,"oooooooooooooooooooooooo")
+
+    context = {
+        'tenant':tenant.slug,
+        'tenant':tenant,
+    
+        'student_enrollment_map': student_enrollment_map,
+    }
+    print(student_enrollment_map,"oooooooooooooooooo")
+    return render(request, 'users/student_info_to_trainer.html', context)
+ except Exception as e:
+      print(e,"pppppppppppppppppp")
+      return render(request, 'users/error.html')

@@ -119,7 +119,7 @@
         color: #ffffff;
       }
       .hero {
-        background-image: url("static/img/wp6841484.webp"); /* Adjust the path if necessary */
+        background-image: url("{% static 'img/wp6841484.webp' %}"); /* Adjust the path if necessary */
         background-size: cover; /* Makes sure the image covers the entire section */
         background-position: center; /* Center the image */
         height: 400px; /* Set a height for the hero section */
@@ -224,36 +224,36 @@
         margin-bottom: 20px;
       }
       .subscription-form {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
 
-/* Coupon Label */
-.coupon-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
+      /* Coupon Label */
+      .coupon-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+      }
 
-/* Coupon Input Styling */
-.coupon-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 5px;
-    transition: border-color 0.3s ease;
-}
+      /* Coupon Input Styling */
+      .coupon-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 5px;
+        transition: border-color 0.3s ease;
+      }
 
-.coupon-input:focus {
-    border-color: #553cdf;
-    outline: none;
-    box-shadow: 0 0 5px rgba(85, 60, 223, 0.3);
-}
+      .coupon-input:focus {
+        border-color: #553cdf;
+        outline: none;
+        box-shadow: 0 0 5px rgba(85, 60, 223, 0.3);
+      }
 
       .btn-pay {
         background-color: var(--violet-2);
@@ -367,19 +367,134 @@
           gap: 10px;
         }
       }
+      #feature {
+        background-color: var(
+          --background-color
+        ); /* Keep the background light */
+        padding: 60px 0;
+      }
+
+
+      .text {
+        padding: 20px;
+      }
+
+      .text h3 {
+        color: var(--violet-2); /* Matching heading color */
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .text p {
+        color: var(--text-color);
+      }
+
+      .btn.custom-btn {
+        background-color: var(--violet-2); /* Button color from your palette */
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn.custom-btn:hover {
+        background-color: var(--violet-3); /* Darker on hover */
+      }
+      .ftco-section {
+  padding: 60px 0; /* Increase padding for more space */
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: scroll;
+ 
+}
+.ftco-section::-webkit-scrollbar{
+  display: none;
+}
+.main{
+  display: flex;
+         width:30%;
+ flex-direction:row;
+ width: 100%;
+ justify-content: space-between;
+ height: auto;
+      gap: 20px;
+      padding: 10px;
+     
+
+}
+  .offer-deal {
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    transition: transform 0.3s; /* Animation for hover */
+    
+ 
+  }
+
+  .offer-deal:hover {
+    transform: scale(1.05); /* Scale effect on hover */
+  }
+
+  .img {
+    border-radius: 10px 10px 0 0; /* Rounded top corners */
+    height: 200px; /* Fixed height */
+    width: 290px; /* Fixed width to maintain square shape */
+    margin: 0 auto; /* Center the image within the card */
+  }
+
+  .text {
+    padding: 20px; /* Consistent padding */
+  }
+
+  .text h3 {
+    color: #553cdf; /* Title color */
+  }
+
+  .text p {
+    color: #555; 
+    font-weight:100 ;/* Body text color */
+  }
+
+  .btn.custom-btn {
+    background-color: #553cdf; /* Button color */
+    color: #fff; /* Text color for button */
+    padding: 10px 20px; /* Button padding */
+    border-radius: 5px; /* Button rounded corners */
+    transition: background-color 0.3s; /* Transition for hover */
+  }
+
+  .btn.custom-btn:hover {
+    background-color: #4527a0; /* Darker shade on hover */
+  }
+
+
+
+
+@media (max-width: 768px) {
+  .img {
+    height: 150px;
+  }
+}
+
     </style>
   </head>
   <body>
     <nav class="navbar">
       <div class="container">
         <a class="navbar-brand" href="#">Knowinmy</a>
-        <ul class="nav-links">
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'register' %}">Signup</a></li>
-          <li><a href="{% url 'register_organization' %}">Create an Organizations</a></li>
-         
-          <li><a href="#testimonials">Testimonials</a></li>
-        </ul>
+        <div class="nav-links">
+          <div><a href="{% url 'login' %}">Login</a></div>
+          <div><a href="{% url 'register' %}">Signup</a></div>
+          <div>
+            <a href="{% url 'register_organization' %}"
+              >Create an Organizations</a
+            >
+          </div>
+
+          <div><a href="#testimonials">Testimonials</a></div>
+        </div>
       </div>
     </nav>
 
@@ -422,7 +537,6 @@
         </div>
       </div>
     </section>
-    
 
     <section id="pricing" class="price-list">
       <div class="container">
@@ -452,6 +566,7 @@
                                 <label for="coupon-{{ subscription.id }}" class="coupon-label">Coupon Code (optional)</label>
                                 <input type="text" name="coupon_code" class="form-control coupon-input" id="coupon-{{ subscription.id }}" placeholder="Enter coupon code if any">
                             </div>
+                            <br>
                             
                             <!-- Pay Now Button -->
                             <button type="submit" class="btn btn-primary btn-pay">Pay Now</button>
@@ -464,6 +579,11 @@
                               <div class="form-group">
                                   <input type="hidden" name="subscription_id" value="{{ subscription.id }}" />
                               </div>
+                              <br>
+                              <br>
+                              <br>
+                              <br>
+                              <br>  
                               <button type="submit" class="btn-pay">Pay Now</button>
                           </form>
                       {% endif %}
@@ -474,21 +594,86 @@
               {% endfor %}
           </div>
       </div>
-      
-  </section>
-  
-  <!-- Modal for coupon code -->
-  
-  
-  
-  
-  
-  <!-- Modal for coupon code -->
-  
-  
-  
-  
+      <section class="ftco-section bg-light" id="feature">
+        <div class="container">
+            <h2 class="text-center mb-5">Yoga Classes</h2>
+            <div class="row justify-content-center">
     
+                <!-- First Card -->
+                <div class="main">
+                  <div class="col mb-4">
+                    <div class="offer-deal text-center shadow rounded glossy-card">
+                        <div class="img" style="background-image: url('static/home_page_images/gallery-1.jpg'); height: 200px; background-size: cover; background-position: center;"></div>
+                        <div class="text p-4">
+                            <h3 class="mb-4">Power Yoga</h3>
+                         
+                            <p>Power Yoga is an energetic and dynamic form of yoga that combines strength, flexibility, and breath to create a vigorous and revitalizing practice.</p>
+                            <br>
+                            <a href="#" class="btn custom-btn bg-color mt-3">Learn more</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Second Card -->
+                <div class="col mb-4">
+                    <div class="offer-deal text-center shadow rounded glossy-card">
+                        <div class="img" style="background-image: url('static/home_page_images/gallery-2.jpg'); height: 200px; background-size: cover; background-position: center;"></div>
+                        <div class="text p-4">
+                            <h3 class="mb-4">Meditation Class</h3>
+                           
+                            <p>Meditation Class offers a tranquil space to cultivate mindfulness, promoting mental clarity and inner peace through guided or silent meditation.</p>
+                            <br>
+                            <a href="#" class="btn custom-btn bg-color mt-3">Learn more <span class="fa fa-arrow-right"></span></a>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Third Card -->
+                <div class="col mb-4">
+                    <div class="offer-deal text-center shadow rounded glossy-card">
+                        <div class="img" style="background-image: url('static/home_page_images/gallery-3.jpg'); height: 200px; background-size: cover; background-position: center;"></div>
+                        <div class="text p-4">
+                            <h3 class="mb-4">Aerobics Class</h3>
+                            <p>Aerobics class combines rhythmic movements, music, and focuses on cardiovascular fitness for overall well-being and holistic health.</p>
+                            <br>
+                            <a href="#" class="btn custom-btn bg-color mt-3">Learn more <span class="fa fa-arrow-right"></span></a>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Fourth Card -->
+                <div class="col mb-4">
+                    <div class="offer-deal text-center shadow rounded glossy-card">
+                        <div class="img" style="background-image: url('static/home_page_images/gallery-4.jpg'); height: 200px; background-size: cover; background-position: center;"></div>
+                        <div class="text p-4">
+                            <h3 class="mb-4">Spiritual Yoga</h3>
+                            <p>Spiritual Yoga blends traditional postures with mindfulness, fostering a deeper spiritual connection to harmonize body, mind, and inner awakening.</p>
+                            <br>
+                            <a href="#" class="btn custom-btn bg-color mt-3">Learn more <span class="fa fa-arrow-right"></span></a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+    
+            </div>
+        </div>
+    </section>
+    
+      
+           
+  
+  <!-- Modal for coupon code -->
+  
+  
+  
+  
+  
+  <!-- Modal for coupon code -->
+  
+  
+  
+  
+    <br>
 
     <section id="testimonials" class="testimonials">
       <div class="container">
@@ -538,18 +723,16 @@
         </div>
       </div>
     </footer>
-    
   </body>
   <script>
     // Use jQuery to handle the modal's button click
-    $(document).ready(function() {
-        $('#couponModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var subscriptionId = button.data('subscription-id'); // Extract info from data-* attributes
-            var modal = $(this);
-            modal.find('#modal_subscription_id').val(subscriptionId); // Set the subscription ID in the modal form
-        });
+    $(document).ready(function () {
+      $("#couponModal").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var subscriptionId = button.data("subscription-id"); // Extract info from data-* attributes
+        var modal = $(this);
+        modal.find("#modal_subscription_id").val(subscriptionId); // Set the subscription ID in the modal form
+      });
     });
-</script>
-
+  </script>
 </html>

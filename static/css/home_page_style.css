@@ -81,7 +81,11 @@ body {
   font-weight: var(--font-weight-bold);
   line-height: normal;
   padding-top: 0;
+  position: absolute; /* Position the brand absolutely */
+         /* Align it to the left */
+  padding-left: 20px;  /* Adjust padding to give some space from the left corner */
 }
+
 
 .nav-item .nav-link {
   display: block;
