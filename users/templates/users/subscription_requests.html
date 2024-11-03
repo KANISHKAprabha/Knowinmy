@@ -1,0 +1,31 @@
+<h2>Subscription Change Requests</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Client Name</th>
+            <th>Request Type</th>
+            <th>Reason</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+            <tr>
+                <td>{{ request.tenant.client_name }}</td>
+                <td>{{ request.request_type }}</td>
+                <td>{{ request.reason }}</td>
+                <td>
+                    <form method="post" action="{% url 'approve_subscription_change' request.id %}">
+                        {% csrf_token %}
+                        <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                        <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">No pending requests.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

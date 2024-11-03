@@ -1,0 +1,36 @@
+<!-- templates/admin/review_slug_changes.html -->
+    
+
+{% block content %}
+  <h2>Pending Slug Change Requests</h2>
+
+  {% if tenants %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Organization Name</th>
+          <th>Requested Slug</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tenant in tenants %}
+          <tr>
+            <td>{{ tenant.organization_name }}</td>
+            <td>{{ tenant.slug_change_requested }}</td>
+            <td>
+              <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="tenant_id" value="{{ tenant.id }}">
+                <button name="action" value="approve" class="btn btn-success">Approve</button>
+                <button name="action" value="reject" class="btn btn-danger">Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No pending slug changes.</p>
+  {% endif %}
+{% endblock %}

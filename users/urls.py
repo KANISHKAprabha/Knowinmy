@@ -22,6 +22,7 @@ urlpatterns = [
     path('subscription_plans/',subscription_plans,name='subscriptions_plans'),
     path('login/', user_login, name='login'),
     path('dashboard/', role_based_dashboard, name='role_based_dashboard'),
+    path('renew/',renew_subscription,name='renew'),
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='users/password_reset_form.html'), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
@@ -71,10 +72,21 @@ urlpatterns = [
     path('asanas/<int:asana_id>/remove/', remove_asana_view, name='remove_asana_view'),
     path('organizations/<int:tenant_id>/create-coupon/', create_coupon_view, name='create_coupon_view'),
     path('<slug:slug>/students_to_trainers/', student_dashboard_for_trainer, name='student_dashboard_trainer'),
+    path('<slug:slug>/enable_disable_user/<int:user_id>/',enable_or_disable_user,name='toggle_permission'),
+    path('subscribe/',dynamic_subscription_payment,name='dynamic'),
+    path('request-slug-change/', request_slug_change, name='request_slug_change'),
+    path('review-slug-changes/', review_slug_changes, name='review_slug_changes'),
+    path('request_subscription_change/', subscription_change_request, name='subscription_change_request'),
+    path('subscription-requests/', list_subscription_requests, name='list_subscription_requests'),
+    path('approve_subscription_change/<int:request_id>/', approve_subscription_change_by_knowinmy, name='approve_subscription_change'),
+    path('request-subscription-change/', subscription_change_request, name='subscription_change_request'),
+   
+   
+    # Add other URLs as needed
 
 
     # Define a URL for tenant-specific data
     # path('<slug:slug>/tenant-data/', tenant_data, name='tenant-data'),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)    

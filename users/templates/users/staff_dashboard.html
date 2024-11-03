@@ -163,14 +163,30 @@
         <div id="nav-content">
             <div class="nav-container">
                 <!-- Home Link -->
-                <a href="{% url 'home'  %}">
-                    <div class="nav-button">
-                        <i class="fas fa-home"></i>
-                        <span>Home</span>
-                    </div>
-                </a>
+                {% for group in request.user.groups.all %}
+                {% if group.name == 'Knowinmy' %}
+                    <a href="{% url 'home'  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+          
+            
+           
+            
+            
+            
                 {% for group in request.user.groups.all %}
                     {% if group.name == 'Trainer' %}
+                    <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
                     <a href="{% url 'view-trained' slug=tenant.slug %}">
                         <div class="nav-button">
                             <i class="fas fa-palette"></i>
@@ -193,6 +209,12 @@
                     {% endif %}
                     
                     {% if group.name == 'Client' %}
+                    <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
                     <a href="{% url 'Trainer-approval' slug=tenant.slug %}">
                         <div class="nav-button">
                             <i class="fas fa-palette"></i>
@@ -235,7 +257,9 @@
                         </div>
                     </a>
                     {% endif %}
+                    
                 {% endfor %}
+                
             </div>
         </div>
 

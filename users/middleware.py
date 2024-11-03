@@ -42,33 +42,15 @@ class TenantMiddleware:
             except Tenant.DoesNotExist:
                 # Redirect to an error page if tenant is not found
                 print("hello")
+                
 
         else:
-            # Handle requests without a slug (like login)
-            if request.user.is_authenticated:
-                try:
-                    tenant = Tenant.objects.get(client_name=request.user)
-                    print("tenant", tenant, "slug",tenant.slug)
-                    print(tenant,"lin")
-                    request.tenant = tenant
-                    
-                    if request.user.groups.filter(name='Trainer').exists():
-                        # Redirect to trainer dashboard
-                        return HttpResponseRedirect(reverse('view-trained', kwargs={'slug': tenant.slug}))
-                    elif request.user.groups.filter(name='Student').exists():
-                        # Redirect to student dashboard
-                        return HttpResponseRedirect(reverse('student-mapp-courses', kwargs={'slug': tenant.slug}))
-                    else:
-                        # Default role or unauthorized role
-                        return redirect(reverse('Trainer-approval', kwargs={'slug': tenant.slug}))
-  
-
-                except Tenant.DoesNotExist:
-                    # return HttpResponseRedirect('tenant-not-found',kwargs={'slug': tenant.slug})
-                    print("222222222222222222222")
-            else:
-                print("user authenticate agala")
-                request.tenant = None
+           print("ayeeeee")
+           
+           subscriptions=Subscription.objects.all()
+           print(subscriptions,"popop")
+           return render (request,'home_page.html',{'subscriptions':subscriptions})
+                
 
         # Proceed if no redirection is needed
         response = self.get_response(request)

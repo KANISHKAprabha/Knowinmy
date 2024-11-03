@@ -1,0 +1,14 @@
+<h2>Request Subscription Change</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <h3>Current Subscription Details</h3>
+    {% if current_user_in_order %}
+        <p>{{ current_subs }}</p>  <!-- Adjust based on your subscription model -->
+    {% else %}
+        <p>No current subscription details found.</p>
+    {% endif %}
+    
+    <button type="submit">Submit Request</button>
+</form>

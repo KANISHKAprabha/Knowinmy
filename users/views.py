@@ -192,6 +192,8 @@ def subscription_payment(request):
     print(current_user,"Current user")
    
    
+   
+   
 
     if request.method == "POST":
         username = request.user
@@ -241,9 +243,47 @@ def subscription_payment(request):
                 "order": order,
             },
         )
-    return render(request, "users/subscription_plans.html")
+    else:
+        print("entered elseeeeeeeeee")
+        username = request.user
+        print(username,"lollllll")
+        get_only_username=User.objects.get(email=username)
+        name=get_only_username.first_name
+        print(name,"line no 111")
+        subscription_id = request.session.get('subscription_id')
+        print(subscription_id,"llllllllll")
+        subscription = Subscription.objects.get(id=subscription_id)
+        amount = Decimal(subscription.price)
+       
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        razorpay_order = client.order.create(
+            {"amount": int(amount * 100), "currency": "INR", "payment_capture": "1"}
+        )
+        order = Order.objects.create(
+          
+            subscription=subscription,
+            name=name,
+            amount=amount,
+            provider_order_id=razorpay_order["id"]
+        )
+        order.save()
+
+        return render(
+            request,
+            "users/callback.html",
+            {
+                "callback_url": "http://" + "127.0.0.1:8000" + "/razorpay/callback/",
+                "razorpay_key": settings.RAZORPAY_KEY_ID,
+                "order": order,
+            },
+        )   
+        
+        
+
+    
  except Exception as e:
-      return render(request,'error.html')
+      print(e,"ppppppppppppppp")
+      return render(request,'users/error.html')
 
 
 
@@ -568,15 +608,49 @@ def role_based_dashboard(request):
         try:
             get_trainer = TrainerLogDetail.objects.get(trainer_name=current_user)
             slug=get_trainer.tenant
-            print(slug,"loogjerojjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
-            tenant = Tenant.objects.get(slug=slug)
-            print(tenant,"trainer")
-            return render(request, 'users/view_trained.html', {
-               'tenant': tenant,
-              'slug': tenant.slug
+            if get_trainer:
+                client_name=get_trainer.onboarded_by
+                print(client_name)
+                client_full_name=User.objects.get(username=client_name)
+                subsciber_name=Order.objects.get(name=client_full_name.first_name)
+                print(subsciber_name,"pppppppppppppppppppppp")
+                if subsciber_name:
+                    get_subs=subsciber_name.subscription
+                    print(get_subs)
+                    get_status=get_subs.duration_in_months
+                    get_start_date=subsciber_name.created_at
+                    print(get_start_date)
+                    expiration_date=get_start_date + timedelta(days=get_status)
+                    print(expiration_date,"oooooooooooooooooooooooooooppppppppppppppp")
+                    print(get_status)
+                    print(timezone.now(),'sidfisd')
+                    if timezone.now() >  expiration_date:
+                        print("oops")
+                       
+
+                        return render(request,'users/error.html')
+                    
+                    else:
+                        tenant = Tenant.objects.get(slug=slug)
+                        return render (request,'users/view_trained.html',{
+                             'tenant': tenant,
+                                   
+                        })
+            else:
+                            
+                tenant = Tenant.objects.get(slug=slug)
+                print(tenant,"trainer")
+                return render(request, 'users/view_trained.html', {
+                    'tenant': tenant,
+                                   'slug': tenant.slug
         })
+
+
+
+
+           
         except Exception as e:
-              print("hello here is error ")
+              print("hello here is error ",e)
               
               return render(request, 'users/view_trained.html', {
                'tenant': tenant,
@@ -585,6 +659,23 @@ def role_based_dashboard(request):
     elif is_student:
         get_student = StudentLogDetail.objects.get(student_name=current_user)
         slug=get_student.tenant
+        if get_student:
+                client_name=get_student.added_by
+                print(client_name)
+                client_full_name=User.objects.get(username=client_name)
+                subsciber_name=Order.objects.get(name=client_full_name.first_name)
+                print(subsciber_name,"pppppppppppppppppppppp")
+                if subsciber_name:
+                    get_subs=subsciber_name.subscription
+                    print(get_subs)
+                    get_status=get_subs.end_date
+                    print(get_status)
+                    print(timezone.now(),'sidfisd')
+                    if get_status <= timezone.now():
+                        print("oops")
+                        return render(request,'users/error.html')
+
+        
         print(slug,"lllllllllllllllllllllllllllllllllllll")
         tenant = Tenant.objects.get(slug=slug)
         print(tenant.slug,"lineeeeeeeeeeeeeee")
@@ -595,9 +686,28 @@ def role_based_dashboard(request):
         })
 
     elif is_client:
+      
         print("here is the error")
         get_tenant_for_client = Tenant.objects.get(client_name=current_user)
+        get_client=request.user
         tenant = get_tenant_for_client
+        print(get_client)
+        get_user=User.objects.get(username=get_client)
+        get_order=Order.objects.filter(name=get_user.first_name).first()
+        print(get_order)
+        get_subs=get_order.subscription
+        print(get_subs)
+        get_status=get_subs.end_date
+        print(get_status)
+        if get_status <= timezone.now():
+            print("oops")
+            return redirect('renew')
+        
+
+
+
+        tenant = get_tenant_for_client
+
         print(tenant,"client")
         print(tenant.slug,"lineeeeeeeeeeeeeee")
         return render(request, "users/Trainer_approval_Page.html", {
@@ -614,8 +724,7 @@ def role_based_dashboard(request):
   except Exception as e:
       print("error",e)
     
-      return render (request,"home_page.html")
-  
+      return redirect('home')
 
   
       
@@ -917,6 +1026,7 @@ class CourseCreationView(UserPassesTestMixin, View):
 
     def test_func(self):
         return check_trainer(self.request.user)
+    
 
     def get(self, request,slug, *args, **kwargs):
      try:
@@ -1030,14 +1140,43 @@ class CourseCreationView(UserPassesTestMixin, View):
 def home(request, slug=None):
     if slug:
         tenant = get_object_or_404(Tenant, slug=slug)
+        current_user=request.user
+        get_client=User.objects.get(email=current_user)
+        get_transaction = False  # Default to False
+        get_tenant = False  # Default to False
+        if user_passes_test(check_client):
+            get_transaction=Order.objects.filter(name=current_user).exists()
+            print(get_transaction)
+
+
+        
+
         subscriptions=Subscription.objects.all()
+        print(slug,subscriptions)
         # Fetch subscriptions if tenant exists
        
-        return render(request, "home_page.html",{'subscriptions':subscriptions})
+        return render(request, "home_page.html",{'subscriptions':subscriptions,'get_tranasction':get_transaction})
     else:
         subscriptions=Subscription.objects.all()
+        current_user=request.user
+        get_name=User.objects.get(email=current_user)
+        get_fn=get_name.first_name
+        print(current_user)
+        get_client=User.objects.get(email=current_user)
+        get_transaction = False  # Default to False
+         # Default to False
+        get_tenant=True
+        if user_passes_test(check_client):
+            get_transaction=Order.objects.filter(name=get_fn).exists()
+            print(get_transaction,"ppppppppppppppp")
+        
+            get_tenant=Tenant.objects.get(client_name=current_user)
+            print(get_tenant)
+        else:
+            return render(request,"home_page.html",{'subscriptions':subscriptions})
+
        
-        return render(request, "home_page.html",{'subscriptions':subscriptions})
+        return render(request, "home_page.html",{'subscriptions':subscriptions,'get_tranasction':get_transaction,'get_tenant':get_tenant})
 
 @user_passes_test(check_student or check_client or check_trainer)
 def staff_dashboard_function(request,slug):
@@ -1368,6 +1507,7 @@ def subscription_plans(request):
 @login_required
 def trainer_dashboard(request, slug):
  try:
+    
     tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
 
     trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name')
@@ -1406,9 +1546,45 @@ def trainer_dashboard(request, slug):
           
       })
 
+def enable_or_disable_user(request, slug, user_id):
+    tenant = Tenant.objects.get(slug=slug)
+    current_user = request.user
+    user = User.objects.get(id=user_id)
+    
+    # Determine the user's group
+    group_name = None
+    if user.groups.filter(name='Trainer').exists():
+        group_name = 'Trainer'
+    elif user.groups.filter(name='Student').exists():
+        group_name = 'Student'
+    elif user.groups.filter(name='Client').exists():
+        group_name = 'Client'
+    else:
+        return HttpResponse("User does not belong to a valid group", status=400)
+
+    try:
+        group = Group.objects.get(name=group_name)
+    except Group.DoesNotExist:
+        return HttpResponse(f"Group '{group_name}' not found", status=404)
+
+    # Enable or disable the user in the group
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'enable':
+            if not user.groups.filter(name=group_name).exists():
+                user.groups.add(group)
+                return HttpResponse(f"User added to group: {group_name}")
+            return HttpResponse(f"User is already enabled in group: {group_name}")
+        elif action == 'disable':
+            if user.groups.filter(name=group_name).exists():
+                user.groups.remove(group)
+                return HttpResponse(f"User removed from group: {group_name}")
+            return HttpResponse(f"User is already disabled in group: {group_name}")
+
+    return HttpResponse("Invalid action", status=400)
 
 
-
+    
 
 
 @login_required
@@ -1544,20 +1720,29 @@ def edit_user(request, user_id,slug):
 def register_organisation(request):
  try:
     print(request.user)
-    if request.method == 'POST':
-        form = OrganisationForm(request.POST,user=request.user)
-        if form.is_valid():
-            form.save()  
-            print("Form is valid. Redirecting to login.")
-            return redirect("home")
-        else:
-            print("Form is invalid. Errors:", form.errors)
+    get_tenant=Tenant.objects.filter(client_name=request.user).exists()
+    print(get_tenant)
+    if get_tenant:
+             print("Already created Tenant")
     else:
-        form = OrganisationForm(user=request.user)
+
+        if request.method == 'POST':
+        
+        
+            # form = OrganisationForm(request.POST,user=request.user)
+            form = formset_factory(OrganisationForm, extra=1, max_num=1, validate_max=True, absolute_max=1)
+            if form.is_valid():
+                form.save()  
+                print("Form is valid. Redirecting to login.")
+                return redirect("home")
+            else:
+               print("Form is invalid. Errors:", form.errors)
+        else:
+             form = OrganisationForm(user=request.user)
 
     return render(request, 'users/register_organization.html', {'form': form})
  except Exception as e:
-      return render(request,'error.html')
+      return render(request,'users/error.html')
 
 
 
@@ -1668,19 +1853,63 @@ def send_mail_page(request):
 
 
 
-def home_slug(request, slug):
- try:
-    if slug:
-        tenant = get_object_or_404(Tenant, slug=slug)
-        print(tenant,"line 1397")
-        # Fetch subscriptions if tenant exists
-        subscriptions =Subscription.objects.all()
-        return render(request, "home_page.html")
-    else:
-        # Render the normal home page if no slug is provided or tenant does not exist
-        return render(request, "home_page.html")
- except Exception as e:
-      return render(request,'error.html')
+
+def home_slug(request, slug=None):
+    try:
+        subscriptions = Subscription.objects.all()  # Always retrieve subscriptions
+        current_user = request.user
+        
+        get_transaction = False  # Default to False
+        get_tenant = True  # Default to False
+
+        if slug:
+            tenant = get_object_or_404(Tenant, slug=slug)
+            print(tenant, "line 1397")
+            
+            # Check if the user has an associated tenant
+            tenant = Tenant.objects.get(slug=slug)
+            print(tenant,"ppppppppppppppppppppppppppppp")
+            
+            if user_passes_test(check_client):
+                # Check if the client has made a transaction
+                current_user=User.objects.filter(username=request.user).first()
+                get_first_name=current_user.first_name
+                
+                get_transaction = Order.objects.filter(name=get_first_name).exists()  # Assuming Order model has a `user` field
+                print(get_transaction,"hhhhhhhhhhhhhh")
+                get_tenant=Tenant.objects.get(client_name=current_user)
+                print(get_tenant)
+
+               # Pass the necessary context to the template
+                return render(request, "home_page.html", {
+                'subscriptions': subscriptions,
+                'get_transaction': get_transaction,
+                'get_tenant': get_tenant,
+
+
+                })
+            else:
+                 return render(request, "home_page.html", {
+                        'subscriptions': subscriptions,
+                        'tenant':tenant,
+                        'tenant':tenant.slug
+                        
+          })
+        else:
+            return render(request,"home_page.html",{
+                'subscriptions':subscriptions,
+              
+                
+            })
+
+
+        
+        # Render the normal home page if no slug is provided
+       
+
+    except Exception as e:
+        print(e)
+        return render(request, 'users/error.html')
 
 
 
@@ -1706,13 +1935,14 @@ def organization_list_view(request):
 def asanas_view(request, tenant_id):
  try:
     tenant = get_object_or_404(Tenant, id=tenant_id)
+    print(tenant,"pppppppppppppppppppppp")
     if tenant:
          get_deat=ClientOnboarding.objects.get(tenant=tenant)
          get_trainer_count=get_deat.trainers_onboarded
          get_stud_count=get_deat.students_onboarded
          get_client=get_deat.client
          print(get_client,"oooooooooooooooooooooooooooooo")
-         get_tenant=Order.objects.get(name=get_client.username,status='ACCEPT')
+         get_tenant=Order.objects.get(name=get_client.first_name,status='ACCEPT')
          print(get_tenant,"looooooooooooooooooo")
          get_subs=get_tenant.subscription.name
          print(get_subs,"ouuuuuuuuuuuuuuuuu")
@@ -1727,6 +1957,7 @@ def asanas_view(request, tenant_id):
     
     print(tenant,"loooooooooooooooo")
     asanas = Asana.objects.filter(tenant=tenant)
+    
     courses=CourseDetails.objects.filter(tenant=tenant).prefetch_related('asanas_by_trainer')
     print(courses.exists(),"oooooooooooooooooooo")
     
@@ -1802,7 +2033,7 @@ def create_coupon_view(request, tenant_id):
 
     return render(request, 'users/create_coupon.html', {'tenant': tenant, 'subscriptions': subscriptions})
  except Exception as e:
-      return render(request,'error.html')
+      return render(request,'users/error.html')
 
 
 
@@ -1837,7 +2068,10 @@ def get_subscription_details_for_client(request,slug):
 
    
  except Exception as e:
-      return render(request,'error.html')
+      print(e,"pppppppppppppppp")
+      return render(request,'users/error.html')
+
+
 
 
 
@@ -1873,3 +2107,299 @@ def  student_dashboard_for_trainer(request, slug):
  except Exception as e:
       print(e,"pppppppppppppppppp")
       return render(request, 'users/error.html')
+ 
+
+
+
+
+
+
+
+def renew_subscription(request):
+    current_user=request.user
+    get_tenant_for_client = Tenant.objects.get(client_name=current_user)
+    
+    tenant = get_tenant_for_client
+    get_username=User.objects.get(username=current_user)
+    get_first_name=get_username.first_name
+    get_order=Order.objects.filter(name=get_first_name).first()
+    print(get_order)
+    get_order.delete()
+    return render(request,'users/alert.html',{
+                  'tenant': tenant,
+            'slug': tenant.slug
+            })
+     
+
+
+
+
+
+
+
+
+def dynamic_subscription_payment(request):
+    if request.method == 'POST':
+        form = SubscriptionForm(request.POST)
+        if form.is_valid():
+            # Extract form data
+            no_of_persons_onboard = int(request.POST.get('no_of_persons_onboard', 0))
+            permitted_asanas = int(request.POST.get('permitted_asanas', 0))
+            duration_in_months = int(request.POST.get('duration_in_months', 0))
+
+            # Calculate price
+            price = (
+                (permitted_asanas * 10) +
+                (no_of_persons_onboard * 100) +
+                (duration_in_months * 200)
+            )
+            print("Form data:", form.cleaned_data)  # Check cleaned data
+
+            # Create a subscription instance without saving it yet
+            form_data = form.save(commit=False)
+            print(form,'kjjjjjjjjjj')
+            print(form_data,"fuckk")
+            form_data.price=price
+            print(price)
+            form.save()
+            
+             # Save the Subscription instance
+
+            # Debugging: print the type and ID of the saved subscription
+             # Should be a valid Subscription ID
+            subscription_form = SubscriptionForm()
+            subscription_form.fields['subscription_id'].initial = form_data.id
+            request.session['subscription_id'] = form_data.id
+
+
+            # Redirect to the payment view with the subscription ID
+            print(form_data.id)
+            
+            return redirect('subscription-payment')
+        
+        else:
+            print(form.errors)  # Print form errors for debugging
+    else:
+        form = SubscriptionForm()
+
+    return render(request, 'users/subscription_detail.html', {'form': form})
+
+
+
+
+
+
+
+@login_required
+@user_passes_test(check_client)
+def request_slug_change(request,slug=None):
+    tenant = get_object_or_404(Tenant,  client_name=request.user)
+    print(tenant,"pppppppppppppppppppp")
+    print(tenant.slug,"ppppppppppppppjjjjjjjjjjjjjj")
+
+    if request.method == "POST":
+        form = SlugChangeRequestForm(request.POST)
+        if form.is_valid():
+            tenant = get_object_or_404(Tenant,  client_name=request.user)
+            tenant.slug_change_requested = form.cleaned_data['slug_change_requested']
+            tenant.slug_approved = False 
+            print("iiiiiiiiiiiiiiiiiiiiiiiiiiii") # reset approval status
+            tenant.save()
+            # messages.success(request, "Slug change requested. Awaiting admin approval.")
+            # Notify the admin here, if desired
+            print(tenant.slug,"ppppppppppppppjjjjjjjjjjjjjj")
+            context={
+                'slug':tenant.slug,
+            }
+            return redirect('get-subs-for-client',tenant.slug)
+    else:
+        form = SlugChangeRequestForm()
+
+    return render(request, 'users/request_slug_change.html', {'form': form, 'tenant': tenant})
+
+
+@login_required
+@user_passes_test(check_knowinmy)
+def review_slug_changes(request):
+    pending_tenants = Tenant.objects.filter(slug_change_requested__isnull=False, slug_approved=False)
+
+    if request.method == "POST":
+        tenant_id = request.POST.get("tenant_id")
+        action = request.POST.get("action")
+        tenant = get_object_or_404(Tenant, id=tenant_id)
+
+        if action == "approve":
+            tenant.slug = tenant.slug_change_requested
+            tenant.slug_approved = True
+            tenant.slug_change_requested = None
+            tenant.save()
+            send_slug_change_notification(tenant,request)
+           
+            # messages.success(request, f"Slug for {tenant.organization_name} approved and updated.")
+        elif action == "reject":
+            tenant.slug_change_requested = None
+            send_slug_change_reject_notification(tenant,request)
+            # messages.warning(request, f"Slug change request for {tenant.organization_name} rejected.")
+        tenant.save()
+
+    return render(request, 'users/review_slug_changes.html', {'tenants': pending_tenants})
+
+
+def send_slug_change_notification(tenant, request):
+    print(tenant,"yyyyyyyyyyy 2236")
+    subject = f"{tenant.organization_name} - Slug Changed"
+    message = f"The slug has been updated to {tenant.slug}. You can now access it at this name"
+    
+    # Collect emails from trainers
+    trainer_emails = TrainerLogDetail.objects.filter(tenant=tenant).values_list('trainer_name__email', flat=True)
+    
+    # Collect emails from students
+    student_emails = StudentLogDetail.objects.filter(tenant=tenant).values_list('student_name__email', flat=True)
+
+    # Get the current user (the client)
+    current_user = request.user
+    
+    # Retrieve the client's email directly from the User model
+    client_email = tenant.client_name.email if tenant.client_name else None  # Ensure there's a client
+
+    # Combine the emails, ensuring uniqueness
+    recipients = set(trainer_emails) | set(student_emails)
+    
+    # Add client email if it exists
+    if client_email:
+        recipients.add(client_email)
+
+    # Sending the email
+    recipient = ['prabha2563@gmail.com']
+    send_mail(subject, message, 'prabhaprasath07@gmail.com', recipient)
+
+
+def send_slug_change_reject_notification(tenant, request):
+    print(tenant,"yyyyyyyyyyy 2236")
+    subject = f"{tenant.organization_name} - Slug got rejected"
+    message = f"The slug has been rejected to {tenant.slug}. You cannot now access it at this name"
+    
+    # Collect emails from trainers
+    trainer_emails = TrainerLogDetail.objects.filter(tenant=tenant).values_list('trainer_name__email', flat=True)
+    
+    # Collect emails from students
+    student_emails = StudentLogDetail.objects.filter(tenant=tenant).values_list('student_name__email', flat=True)
+
+    # Get the current user (the client)
+    current_user = request.user
+    
+    # Retrieve the client's email directly from the User model
+    client_email = tenant.client_name.email if tenant.client_name else None  # Ensure there's a client
+
+    # Combine the emails, ensuring uniqueness
+    recipients = set(trainer_emails) | set(student_emails)
+    
+    # Add client email if it exists
+    if client_email:
+        recipients.add(client_email)
+
+    # Sending the email
+    recipient = ['prabha2563@gmail.com']
+    send_mail(subject, message, 'prabhaprasath07@gmail.com', recipient)
+
+
+
+
+
+def subscription_change_request(request,slug=None):
+    current_user=request.user
+    current_user_in_order=Order.objects.filter(name=current_user).first()
+    # current_subs=current_user_in_order.subscription
+    print(current_user_in_order,"pppppppppppppppppppp")
+    if request.method == 'POST':
+        form = SubscriptionChangeForm(request.POST)
+        tenant=Tenant.objects.filter(client_name=current_user).first()
+        slug=tenant.slug
+        current_user_in_order=Order.objects.filter(name=current_user).first()
+        # current_subs=current_user_in_order.subscription
+        # print(current_user_in_order,current_subs,"pppppppppppppppppppp")
+        if form.is_valid():
+            subscription_request = SubscriptionChangeRequest.objects.create(
+                tenant=request.user.tenant,  # Assuming the user has a related Tenant instance
+                request_type=form.cleaned_data['request_type'],
+                reason=form.cleaned_data['reason']
+            )
+            current_user=request.user
+            current_user_in_order=Order.objects.filter(name=current_user).first()
+            # current_subs=current_user_in_order.subscription
+            # print(current_user_in_order,current_subs,"pppppppppppppppppppp")
+
+
+            # messages.success(request, "Your request has been submitted.")
+            return redirect('Trainer-approval',tenant.slug)
+    else:
+        form = SubscriptionChangeForm()
+        
+    
+    return render(request, 'users/subscription_change_request.html', {'form': form,'current_user_in_order':current_user_in_order,})
+
+
+
+
+
+
+
+
+
+def approve_subscription_change(request, request_id):
+    subscription_request = get_object_or_404(SubscriptionChangeRequest, id=request_id)
+    tenant = get_object_or_404(Tenant, id=subscription_request.tenant.id)
+
+    if subscription_request.request_type == 'withdraw':
+        tenant.is_active = False  # Disable the organization
+        tenant.save()  # Save the tenant's active status
+        messages.success(request, f"The organization '{tenant.organization_name}' has been disabled.")
+    
+    subscription_request.approved = True  # Mark the request as approved
+    subscription_request.save()
+
+    return redirect('list_subscription_requests')  # Redirect to the list of requests
+
+
+
+
+def approve_subscription_change_by_knowinmy(request, request_id):
+    subscription_request = get_object_or_404(SubscriptionChangeRequest, id=request_id)
+    print(subscription_request,"pppppppppppppppppppppppppp")
+    get_tenant_name=subscription_request.tenant
+    get_client_name=Tenant.objects.filter(slug=get_tenant_name).first()
+    print(get_client_name,"jzfdddddddddddd")
+    get_user=get_client_name.client_name
+    print(get_user,"pppppppppppppppppp")
+
+    subscription = get_object_or_404(Order, name=request.user)
+   
+    tenant=Tenant.objects.filter(client_name=get_user).first()
+    print(tenant,"ooooooooooooooooooooo")
+
+    get_subs=subscription.subscription
+    print(get_subs,"llllllllllllllllll")
+    action = request.POST.get('action')
+    if action == 'approve':
+        # Set tenant as inactive (disable organization access)
+        tenant.is_active = False
+        tenant.save()
+        print("hello")
+        
+    elif action == 'reject':
+        # Set tenant as active (enable organization access)
+        tenant.is_active = True
+        tenant.save()
+        messages.success(request, f"The subscription for {tenant.client_name} has been enabled.")   
+
+    
+    subscription_request.delete()
+
+    # Optionally, you can delete the request after processing
+   
+
+    return redirect('list_subscription_requests')  # Redirect back to the list of requests
+
+def list_subscription_requests(request):
+    requests = SubscriptionChangeRequest.objects.filter(approved=False)  # Fetch all unapproved requests
+    return render(request, 'users/subscription_requests.html', {'requests': requests})

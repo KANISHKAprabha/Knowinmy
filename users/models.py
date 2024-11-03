@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _ 
 from django.db.models.signals import post_save
 from django.utils.text import slugify
-
+from datetime import timedelta
+from django.utils import timezone
 # from *cons import PaymentStatus
 
 #enable disable 
@@ -20,16 +21,36 @@ class   Tenant(models.Model):
     organization_email = models.EmailField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
     full_url = models.URLField(blank=True) 
-    # phone nuber
+    slug_change_requested = models.SlugField(blank=True, null=True)
+    slug_approved = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.domain_name)
-            self.full_url=f"http://127.0.0.1:8000/.{self.slug}.com"
+            self.full_url=f"http://127.0.0.1:8000/{self.slug}.com"
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.domain_name
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Asana(models.Model):
     
     name = models.CharField(max_length=100,verbose_name="Asana Name")
@@ -126,22 +147,39 @@ class EnrollmentDetails(models.Model):
 
 
 class Subscription(models.Model):
-   
-
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=100)
     permitted_asanas = models.PositiveIntegerField(default=None)
-    no_of_persons_onboard =models.PositiveIntegerField(default=None)
-    price =  models.FloatField(default= None)
+    no_of_persons_onboard = models.PositiveIntegerField(default=None)
+    price = models.FloatField(default=None)
     highlight_status = models.BooleanField(default=False)
-    created_at=models.DateTimeField(verbose_name='Created at',null=True)
-    updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
+    created_at = models.DateTimeField(verbose_name='Created at', null=True)
+    updated_at = models.DateTimeField(verbose_name='Last modified at', null=True)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(null=True, blank=True)
+    duration_in_months = models.PositiveIntegerField(default=0)  # New field for month-based duration
+    active = models.BooleanField(default=True)
 
 
-    def __str_(self):
-        return self.name
+    
+    def save(self, *args, **kwargs):
+        # Automatically calculate the end date based on the duration
+        if not self.end_date and self.duration_in_months > 0:
+            self.end_date = self.start_date + timedelta(days=self.duration_in_months)
+            super().save(*args, **kwargs)
 
+    def is_active(self):
+    # Check if the subscription has expired
+      if self.end_date and timezone.now() >= self.end_date:
+        # Set active to False if expired
+        self.active = False
+        self.save(update_fields=['active'])  # Only update the 'active' field for efficiency
+        return self.active
 
+    
+
+  
+    
 class Order(models.Model):
   
 
@@ -158,6 +196,25 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.id}-{self.name}-{self.status}"
     
+
+    
+
+
+
+class SubscriptionChangeRequest(models.Model):
+    REQUEST_TYPE_CHOICES = [
+        ('change', 'Change Subscription'),
+        ('withdraw', 'Withdraw Subscription'),
+    ]
+
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)  # Link to the Tenant
+    request_type = models.CharField(max_length=10, choices=REQUEST_TYPE_CHOICES)
+    reason = models.TextField()
+    approved = models.BooleanField(default=False)  # Track if the request is approved
+    created_at = models.DateTimeField(auto_now_add=True)  # Track when the request was made
+
+    def __str__(self):
+        return f"{self.tenant.client_name} - {self.request_type}"  # Adjust based on your Tenant model
 
 
 
@@ -221,6 +278,7 @@ class TrainerLogDetail(models.Model):
     no_of_asanas_created=models.PositiveIntegerField(null=True,blank=True,default=0)
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
        return  self.trainer_name.username
@@ -235,6 +293,7 @@ class StudentLogDetail(models.Model):
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
     mentor=models.ForeignKey(TrainerLogDetail,on_delete=models.CASCADE,null=True,blank=True)
+    is_active = models.BooleanField(default=True)
    
 
     def __str__(self):

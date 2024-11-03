@@ -1,0 +1,19 @@
+<!-- templates/tenant/request_slug_change.html -->
+
+
+{% block content %}
+  <h2>Request Slug Change for {{ tenant.organization_name }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Slug Change Request</button>
+  </form>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+{% endblock %}

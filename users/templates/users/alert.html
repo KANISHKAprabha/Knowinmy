@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f3f3f3;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #8a2be2; /* Violet */
+            font-size: 3em;
+        }
+        .error-message {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        .details {
+            font-size: 1em;
+            color: #666;
+        }
+        .back-button {
+            background-color: #8a2be2;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #7a24d9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-container">
+        <h1>Alert</h1>
+        <h2>Ooops your subscription ends renew  the subscription</h2>
+        <a href="{% url 'home-slug' slug=tenant.slug %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Back to Home
+        </a>
+
+        <button class="back-button" onclick="window.history.back()">Go Back</button>
+    </div>
+
+</body>
+</html>
+    

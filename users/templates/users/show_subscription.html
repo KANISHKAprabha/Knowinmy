@@ -10,7 +10,8 @@
     <br>
     <p><strong>Tenant Slug:</strong> {{ slug }}</p>
     <br>
-
+    <a href="{% url 'request_slug_change' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;"> Edit Slug </a>
+    <br>
     <!-- Subscription Information Table -->
     <h2 style="color: #5f52aa;">Subscription Information</h2>
     {% if get_order %}

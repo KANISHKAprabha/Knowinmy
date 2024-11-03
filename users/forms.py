@@ -149,16 +149,23 @@ class OrderForm(forms.ModelForm):
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
-        fields = ['name', 'description', 'permitted_asanas', 'no_of_persons_onboard', 'price', 'highlight_status', 'created_at', 'updated_at']
+        fields = [ 'permitted_asanas', 'no_of_persons_onboard','duration_in_months']
 
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)
         super(SubscriptionForm, self).__init__(*args, **kwargs)
-        
+        self.fields['subscription_id'] = forms.CharField(widget=forms.HiddenInput(), required=False)
     def save(self, commit=True):
         instance = super(SubscriptionForm, self).save(commit=False)
-        if self.tenant:
-            instance.tenant = self.tenant  # Assign the tenant
+        if not instance.id:
+            print(id,"oooooooooooooooooooooooformmmmmmmmmm")
+            last_subscription = Subscription.objects.order_by('id').last()
+            if last_subscription:
+                instance.id = last_subscription.id + 1
+            else:
+                instance.id = 1 
+       
+
         if commit:
             instance.save()
         return instance
@@ -188,7 +195,15 @@ class OrganisationForm(forms.ModelForm):
             instance.client_name = self.user  # Assign request.user to client_name
         if commit:
             instance.save()
-        return instance
+        return 
+    
+
+
+# class SlugEditForm(forms.ModelForm):
+#     class Meta:
+#         model=Tenant
+
+
 
 
 
@@ -289,3 +304,24 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)
         super().__init__(*args, **kwargs)  
+
+
+
+class SlugChangeRequestForm(forms.ModelForm):
+    slug_change_requested = forms.SlugField(label="New Slug", max_length=50, required=True)
+
+    class Meta:
+        model = Tenant
+        fields = ['slug_change_requested']
+
+
+
+
+class SubscriptionChangeForm(forms.Form):
+    request_type = forms.ChoiceField(
+        choices=[('change', 'Change Subscription'), ('withdraw', 'Withdraw Subscription')],
+        required=True,
+        label="Request Type"
+    )
+    reason = forms.CharField(widget=forms.Textarea, required=True, label="Reason for Request")
+
