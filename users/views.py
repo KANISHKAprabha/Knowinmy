@@ -22,11 +22,15 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import *
+from django.contrib import messages as django_messages
+
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import  logout
 from sentry_sdk import capture_exception
 from django.views import View
 # from bulkmodel.models import BulkModel
+from django.contrib import messages
+
 
 from django.db import transaction
 from django.utils.decorators import method_decorator
@@ -68,7 +72,23 @@ from django.views.decorators.http import require_http_methods
 import logging
 logger = logging.getLogger(__name__)
 
+def send_email(recipient_list, subject, message, from_email=settings.EMAIL_HOST_USER):
+    """
+    Send an email to a list of recipients.
 
+    Args:
+        recipient_list (list): List of email addresses to send the email to.
+        subject (str): Subject of the email.
+        message (str): Body of the email.
+        from_email (str): The sender's email address. Defaults to settings.EMAIL_HOST_USER.
+    """
+    send_mail(
+        subject,
+        message,
+        from_email,
+        recipient_list,
+        fail_silently=False,
+    )
 
 
 def register(request):
@@ -264,7 +284,8 @@ def subscription_payment(request):
             subscription=subscription,
             name=name,
             amount=amount,
-            provider_order_id=razorpay_order["id"]
+            provider_order_id=razorpay_order["id"],
+            
         )
         order.save()
 
@@ -308,6 +329,7 @@ def callback(request):
         order.payment_id = payment_id
         order.signature_id = signature_id
         order.created_at=timezone.now()
+        order.is_active=True
         order.updated_at=timezone.now()
         # order.tenant=request.tenant
         order.save()
@@ -606,11 +628,18 @@ def role_based_dashboard(request):
     print("is_trainer", is_trainer, "is_student", is_student)
     if is_trainer:
         try:
-            get_trainer = TrainerLogDetail.objects.get(trainer_name=current_user)
+            get_trainer = TrainerLogDetail.objects.get(trainer_name=current_user,is_active=True)
             slug=get_trainer.tenant
             if get_trainer:
                 client_name=get_trainer.onboarded_by
                 print(client_name)
+                get_tenant=Tenant.objects.filter(client_name=client_name).first()
+                print(get_tenant,"oppppppppppppppppppppppppppp")
+                get_status=get_tenant. is_active
+                print(get_status,"poooooooooooooooooooooooooooo")
+                if not get_status:
+                    print("kannnnnnnnnnnnnni")
+                    return render(request,"users/info.html")
                 client_full_name=User.objects.get(username=client_name)
                 subsciber_name=Order.objects.get(name=client_full_name.first_name)
                 print(subsciber_name,"pppppppppppppppppppppp")
@@ -652,28 +681,45 @@ def role_based_dashboard(request):
         except Exception as e:
               print("hello here is error ",e)
               
-              return render(request, 'users/view_trained.html', {
-               'tenant': tenant,
-              'slug': tenant.slug})
+              return render(request, 'users/info_active.html'
+              )
 
     elif is_student:
-        get_student = StudentLogDetail.objects.get(student_name=current_user)
+        get_student = StudentLogDetail.objects.get(student_name=current_user,is_active=True)
         slug=get_student.tenant
         if get_student:
                 client_name=get_student.added_by
                 print(client_name)
+               
+                get_tenant=Tenant.objects.filter(client_name=client_name).first()
+                print(get_tenant,"oppppppppppppppppppppppppppp")
+                get_status=get_tenant. is_active
+                print(get_status,"poooooooooooooooooooooooooooo")
+                if not get_status:
+                    print("kannnnnnnnnnnnnni")
+                    return render(request,"users/info.html")
                 client_full_name=User.objects.get(username=client_name)
                 subsciber_name=Order.objects.get(name=client_full_name.first_name)
                 print(subsciber_name,"pppppppppppppppppppppp")
                 if subsciber_name:
                     get_subs=subsciber_name.subscription
                     print(get_subs)
-                    get_status=get_subs.end_date
+                    get_status=get_subs.duration_in_months
+                    print(get_status)
+                    get_start_date=subsciber_name.created_at
+                    print(get_start_date)
+                    expiration_date=get_start_date + timedelta(days=get_status)
+                    print(expiration_date,"oooooooooooooooooooooooooooppppppppppppppp")
                     print(get_status)
                     print(timezone.now(),'sidfisd')
-                    if get_status <= timezone.now():
+                    if timezone.now() >  expiration_date:
                         print("oops")
                         return render(request,'users/error.html')
+                    
+        else:
+            return render(request, 'users/info_active.html'
+              )
+            
 
         
         print(slug,"lllllllllllllllllllllllllllllllllllll")
@@ -688,18 +734,33 @@ def role_based_dashboard(request):
     elif is_client:
       
         print("here is the error")
-        get_tenant_for_client = Tenant.objects.get(client_name=current_user)
+        get_tenant_for_client = Tenant.objects.get(client_name=current_user,is_active=True)
         get_client=request.user
         tenant = get_tenant_for_client
         print(get_client)
         get_user=User.objects.get(username=get_client)
         get_order=Order.objects.filter(name=get_user.first_name).first()
         print(get_order)
+        get_tenant=Tenant.objects.filter(client_name=current_user).first()
+        print(get_tenant,"oppppppppppppppppppppppppppp")
+        get_status=get_tenant. is_active
+        print(get_status,"poooooooooooooooooooooooooooo")
+        if not get_status:
+           
+            print("it get dele")
+            print(get_tenant,"pppppppppp")
+            print("kannnnnnnnnnnnnni")
+            return render(request,"users/info.html")
         get_subs=get_order.subscription
         print(get_subs)
-        get_status=get_subs.end_date
+        get_status=get_subs.duration_in_months
+        get_start_date=get_order.created_at
+        print(get_start_date)
+        expiration_date=get_start_date + timedelta(days=get_status)
+        print(expiration_date,"pooooooooooooooooooooouih")
+
         print(get_status)
-        if get_status <= timezone.now():
+        if timezone.now()> expiration_date:
             print("oops")
             return redirect('renew')
         
@@ -724,7 +785,7 @@ def role_based_dashboard(request):
   except Exception as e:
       print("error",e)
     
-      return redirect('home')
+      return render(request,'users/info.html')
 
   
       
@@ -755,7 +816,6 @@ def log_out(request,slug=None):
         # messages.error(request, 'An error occurred while logging out.')
         print(e)
         return redirect('home')  # Redirect to the home page in case of error
-
 
 @user_passes_test(check_trainer )
 def view_trained(request,slug):
@@ -828,8 +888,9 @@ class CreateAsanaView(UserPassesTestMixin, View):
                 print(client,"line 467 client")
                 no_of_asanas_created_by_trainee = client_for_trainer.no_of_asanas_created
                 print(no_of_asanas_created_by_trainee,"line 468")
-
-                transaction = Order.objects.filter(name=client, status='ACCEPT').first()
+                client_name=User.objects.filter(username=client).first()
+                print(client_name.first_name)
+                transaction = Order.objects.filter(name=client_name.first_name, status='ACCEPT').first()
                 print(transaction,"line 470")
                 if transaction:
                     subscription = transaction.subscription
@@ -911,6 +972,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
             created_asanas_by_trainer.no_of_asanas_created -= 1
             created_asanas_by_trainer.save()
             asana.delete()
+            django_messages.success(request, "Asana deleted successfully")
             return redirect("view-trained",slug=tenant.slug if slug else '')
 
         if "asana_id" in request.POST:
@@ -959,17 +1021,13 @@ class CreateAsanaView(UserPassesTestMixin, View):
                     print(postures_to_delete,existing_postures.count(),no_of_postures_for_asanas,"line no 729")
                     for posture in postures_to_delete:
                         posture.delete()
+                    
                
                 
-                
-            return render(request,"users/view_trained.html",{
-                'form':form,
-                'slug':tenant.slug,
-                'asana_id': asana_id,
-                'is_trainer': True,
-              
-                'tenant':tenant            })
+            django_messages.success(request, "Asana updated successfully")   
+            return redirect("view-trained",slug=tenant.slug if slug else '')
 
+           
 
 
         
@@ -1004,7 +1062,9 @@ class CreateAsanaView(UserPassesTestMixin, View):
                         no_of_asanas_created_by_trainee += 1
                         remaining_forms -= 1
                         print(remaining_forms, "line 579")
-                        sweetify.success(self.request,'Asana created!')
+                        print(messages,"leeee")
+                        
+                        django_messages.success(request, "Asana created successfully")
                         return redirect("view-trained",slug=tenant.slug if slug else '')
                     else:
                         print("max-limit-of-asansa")
@@ -1506,46 +1566,51 @@ def subscription_plans(request):
 
 @login_required
 def trainer_dashboard(request, slug):
- try:
-    
-    tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
+    try:
+        tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
+        trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name')
 
-    trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name')
-    print(trainers,"linee   ")
-    
-    course_counts = {}
-    enrollment_counts = {}
-    
-   
-    trainer_courses = {}
-    trainer_enrollments = {}
+        course_counts = {}
+        enrollment_counts = {}
+        trainer_courses = {}
+        trainer_enrollments = {}
 
-    for trainer in trainers:
-        
-        courses = CourseDetails.objects.filter(tenant=tenant, user=trainer.trainer_name)
-        print(courses,"line no 1128")
-        course_counts[trainer.trainer_name.id] = courses.count()
-        trainer_courses[trainer.trainer_name.id] = courses 
+        for trainer in trainers:
+            courses = CourseDetails.objects.filter(tenant=tenant, user=trainer.trainer_name)
+            course_counts[trainer.trainer_name.id] = courses.count()
+            trainer_courses[trainer.trainer_name.id] = courses
+            
+            enrollments = EnrollmentDetails.objects.filter(tenant=tenant, created_by=trainer.trainer_name).select_related('user')
+            enrollment_counts[trainer.trainer_name.id] = enrollments.count()
+            trainer_enrollments[trainer.trainer_name.id] = enrollments
 
-        
-        enrollments = EnrollmentDetails.objects.filter(tenant=tenant, created_by=trainer.trainer_name).select_related('user')
-        enrollment_counts[trainer.trainer_name.id] = enrollments.count()
-        trainer_enrollments[trainer.trainer_name.id] = enrollments  
+        # Handle enable/disable action
+        if request.method == "POST":
+            action = request.POST.get('action')
+            trainer_id = request.POST.get('trainer_id')
+            trainer_to_update = trainers.filter(trainer_name__id=trainer_id).first()
+            print(trainer_to_update,"ppppppppppppppppppppp")
+            
+            if trainer_to_update:
+                if action == 'enable':
+                    print("it got enabled")
+                    trainer_to_update.is_active = True
+                elif action == 'disable':
+                    print("it got disabled")
+                    trainer_to_update.is_active = False
+                trainer_to_update.save()
 
-    return render(request, 'users/trainers.html', {
-        'trainers': trainers,
-        'course_counts': course_counts,
-        'enrollment_counts': enrollment_counts,
-        'trainer_courses': trainer_courses,
-        'trainer_enrollments': trainer_enrollments,
-        'tenant': tenant,
-    })
- except Exception as e:
-      print("hell0")
-      return render (request,'users/trainers.html',{
-          
-      })
-
+        return render(request, 'users/trainers.html', {
+            'trainers': trainers,
+            'course_counts': course_counts,
+            'enrollment_counts': enrollment_counts,
+            'trainer_courses': trainer_courses,
+            'trainer_enrollments': trainer_enrollments,
+            'tenant': tenant,
+        })
+    except Exception as e:
+        print("Error:", e)
+        return render(request, 'users/error.html')
 def enable_or_disable_user(request, slug, user_id):
     tenant = Tenant.objects.get(slug=slug)
     current_user = request.user
@@ -1638,17 +1703,50 @@ def  student_dashboard(request, slug):
  try:
     tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
 
+
     
-    enrollments = EnrollmentDetails.objects.filter(tenant=tenant).prefetch_related('students_added_to_courses', 'students_added_to_courses__asanas_by_trainer')
+    enrollments = EnrollmentDetails.objects.filter(tenant=tenant).prefetch_related('students_added_to_courses', 'students_added_to_courses__asanas_by_trainer') 
     print(enrollments,"skdjfffffffffffffffffff")
 
 
     student_enrollment_map = {}
     for enrollment in enrollments:
+        print(enrollment.user.id,"jdhbb")
         if enrollment.user not in student_enrollment_map:
             student_enrollment_map[enrollment.user] = []
         student_enrollment_map[enrollment.user].append(enrollment)
         print(student_enrollment_map,"oooooooooooooooooooooooo")
+        
+    print(enrollment.user,"kanis")
+    get_stud=User.objects.filter(username=enrollment.user).first()
+    print(get_stud.id)
+
+    current_user=enrollment.user
+    print(current_user,"oei cirrent")
+    print(get_stud,"ooooopokohjhjhb")
+    get_student=User.objects.filter(username=current_user)
+    print(get_student,"ahsdgggggggggggdgg")
+    if request.method == "POST":
+            action = request.POST.get('action')
+            student_id = request.POST.get('student_id')
+            print(student_id,"idddddddddd")
+            print(get_student,"line 1710")
+            student_to_update = User.objects.filter(id=student_id).first()
+            print(student_to_update,"llllllllllllllllllllllllllll")
+            
+            if student_to_update:
+                if action == 'enable':
+                    print("it got enabled")
+                    student_to_update.is_active = True
+                    student_to_update.save()
+                elif action == 'disable':
+                    print("it got disabled")
+                    student_to_update.is_active = False
+                    student_to_update.save()
+                
+
+
+    
 
     context = {
         'tenant': tenant,
@@ -1657,8 +1755,9 @@ def  student_dashboard(request, slug):
     print(student_enrollment_map,"oooooooooooooooooo")
     return render(request, 'users/students.html', context)
  except Exception as e:
+      print(e,"error")
       
-      return render(request, 'users/students.html')
+      return render(request, 'users/error.html')
 
 
 
@@ -1867,10 +1966,12 @@ def home_slug(request, slug=None):
             print(tenant, "line 1397")
             
             # Check if the user has an associated tenant
-            tenant = Tenant.objects.get(slug=slug)
+            tenant = Tenant.objects.get(slug=tenant)
             print(tenant,"ppppppppppppppppppppppppppppp")
             
-            if user_passes_test(check_client):
+            if check_client(current_user):
+                print(request.user,"pppppppppppppppppppppppp]]")
+                print("it entered if part ")
                 # Check if the client has made a transaction
                 current_user=User.objects.filter(username=request.user).first()
                 get_first_name=current_user.first_name
@@ -1921,18 +2022,44 @@ def home_slug(request, slug=None):
 
 
 
+
 @login_required
 @user_passes_test(check_knowinmy)
 def organization_list_view(request):
- try:
-    organizations = Tenant.objects.all()
-    return render(request, 'users/organization_list.html', {'organizations': organizations})
- except Exception as e:
-     return render(request, 'users/error.html')
-      
+    try:
+        organizations = Tenant.objects.all()
+
+        if request.method == "POST":
+            action = request.POST.get('action')
+            tenant_id = request.POST.get('tenant_id')
+            print(tenant_id,"ooooooooooooooooid")
+            organization_to_update = organizations.filter(id=tenant_id).first()
+            print("organization",organization_to_update)
+            print(organization_to_update.is_active,"line 2010")
+
+            if organization_to_update:
+                if action == 'enable':
+                    organization_to_update.is_active = True
+                    print(organization_to_update.is_active,"line 2013")
+                    organization_to_update.save()
+                    print("got enabled")
+                  
+                elif action == 'disable':
+                    organization_to_update.is_active = False
+                    print(organization_to_update.is_active,"line 2018")
+                    organization_to_update.save()
+                    print("got diasnlad")
+                   
+
+        return render(request, 'users/organization_list.html', {'organizations': organizations})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        # messages.error(request, "An error occurred while processing the request.")
+        return render(request, 'users/error.html')
 @login_required
 @user_passes_test(check_knowinmy)
-def asanas_view(request, tenant_id):
+def     asanas_view(request, tenant_id):
  try:
     tenant = get_object_or_404(Tenant, id=tenant_id)
     print(tenant,"pppppppppppppppppppppp")
@@ -2053,18 +2180,26 @@ def get_subscription_details_for_client(request,slug):
     print(tenant,"puuuuuppyyyyyyy")
     get_order=Order.objects.filter(name=get_email).first()
     print(get_order,"popopop")
-    get_subs=get_order.subscription.name
+    get_subs=get_order.subscription
     get_asana_count=get_order.subscription.permitted_asanas
     get_no_of_persons_onboard=get_order.subscription.no_of_persons_onboard
+    get_time=get_order.created_at
+    get_status=get_subs.duration_in_months
+    print(get_status,"ppppppppppppppppppppp")
+    print(get_time,"oooooooooo")
+    expiration_date=get_time + timedelta(days=get_status)
+    print(expiration_date,"oooooooooooooooooooooooooooppppppppppppppp")
+
+
 
     get_client_onboardings=ClientOnboarding.objects.filter(tenant=tenant).first()
     if get_client_onboardings:
          get_count_stud=get_client_onboardings.students_onboarded
          get_count_trainer=get_client_onboardings.trainers_onboarded
          print(get_subs)
-         return render (request,'users/show_subscription.html',{'slug':tenant.slug,'tenant':tenant,'get_order':get_order,'get_subs':get_subs,'get_asana_count':get_asana_count,'get_no_of_persons_onboard':get_no_of_persons_onboard,'get_count_stud':get_count_stud,'get_count_trainer':get_count_trainer})
+         return render (request,'users/show_subscription.html',{'slug':tenant.slug,'tenant':tenant,'get_order':get_order,'get_subs':get_subs,'get_asana_count':get_asana_count,'get_no_of_persons_onboard':get_no_of_persons_onboard,'get_count_stud':get_count_stud,'get_count_trainer':get_count_trainer,'expiration_date':expiration_date})
     else:
-        return render (request,'users/show_subscription.html',{'slug':tenant.slug,'tenant':tenant,'get_order':get_order,'get_subs':get_subs,'get_asana_count':get_asana_count,'get_no_of_persons_onboard':get_no_of_persons_onboard,'get_count_stud':0,'get_count_trainer':0})
+        return render (request,'users/show_subscription.html',{'slug':tenant.slug,'tenant':tenant,'get_order':get_order,'get_subs':get_subs,'get_asana_count':get_asana_count,'get_no_of_persons_onboard':get_no_of_persons_onboard,'get_count_stud':0,'get_count_trainer':0,'expiration_date':expiration_date})
 
    
  except Exception as e:
@@ -2305,16 +2440,18 @@ def send_slug_change_reject_notification(tenant, request):
 
 
 
-
+@user_passes_test(check_client)
 def subscription_change_request(request,slug=None):
     current_user=request.user
+    print(current_user,"pppppppppppppppppppp")
     current_user_in_order=Order.objects.filter(name=current_user).first()
     # current_subs=current_user_in_order.subscription
     print(current_user_in_order,"pppppppppppppppppppp")
     if request.method == 'POST':
         form = SubscriptionChangeForm(request.POST)
         tenant=Tenant.objects.filter(client_name=current_user).first()
-        slug=tenant.slug
+        print(tenant,"ppppppppppppppp]")
+       
         current_user_in_order=Order.objects.filter(name=current_user).first()
         # current_subs=current_user_in_order.subscription
         # print(current_user_in_order,current_subs,"pppppppppppppppppppp")
@@ -2350,6 +2487,7 @@ def approve_subscription_change(request, request_id):
     subscription_request = get_object_or_404(SubscriptionChangeRequest, id=request_id)
     tenant = get_object_or_404(Tenant, id=subscription_request.tenant.id)
 
+
     if subscription_request.request_type == 'withdraw':
         tenant.is_active = False  # Disable the organization
         tenant.save()  # Save the tenant's active status
@@ -2372,17 +2510,24 @@ def approve_subscription_change_by_knowinmy(request, request_id):
     get_user=get_client_name.client_name
     print(get_user,"pppppppppppppppppp")
 
-    subscription = get_object_or_404(Order, name=request.user)
+   
    
     tenant=Tenant.objects.filter(client_name=get_user).first()
+    get_fn=User.objects.get(username=get_user)
+    get_name=get_fn.first_name
+    print(get_name,"ppppppppppppppppsdifhsdjhjh")
+    get_order=Order.objects.filter(name=get_name).first()
+    print(get_order,"kkkkkkkkkkkkkkkka")
     print(tenant,"ooooooooooooooooooooo")
 
-    get_subs=subscription.subscription
+    get_subs=get_order.subscription
     print(get_subs,"llllllllllllllllll")
     action = request.POST.get('action')
     if action == 'approve':
         # Set tenant as inactive (disable organization access)
         tenant.is_active = False
+        get_order.delete()
+
         tenant.save()
         print("hello")
         
@@ -2399,7 +2544,7 @@ def approve_subscription_change_by_knowinmy(request, request_id):
    
 
     return redirect('list_subscription_requests')  # Redirect back to the list of requests
-
+@user_passes_test(check_knowinmy)
 def list_subscription_requests(request):
     requests = SubscriptionChangeRequest.objects.filter(approved=False)  # Fetch all unapproved requests
     return render(request, 'users/subscription_requests.html', {'requests': requests})

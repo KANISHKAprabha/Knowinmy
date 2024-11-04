@@ -1,157 +1,66 @@
 {% extends 'users/staff_dashboard.html' %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organization List</title>
-    <!-- Include Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Include Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-    <style>
-        body {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        thead {
-            background-color:rgb(114, 54, 209);
-            color: white;
-            text-align: center; /* Horizontally center the text */
-        }
-
-        th {
-            padding: 15px;
-            vertical-align: middle; /* Vertically center the text */
-            text-align: center; /* Horizontally center the text */
-            font-weight: bold;
-        }
-
-        /* Ensure table width consistency */
-        .table {
-            width: 100%;
-            margin: 20px auto;
-            border-radius: 10px;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        td {
-            padding: 10px;
-            vertical-align: middle;
-            text-align: center;
-        }
-
-        .btn {
-            color: white;
-            border-radius: 5px;
-            padding: 10px 15px;
-            transition: background-color 0.3s;
-            width: 100%; /* Make buttons take full width of their parent column */
-        }
-
-        .btn-primary {
-            background-color: #5244a3;
-        }
-
-        .btn-primary:hover {
-            background-color: #4729a8;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        /* Add some spacing between the action buttons */
-        .btn-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px; /* Spacing between buttons */
-        }
-
-        /* Ensure responsiveness for buttons */
-        @media (max-width: 768px) {
-            .btn-group {
-                flex-direction: column;
-            }
-        }
-
-        /* Make the table responsive */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        /* Adjust table cells for smaller screens */
-        @media (max-width: 576px) {
-            td, th {
-                font-size: 12px;
-                padding: 8px;
-            }
-
-            .btn {
-                font-size: 12px;
-                padding: 8px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2 class="text-center mt-4">Organization List</h2>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Organization Name</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for organization in organizations %}
-                    <tr>
-                        <td>{{ organization.organization_name }}</td>
-                        <td>{{ organization.organization_email }}</td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="{% url 'asanas_view' organization.id %}" class="btn btn-primary">
-                                    <i class="fas fa-eye"></i> View Details
-                                </a>
-                                <a href="{% url 'send_email_view' organization.id %}" class="btn btn-secondary">
-                                    <i class="fas fa-envelope"></i> Send Email
-                                </a>
-                                <a href="{% url 'create_coupon_view' organization.id %}" class="btn btn-success">
-                                    <i class="fas fa-tag"></i> Create Coupon
-                                </a>
+<div class="container">
+    <h2 class="text-center mt-4">Organization List</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Organization Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for organization in organizations %}
+                <tr>
+                    <td>{{ organization.organization_name }}</td>
+                    <td>{{ organization.organization_email }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{% url 'asanas_view' organization.id %}" class="btn btn-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <a href="{% url 'send_email_view' organization.id %}" class="btn btn-secondary">
+                                <i class="fas fa-envelope"></i> Send Email
+                            </a>
+                            <a href="{% url 'create_coupon_view' organization.id %}" class="btn btn-success">
+                                <i class="fas fa-tag"></i> Create Coupon
+                            </a>
+                        </div>
+                        <!-- Enable/Disable Form -->
+                        <div class="btn-group mt-2">
+                            <div class="d-flex justify-content-center">
+                                <!-- Enable Form -->
+                                <form id="enable-form-{{ organization.id }}" method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tenant_id" value="{{ organization.id }}">
+                                    <input type="hidden" name="action" value="enable">
+                                    {% if not organization.is_active %}
+                                        <button type="submit" class="btn btn-success btn-sm">Enable</button>
+                                    {% endif %}
+                                </form>
+                            
+                                <!-- Disable Form -->
+                                <form id="disable-form-{{ organization.id }}" method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    {{ organization.id }}
+                                    {{organization.is_active}}
+                                    <input type="hidden" name="tenant_id" value="{{ organization.id }}">
+                                    <input type="hidden" name="action" value="disable">
+                                    {% if organization.is_active %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Disable</button>
+                                    {% endif %}
+                                </form>
                             </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-    <!-- Include Bootstrap JS (optional) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+</div>
 {% endblock content %}

@@ -24,7 +24,6 @@
                 {% for trainer in trainers %}
                 <tr>
                     <td>{{ trainer.trainer_name.username }}</td>
-                    
                     <td>{{ trainer.no_of_asanas_created }}</td>
                     <td>
                         <ol class="list-unstyled">
@@ -38,7 +37,7 @@
                     <td>
                         <ol class="list-unstyled">
                             {% for enrollment in trainer_enrollments|get_item:trainer.trainer_name.id %}
-                                <li>{{ enrollment.user.username }} enrolled -  {{ enrollment.students_added_to_courses.all|join:", " }}</li>
+                                <li>{{ enrollment.user.username }} enrolled - {{ enrollment.students_added_to_courses.all|join:", " }}</li>
                             {% empty %}
                                 <li class="no-content">No enrollments for this trainer.</li>
                             {% endfor %}
@@ -46,16 +45,28 @@
                     </td>
                     <td>
                         <div class="d-flex justify-content-center">
-                            <div class="d-flex justify-content-center">
-                                
-                            </div>
-                            
-                           
-                            
+                            <!-- Enable/Disable Button Forms -->
+                            <form id="enable-form-{{ trainer.trainer_name.id }}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="trainer_id" value="{{ trainer.trainer_name.id }}">
+                                <input type="hidden" name="action" value="enable">
+                                {% if not trainer.is_active %}
+                                    <button type="submit" class="btn btn-success btn-sm">Enable</button>
+                                {% endif %}
+                            </form>
+
+                            <form id="disable-form-{{ trainer.trainer_name.id }}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="trainer_id" value="{{ trainer.trainer_name.id }}">
+                                <input type="hidden" name="action" value="disable">
+                                {% if trainer.is_active %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Disable</button>
+                                {% endif %}
+                            </form>
+
                             <!-- Edit button remains unchanged -->
                             <a href="{% url 'edit_trainer' user_id=trainer.trainer_name.id slug=tenant.slug %}" class="btn btn-warning btn-sm ml-2">Edit</a>
                         </div>
-                       
                     </td>
                 </tr>
                 {% empty %}
@@ -76,112 +87,5 @@
 
 </div>
 
-<!-- Modal for Course Creation/Update -->
-<div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #5f52aa; color: white;">
-                <h5 class="modal-title" id="courseModalLabel">
-                    {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="course-creation-form" method="POST">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        {{ form.course_name.label_tag }}
-                        {{ form.course_name }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.description.label_tag }}
-                        {{ form.description }}
-                    </div>
-                    <button type="submit" name="create_course" class="btn btn-primary" style="background-color: #5f52aa; border-color: #5f52aa;">
-                        {% if form.instance.id %}Update Course{% else %}Create Course{% endif %}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<style>
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
-    
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-    }
-    
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-    }
-    
-    input:checked + .slider {
-      background-color: #4caf50;  /* Green for enabled */
-    }
-    
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    
-    .slider.round {
-      border-radius: 34px;
-    }
-    
-    .slider.round:before {
-      border-radius: 50%;
-    }
-    </style>
-    
-<!-- JavaScript for modal form -->
-<script>
-    function submit_form() {
-        $("#course-creation-form").submit();
-    }
-</script>
-<script>
-    document.getElementById('toggle-input').addEventListener('change', function() {
-        var form = document.getElementById('enable-disable-form');
-        var actionInput = document.getElementById('action-input');
-        var isChecked = this.checked;
-    
-        if (isChecked) {
-            actionInput.value = 'enable';  // Set the action to enable
-        } else {
-            actionInput.value = 'disable';  // Set the action to disable
-        }
-    
-        // Submit the form to toggle enable/disable status
-        form.submit();
-    });
-    </script>
-    
 {% endblock %}
 

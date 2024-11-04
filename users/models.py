@@ -192,6 +192,8 @@ class Order(models.Model):
     signature_id = models.CharField(_("Signature ID"), max_length=128, null=False, blank=False)
     created_at=models.DateTimeField(verbose_name='Created at',null=True)
     updated_at= models.DateTimeField(verbose_name='Last modified at',null=True)
+    is_active = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"{self.id}-{self.name}-{self.status}"
