@@ -18,17 +18,17 @@
     <!-- Buttons and Heading Section -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
         <!-- Create Enrollment Button -->
-        <button class="btn btn-primary text-white shadow-sm mb-2 mb-md-0" data-toggle="modal" data-target="#enrollmentModal">
+        <button class="btn btn-primary text-white shadow-sm mb-2 mb-md-0" data-toggle="modal" data-target="#enrollmentModal" style="background-color: #5f52aa; border-color: #5f52aa;">
             Create Enrollment
         </button>
         <!-- Enrollment Details Heading -->
-        <h2 class="text-center mb-0" style="font-size: 36px; color: #553CDF;">Enrollment Details</h2>
+        <h2 class="text-center mb-0" style="color: #5f52aa;">Enrollment Details</h2>
     </div>
 
     <!-- Enrollment Details Table Section -->
     <div class="table-responsive">
-        <table class="table table-bordered table-striped w-100">
-            <thead class="thead-light">
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
                 <tr>
                     <th scope="col">Username</th>
                     <th scope="col">Enrolled Courses</th>
@@ -44,7 +44,7 @@
                     <td>
                         <div class="d-flex flex-wrap">
                             {% for course in enrollment.students_added_to_courses.all %}
-                            <span >{{ course.course_name }}</span>
+                            <span>{{ course.course_name }}</span>
                             {% empty %}
                             <span class="text-muted">No courses enrolled.</span>
                             {% endfor %}
@@ -70,7 +70,7 @@
         </table>
     </div>
     <div class="d-flex justify-content-end mt-3">
-        <a href="{% url 'create-course' slug=tenant.slug %}" class="btn btn-secondary shadow-sm">Back</a>
+        <a href="{% url 'create-course' slug=tenant.slug %}" class="btn btn-secondary shadow-sm" style="background-color: #5f52aa; border-color: #5f52aa;">Back</a>
     </div>
 </div>
 
@@ -78,7 +78,7 @@
 <div class="modal fade" id="enrollmentModal" tabindex="-1" role="dialog" aria-labelledby="enrollmentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #5f52aa; color: white;">
                 <h5 class="modal-title" id="enrollmentModalLabel">Create Enrollment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -88,12 +88,20 @@
                 <form id="enrollment_form" method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug %}">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary">Create Enrollment</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #5f52aa; border-color: #5f52aa;">Create Enrollment</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+{% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
 
 <!-- Custom Script for Form Handling -->
 <script>
@@ -121,7 +129,7 @@
     /* Headings Styling */
     h2 {
         font-size: 2.5rem;
-        color: #333;
+        color: #5f52aa;
         font-weight: 600;
     }
 
@@ -132,8 +140,8 @@
     }
 
     .btn-primary {
-        background-color: #553CDF;
-        border-color: #553CDF;
+        background-color: #5f52aa;
+        border-color: #5f52aa;
     }
 
     .btn-info {
@@ -169,6 +177,22 @@
             padding: 8px;
         }
     }
+
+    .alert {
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: green;
+        border-color: #d4edda;
+        background-color: #d4edda;
+    }
+    .alert-error {
+        color: red;
+        border-color: #f8d7da;
+        background-color: #f8d7da;
+    }
 </style>
 {% endblock %}
-

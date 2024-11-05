@@ -103,6 +103,15 @@ def register(request):
 
         user = User.objects.create_user(username=email,email=email,first_name=first_name,last_name=last_name,password=password)
         user.save()
+        send_email(
+            subject="Registeration in Knowinmy",
+            message="Welcome to our website to enchance your tutor skills in  AI assisted website",
+            from_email="prabhaprasath07@gmail.com",
+            recipient_list=[email],
+            fail_silently=False,
+
+
+                   )
         
       
         return redirect('login')
@@ -203,8 +212,42 @@ def update_profile(request,slug):
     except Exception as e:
         return render(request, 'error.html')
 
+def send_payment_invoice(request,order):
+    user=request.user
+    print(user,"hello world ")
+    current_user=User.objects.filter(username=user).first()
+    get_email=current_user.email
+    print(get_email,"hello")
 
-@user_passes_test(check_client)
+    subject = f"Payment Invoice for Order {order.provider_order_id}"
+    message = f"""
+    Dear Customer,
+
+    Thank you for your payment. Here are the details of your transaction:
+
+    Order ID: {order.provider_order_id}
+    Payment ID: {order.payment_id}
+    Amount: {order.amount}  # Assuming there's an amount field in your Order model
+    Status: {order.status}
+    Date: {order.created_at}
+
+    We appreciate your business!
+
+    Best regards,
+    Your Company Name
+    """
+    from_email = settings.DEFAULT_FROM_EMAIL  # Make sure to set this in your settings.py
+    recipient_list = [get_email]  # Replace with the actual field containing the customer's email
+
+    # Send the email
+    send_mail(
+        subject,
+        message,
+        from_email,
+        recipient_list,
+        fail_silently=False,
+    )
+@login_required
 def subscription_payment(request):
  try:
     
@@ -218,10 +261,11 @@ def subscription_payment(request):
     if request.method == "POST":
         username = request.user
         print(username,"lollllll")
-        get_only_username=User.objects.get(email=username)
+        get_only_username=User.objects.get(username=current_user)
         name=get_only_username.first_name
         print(name,"line no 111")
         subscription_id = request.POST.get("subscription_id")
+        print(subscription_id)
         coupon_code = request.POST.get("coupon_code")
         subscription = Subscription.objects.get(id=subscription_id)
         
@@ -253,6 +297,11 @@ def subscription_payment(request):
             provider_order_id=razorpay_order["id"]
         )
         order.save()
+        group, _ = Group.objects.get_or_create(name='Client')
+        if not current_user.groups.filter(name='Client').exists():
+            current_user.groups.add(group)
+            current_user.save() 
+        send_payment_invoice(request,order)   
 
         return render(
             request,
@@ -267,7 +316,7 @@ def subscription_payment(request):
         print("entered elseeeeeeeeee")
         username = request.user
         print(username,"lollllll")
-        get_only_username=User.objects.get(email=username)
+        get_only_username=User.objects.get(username=username)
         name=get_only_username.first_name
         print(name,"line no 111")
         subscription_id = request.session.get('subscription_id')
@@ -288,6 +337,18 @@ def subscription_payment(request):
             
         )
         order.save()
+         # send_payment_invoice(order,request)
+            # group, _ = Group.objects.get_or_create(name='Client')
+            # current_user.groups.add(group)
+        print("order saved")
+        group, _ = Group.objects.get_or_create(name='Client')
+        if not current_user.groups.filter(name='Client').exists():
+            current_user.groups.add(group)
+            current_user.save() 
+        send_payment_invoice(request,order)    
+        
+ 
+                   
 
         return render(
             request,
@@ -296,6 +357,7 @@ def subscription_payment(request):
                 "callback_url": "http://" + "127.0.0.1:8000" + "/razorpay/callback/",
                 "razorpay_key": settings.RAZORPAY_KEY_ID,
                 "order": order,
+               
             },
         )   
         
@@ -312,8 +374,10 @@ def subscription_payment(request):
 def callback(request):
     # tenant = request.tenant  # Assuming the tenant is set in the middleware
   try:
+   
 
     def verify_signature(response_data):
+        
         time.sleep(2)
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
         try:
@@ -341,6 +405,10 @@ def callback(request):
                 'order':order,
                 # 'idempo_token': idempo.token,
             }
+           
+          
+ 
+           
             
             print("SUCCESS")
             return render(request, "users/success.html",context)
@@ -365,7 +433,8 @@ def callback(request):
         print("FAILURE: Error in payment process.")
         return render(request, "users/callback.html", context={"status": order.status})
   except Exception as e:
-       return render(request,'error.html')
+       print(e,"hello error")
+       return render(request,'users/error.html')
 
 # integrity error need to handle in this view - username must be unique
 
@@ -383,11 +452,13 @@ def Trainer_approval_function(request,slug):
 
         if request.method == 'POST':
             admin_user = request.user
+            get_name=User.objects.filter(username=admin_user).first()
+            get_name_email=get_name.email
             print(admin_user,"line 209")
 
           
             order_transaction = Order.objects.filter(
-                name=admin_user,
+                name=get_name.first_name,
                 status='ACCEPT',
                  # Filter based on tenant
             ).first()
@@ -418,10 +489,20 @@ def Trainer_approval_function(request,slug):
                 
                 # Pass file path, admin user ID, and tenant information to the Celery task
                 process_excel_file.delay(file_path, admin_user_id, tot, tenant.id)
+                send_email(
+            subject="Onboarding users in Knowinmy",
+            message="You have onboarded the users successfully ",
+            from_email="prabhaprasath07@gmail.com",
+            recipient_list=[get_name_email],
+            fail_silently=False,
 
-                sweetify.success(request, "Users are being onboarded, you'll be notified once done.", button="OK")
+
+                   )
+                
+
+                django_messages.success(request, "Users are being onboarded, you'll be notified once done.", button="OK")
             else:
-                sweetify.error(request, "No file uploaded!", button="OK")
+                django_messages.error(request, "No file uploaded!", button="OK")
 
             return render(request, 'users/Trainer_approval_Page.html',{'tenant': tenant,"slug":tenant.slug})
 
@@ -431,6 +512,7 @@ def Trainer_approval_function(request,slug):
     except Exception as e:
         print(e)
         capture_exception(e)
+        django_messages.error(request, "Error from our side ")
         return render(request,'users/error.html')
     
 
@@ -449,7 +531,7 @@ def client_list(request):
 def onboarding_view(request,slug):
   try:
     admin_user = request.user
-    user_email=User.objects.get(email=admin_user)
+    user_email=User.objects.get(username=admin_user)
     print(user_email,"pppppppppjij")
     username_client=user_email.first_name
     print(username_client,"oooooooooooo")
@@ -470,6 +552,7 @@ def onboarding_view(request,slug):
     if not order_transaction:
         tenant = Tenant.objects.get(slug=slug)
         sweetify.warning(request, "No transaction found", button="OK")
+        django_messages.error(request,"No transaction found")
         print("No transaction found")
         print("hello")
         return render(request,'users/Trainer_approval_Page.html', {'slug':tenant.slug,'tenant':tenant})
@@ -541,6 +624,7 @@ def onboarding_view(request,slug):
                         
                     )
                     # Update ClientOnboarding model
+                    django_messages.success(request,"Trainer onboarded successfully")
                     client_onboarding.trainers_onboarded = F('trainers_onboarded') + 1
                 else:
                   
@@ -554,15 +638,18 @@ def onboarding_view(request,slug):
                         tenant=tenant  # Associate with the tenant
                     )
                     # Update ClientOnboarding model
+                    django_messages.success(request,"Student onboarded successfully")
                     client_onboarding.students_onboarded = F('students_onboarded') + 1
 
             # Save the updated counts to the database
             client_onboarding.save()
             remaining_forms -= len(formset)
             print(remaining_forms, "Remaining Forms after Onboarding")
+
             return render(request, 'users/Trainer_approval_Page.html',{'tenant':tenant})
         else:
             print(formset.errors)
+            django_messages.error(request,"Form is not valid  ")
 
             print("formset is not valid")
     else:
@@ -572,6 +659,7 @@ def onboarding_view(request,slug):
     return render(request, 'users/onboarding_form.html', {'formset': formset,'tenant':tenant})
   except  Exception as e:
        print(e)
+       django_messages.error(request,"An error occured ")
        return render(request,'users/error.html')
 
 
@@ -620,7 +708,8 @@ def role_based_dashboard(request):
     print("Current user:", current_user)
     is_trainer = TrainerLogDetail.objects.filter(trainer_name=current_user).exists()
     is_student = StudentLogDetail.objects.filter(student_name=current_user).exists()
-    is_client=User.objects.filter(email=current_user).exists()
+    is_client=Order.objects.filter(name=current_user).exists()
+    print(is_client,"lllllllllllll")
     print(is_student,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
     # is_client = User.objects.filter(username=current_user).exists()
     # print(is_client,"loooooooooooooooooooooooooooo")
@@ -641,7 +730,7 @@ def role_based_dashboard(request):
                     print("kannnnnnnnnnnnnni")
                     return render(request,"users/info.html")
                 client_full_name=User.objects.get(username=client_name)
-                subsciber_name=Order.objects.get(name=client_full_name.first_name)
+                subsciber_name=Order.objects.filter(name=client_full_name.first_name).first()
                 print(subsciber_name,"pppppppppppppppppppppp")
                 if subsciber_name:
                     get_subs=subsciber_name.subscription
@@ -776,6 +865,7 @@ def role_based_dashboard(request):
             'slug': tenant.slug
         })
     else:
+        print("entered knowinmy part")
         get_knowinmy=User.objects.get(username =request.user)
         print(get_knowinmy,"ppppppppppppppppppppppppppp")
         
@@ -817,7 +907,7 @@ def log_out(request,slug=None):
         print(e)
         return redirect('home')  # Redirect to the home page in case of error
 
-@user_passes_test(check_trainer )
+@user_passes_test(check_trainer   )
 def view_trained(request,slug):
 
  try:
@@ -841,8 +931,8 @@ def view_trained(request,slug):
       return render(request,'error.html')
 
 
-@login_required
-@user_passes_test(check_trainer or check_student)
+
+@user_passes_test(check_trainer or check_student or check_knowinmy)
 def view_posture(request, asana_id,slug):
   try:
     print(asana_id,"line no 575")
@@ -943,6 +1033,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
         else:
             tenant =  Tenant.objects.get(slug=slug)
             formset = AsanaCreationFormSet()
+            
             return render(request, "users/create_asana.html", {
                 'formset': formset,
                 'is_trainer': True,
@@ -1068,6 +1159,7 @@ class CreateAsanaView(UserPassesTestMixin, View):
                         return redirect("view-trained",slug=tenant.slug if slug else '')
                     else:
                         print("max-limit-of-asansa")
+                        django_messages.error(request, "Exceed max limit of asanas")
                         return redirect("view-trained",slug=tenant.slug if slug else '')
                         break
 
@@ -1111,6 +1203,7 @@ class CourseCreationView(UserPassesTestMixin, View):
         else:
             form = CourseCreationForm(user=self.request.user,tenant=tenant)
             courses = CourseDetails.objects.filter(user=current_user, tenant=tenant)
+           
             return render(request, "users/trainer_dashboard.html", {
                 'form': form,
                 'is_trainer': True,
@@ -1121,7 +1214,7 @@ class CourseCreationView(UserPassesTestMixin, View):
             })
      except Exception as e:
           print(e)
-          return render (request,'users/trainer_dashboard.html',)
+          return render (request,'users/error.html',)
 
     def post(self, request, slug,*args, **kwargs):
      try:
@@ -1137,6 +1230,7 @@ class CourseCreationView(UserPassesTestMixin, View):
             courses_id= kwargs.get('course_id')
             course = get_object_or_404(CourseDetails, id=course_id, tenant=tenant)
             course.delete()
+            django_messages.success(request, "Course deleted successfully")
             return redirect('create-course',slug=slug if slug else '')
         elif 'course_id'  in request.POST:
             course =CourseDetails.objects.get(id=course_id, tenant=tenant)
@@ -1147,10 +1241,12 @@ class CourseCreationView(UserPassesTestMixin, View):
             if form.is_valid():
                 form.save()
                 print(form.errors,"oooooooooooooooooooooooo")
-                return redirect('view-trained',slug=tenant.slug if slug else '')
+                django_messages.success(request, "Course updated successfully")
+                return redirect('create-course',slug=tenant.slug if slug else '')
                 
                
             else:
+                django_messages.error(request, "An error occured!")
                 return render(request, "users/update_course.html", {
                     'form': form,
                     'course_id': course_id,
@@ -1182,10 +1278,12 @@ class CourseCreationView(UserPassesTestMixin, View):
                 course.updated_at = timezone.now()
                 course.save()  # Save the instance to the database
                 form.save_m2m()  # Save many-to-many data
+                django_messages.success(request, "Course created successfully")
 
                 return redirect('create-course',slug=slug if slug else '')
             else:
                 courses = CourseDetails.objects.filter(user=self.request.user)
+                django_messages.error(request, "An error occured!")
                 return render(request, "users/trainer_dashboard.html", {
                     'form': form,
                     'is_trainer': True,
@@ -1193,20 +1291,39 @@ class CourseCreationView(UserPassesTestMixin, View):
                     'tenant':tenant
                 })
      except Exception as e:
+         django_messages.error(request, "An error occured!")
          return render(request,'error.html')
 
 
 # @user_passes_test(check_student)
 def home(request, slug=None):
-    if slug:
+  
         tenant = get_object_or_404(Tenant, slug=slug)
         current_user=request.user
+        print(current_user,"line 1301")
         get_client=User.objects.get(email=current_user)
         get_transaction = False  # Default to False
         get_tenant = False  # Default to False
-        if user_passes_test(check_client):
-            get_transaction=Order.objects.filter(name=current_user).exists()
-            print(get_transaction)
+        if check_client(current_user):
+                print(request.user,"pppppppppppppppppppppppp]]")
+                print("it entered if part ")
+                # Check if the client has made a transaction
+                current_user=User.objects.filter(username=request.user).first()
+                get_first_name=current_user.first_name
+                
+                get_transaction = Order.objects.filter(name=get_first_name).exists()  # Assuming Order model has a `user` field
+                print(get_transaction,"hhhhhhhhhhhhhh")
+               
+               # Pass the necessary context to the template
+                return render(request, "home_page.html", {
+                
+                'get_transaction': get_transaction,
+                
+
+                })
+        else:
+            return render(request, "home_page.html", {
+              })
 
 
         
@@ -1216,28 +1333,7 @@ def home(request, slug=None):
         # Fetch subscriptions if tenant exists
        
         return render(request, "home_page.html",{'subscriptions':subscriptions,'get_tranasction':get_transaction})
-    else:
-        subscriptions=Subscription.objects.all()
-        current_user=request.user
-        get_name=User.objects.get(email=current_user)
-        get_fn=get_name.first_name
-        print(current_user)
-        get_client=User.objects.get(email=current_user)
-        get_transaction = False  # Default to False
-         # Default to False
-        get_tenant=True
-        if user_passes_test(check_client):
-            get_transaction=Order.objects.filter(name=get_fn).exists()
-            print(get_transaction,"ppppppppppppppp")
-        
-            get_tenant=Tenant.objects.get(client_name=current_user)
-            print(get_tenant)
-        else:
-            return render(request,"home_page.html",{'subscriptions':subscriptions})
-
-       
-        return render(request, "home_page.html",{'subscriptions':subscriptions,'get_tranasction':get_transaction,'get_tenant':get_tenant})
-
+    
 @user_passes_test(check_student or check_client or check_trainer)
 def staff_dashboard_function(request,slug):
  try:
@@ -1362,7 +1458,7 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
                 'tenant':tenant
             })
      except Exception as e :
-          return render(request,'error.html')
+          return render(request,'users/error.html')
 
     
     def post(self, request,slug, *args, **kwargs):
@@ -1377,20 +1473,22 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
         if 'delete_course_map_form' in request.POST :
             enrollment = get_object_or_404(EnrollmentDetails, id=enrollment_id, tenant=tenant)
             enrollment.delete()
-            return render(request, 'users/student_mapping.html',{'tenant':tenant})
+            django_messages.success(request, "Enrollment deleted successfully")
+            return redirect('student-mapp-courses',slug=slug if slug else '')
+            
+            
         
         elif   enrollment_id or 'update_course_map_form' in request.POST:
             enrollment = get_object_or_404(EnrollmentDetails, id=enrollment_id, tenant=tenant)
             form = StudentCourseMappingForm(request.POST, instance=enrollment, user=request.user,tenant=tenant)
             if form.is_valid():
                 form.save()
-                return render(request, "users/student_mapping.html", {
-                    'form': form,
-                    'enrollment_id': enrollment_id,
-                    'tenant':tenant,
-                    'slug':tenant.slug
-                })
+                django_messages.success(request, "Enrollment updated successfully")
+               
+                return redirect('student-mapp-courses',slug=slug if slug else '')
+               
             else:
+                django_messages.error(request, "An error occured!")
                 return render(request, "users/student_mapping.html", {
                     'form': form,
                     'enrollment_details': enrollment_details,
@@ -1411,6 +1509,7 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
                 enrollment.created_by=self.request.user # Set the tenant for the enrollment
                 enrollment.save()
                 form.save_m2m()
+                django_messages.success(request, "Enrollment created successfully")
                 return render(request, "users/student_mapping.html", {
                     'form': form,
                     'enrollment_details': enrollment_details,
@@ -1419,6 +1518,7 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
                     'slug':tenant.slug
                 })
             else:
+                django_messages.error(request, "An error occured!")
                 return render(request, "users/trainer_dashboard.html", {
                     'form': form,
                     'enrollment_id': enrollment_id,
@@ -1426,7 +1526,10 @@ class StudentCourseMapView(LoginRequiredMixin, UserPassesTestMixin, View):
                      'slug':tenant.slug
                 })
      except Exception as e:
-          return render(request,'error.html')
+          print(e)
+          django_messages.error(request, "An error occured!")
+
+          return render(request,'users/error.html')
 
 
 
@@ -1471,7 +1574,7 @@ def user_view_asana(request,slug):
 
 
 @login_required
-@user_passes_test(check_student)
+@user_passes_test(check_student or check_knowinmy)
 def user_view_posture(request,slug, asana_id):
 
     tenant = Tenant.objects.get(slug=slug)
@@ -2059,7 +2162,7 @@ def organization_list_view(request):
         return render(request, 'users/error.html')
 @login_required
 @user_passes_test(check_knowinmy)
-def     asanas_view(request, tenant_id):
+def  asanas_view(request, tenant_id):
  try:
     tenant = get_object_or_404(Tenant, id=tenant_id)
     print(tenant,"pppppppppppppppppppppp")
@@ -2073,6 +2176,20 @@ def     asanas_view(request, tenant_id):
          print(get_tenant,"looooooooooooooooooo")
          get_subs=get_tenant.subscription.name
          print(get_subs,"ouuuuuuuuuuuuuuuuu")
+         get_name=User.objects.filter(email=get_client).first()
+         get_order=Order.objects.filter(name=get_name.first_name).first()
+         print(get_order,"popopop")
+         get_subs=get_order.subscription
+         print(get_subs,"ooooooooooooooo")
+      
+         get_asana_count=get_order.subscription.permitted_asanas
+         get_no_of_persons_onboard=get_order.subscription.no_of_persons_onboard
+         get_time=get_order.created_at
+         get_status=get_subs.duration_in_months
+         print(get_status,"ppppppppppppppppppppp")
+         print(get_time,"oooooooooo")
+         expiration_date=get_time + timedelta(days=get_status)
+         print(expiration_date,"oooooooooooooooooooooooooooppppppppppppppp")
 
          print(get_trainer_count,get_stud_count,"ppppppppppppppppp")
     else:
@@ -2084,12 +2201,32 @@ def     asanas_view(request, tenant_id):
     
     print(tenant,"loooooooooooooooo")
     asanas = Asana.objects.filter(tenant=tenant)
-    
-    courses=CourseDetails.objects.filter(tenant=tenant).prefetch_related('asanas_by_trainer')
-    print(courses.exists(),"oooooooooooooooooooo")
-    
-    print(courses,"lllllllllllllllllllll")
-    return render(request, 'users/asanas_list.html', {'asanas': asanas, 'tenant': tenant,'get_trainer_count':get_trainer_count,'get_stud_count':get_stud_count,'get_subs':get_subs,'courses':courses})
+    asana_postures = []
+
+    for asana in asanas:
+    # Fetch all Posture objects related to the current asana
+      postures = Posture.objects.filter(asana=asana)
+   
+      posture_images = [posture.snap_shot.url for posture in postures if posture.snap_shot]
+      print(posture_images,"llllllllllll")
+      asana_postures.append((asana, posture_images))
+      flattened_asana_postures = [image for sublist in asana_postures for image in sublist]
+      print(flattened_asana_postures,"line 2135")
+      print(asana_postures,"array")  # Map asana to its posture images
+
+    courses = CourseDetails.objects.filter(tenant=tenant).prefetch_related('asanas_by_trainer')
+
+    return render(request, 'users/asanas_list.html', {
+            'asanas': asanas,
+               'tenant': tenant,
+              'get_trainer_count': get_trainer_count,
+              'get_stud_count': get_stud_count,
+              'get_subs': get_subs,
+              'courses': courses,
+            'expiration_date': expiration_date,
+             'asana_postures': asana_postures # Pass asana-posture mapping to the template
+           })
+
  except Exception as e:
      return render(request, 'users/asanas_list.html')
      
@@ -2368,12 +2505,16 @@ def review_slug_changes(request):
             tenant.slug_approved = True
             tenant.slug_change_requested = None
             tenant.save()
+            django_messages.success(request,"Approved successfully")
             send_slug_change_notification(tenant,request)
+            django_messages.success(request,"Approved successfully")
            
             # messages.success(request, f"Slug for {tenant.organization_name} approved and updated.")
         elif action == "reject":
             tenant.slug_change_requested = None
+            django_messages.error(request,"Re   jected slug change")
             send_slug_change_reject_notification(tenant,request)
+            
             # messages.warning(request, f"Slug change request for {tenant.organization_name} rejected.")
         tenant.save()
 
@@ -2443,6 +2584,10 @@ def send_slug_change_reject_notification(tenant, request):
 @user_passes_test(check_client)
 def subscription_change_request(request,slug=None):
     current_user=request.user
+    tenant=Tenant.objects.filter(client_name=current_user).first()
+    slug=tenant.slug
+    
+
     print(current_user,"pppppppppppppppppppp")
     current_user_in_order=Order.objects.filter(name=current_user).first()
     # current_subs=current_user_in_order.subscription
@@ -2450,6 +2595,7 @@ def subscription_change_request(request,slug=None):
     if request.method == 'POST':
         form = SubscriptionChangeForm(request.POST)
         tenant=Tenant.objects.filter(client_name=current_user).first()
+        slug=tenant.slug
         print(tenant,"ppppppppppppppp]")
        
         current_user_in_order=Order.objects.filter(name=current_user).first()
@@ -2468,7 +2614,7 @@ def subscription_change_request(request,slug=None):
 
 
             # messages.success(request, "Your request has been submitted.")
-            return redirect('Trainer-approval',tenant.slug)
+            return redirect('Trainer-approval',slug)
     else:
         form = SubscriptionChangeForm()
         
@@ -2528,13 +2674,31 @@ def approve_subscription_change_by_knowinmy(request, request_id):
         tenant.is_active = False
         get_order.delete()
 
+
         tenant.save()
+        send_email(
+            subject="Subscription change request",
+            message="Here your request to change in approval got approved",
+            from_email="prabhaprasath07@gmail.com",
+            recipient_list=[get_fn.email],
+            
+
+                   )
         print("hello")
         
     elif action == 'reject':
         # Set tenant as active (enable organization access)
         tenant.is_active = True
         tenant.save()
+        send_email(
+            subject="Subscription change request",
+            message="Here your request to change in approval got rejected",
+            from_email="prabhaprasath07@gmail.com",
+            recipient_list=[get_fn.email],
+            fail_silently=False,
+
+
+                   )
         messages.success(request, f"The subscription for {tenant.client_name} has been enabled.")   
 
     

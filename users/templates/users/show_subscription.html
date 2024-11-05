@@ -8,11 +8,22 @@
     <!-- Page Title -->
     <h1 class="text-center" style="color: #5f52aa;">{{ tenant.client_name }} - Subscription Details</h1>
     <br>
-    <p><strong>Tenant Slug:</strong> {{ slug }}</p>
-    <br>
-    <a href="{% url 'request_slug_change' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;"> Edit Slug </a>
-    <br>
-    <h3>This subscription expire on-{{expiration_date}}</h3>
+    <p>
+        <strong style="color: #5f52aa;">Tenant Slug:</strong> <span>{{ slug }}</span>
+    </p>
+    
+
+    <!-- Edit Slug Button and Expiration Date -->
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <h3>
+            <span style="color: #5f52aa;">Subscription expires on</span> - <span>{{ expiration_date }}</span>
+        </h3>
+        
+        <a href="{% url 'request_slug_change' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Edit Slug
+        </a>
+    </div>
+
     <!-- Subscription Information Table -->
     <h2 style="color: #5f52aa;">Subscription Information</h2>
     {% if get_order %}

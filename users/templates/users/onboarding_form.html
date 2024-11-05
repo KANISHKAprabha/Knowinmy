@@ -2,70 +2,77 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Onboard Users</h1>
+    <h1 class="text-center mb-4" style="color: #5f52aa;">Onboard Users</h1>
     
     <div class="row justify-content-center">
         <div class="col-md-8">
             <!-- Onboarding users formset -->
-            <form method="post" id="onboard-user-form" action="{% url 'onboard-users-form' slug=tenant.slug %}" class="p-4 border rounded shadow">
+            <form method="post" id="onboard-user-form" action="{% url 'onboard-users-form' slug=tenant.slug %}" class="p-4 border rounded shadow-sm bg-white">
                 {% csrf_token %}
                 {{ formset.management_form }}
-            
+                
                 {% for form in formset %}
-                    <div class="form-group">
-                        <label class="font-weight-bold">Onboard User {{ forloop.counter }}</label>
-            
-                        {{ form.username.label_tag }} {{ form.username }}
-                        {{ form.first_name.label_tag }} {{ form.first_name }}
-                        {{ form.last_name.label_tag }} {{ form.last_name }}
-                        {{ form.email.label_tag }} {{ form.email }}
-                        {{ form.role.label_tag }} {{ form.role }}
-            
-                        <!-- Render Mentor field manually to ensure it shows -->
-                        {% if form.mentor %}
-                            {{ form.mentor.label_tag }} {{ form.mentor }}
-                        {% else %}
-                            <p class="text-danger">Mentor field not found!</p>
-                        {% endif %}
+                    <div class="form-group mb-4 p-3 border rounded shadow-sm">
+                        <h5 class="font-weight-bold mb-3" style="color: #5f52aa;">Onboard User {{ forloop.counter }}</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.username.label_tag }} {{ form.username }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.first_name.label_tag }} {{ form.first_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.last_name.label_tag }} {{ form.last_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.email.label_tag }} {{ form.email }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.role.label_tag }} {{ form.role }}
+                            </div>
+                            <div class="col-md-6 mb-3 mentor-field" style="display: none;">
+                                {% if form.mentor %}
+                                    {{ form.mentor.label_tag }} {{ form.mentor }}
+                                {% else %}
+                                    <p class="text-danger">Mentor field not found!</p>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
                 
-                <button type="submit" class="btn btn-primary btn-block mt-4">Onboard Users</button>
-               
+                <button type="submit" class="btn btn-primary btn-block mt-4" style="background-color: #5f52aa; border-color: #5f52aa;">Onboard Users</button>
             </form>
-            
-            
 
             <!-- Back Button -->
-            <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-secondary btn-block mt-4">Back to Trainer Approval</a>
+            <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-secondary btn-block mt-4" style="background-color: #5f52aa; border-color: #5f52aa;">Back to Trainer Approval</a>
         </div>
     </div>
 
-    <br>
-
-    <!-- Message display -->
+    <!-- Message Display -->
+     <BR>
     {% if messages %}
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-8">
-                <div class="alert alert-info">
-                    <ul class="mb-0">
-                        {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    {% endif %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
 </div>
 
-<!-- JavaScript to handle dynamic mentor field display -->
+<!-- JavaScript to Handle Dynamic Mentor Field Display -->
 <script>
-  
 document.addEventListener('DOMContentLoaded', function () {
     const formsetForms = document.querySelectorAll('#onboard-user-form .form-group');
-    
-    formsetForms.forEach(function (formGroup, index) {
+
+    formsetForms.forEach(function (formGroup) {
         const roleField = formGroup.querySelector('select[name$="-role"]');
         const mentorField = formGroup.querySelector('.mentor-field');
 
@@ -82,15 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to show/hide mentor field based on role selection
     function toggleMentorField(roleField, mentorField) {
-    if (roleField.value === 'student') {
-        mentorField.style.display = 'block';  // Show the mentor field for students
-    } else {
-        mentorField.style.display = 'none';   // Hide the mentor field for trainers
+        if (roleField.value === 'student') {
+            mentorField.style.display = 'block';  // Show the mentor field for students
+        } else {
+            mentorField.style.display = 'none';   // Hide the mentor field for trainers
+        }
     }
-}
-
 });
-</script>
 </script>
 {% endblock %}
 

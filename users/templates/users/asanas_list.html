@@ -1,10 +1,11 @@
+{% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asanas for {{ tenant.organization_name }}</title>
-    <!-- Include Bootstrap CSS -->
+
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -18,17 +19,25 @@
             color: #553CDF;
         }
 
+        .expiration-date {
+            text-align: center;
+            font-size: 16px;
+            color: #5f52aa;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
         .table {
             width: 100%;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             table-layout: fixed;
-            margin-bottom: 20px; /* Add margin between the tables */
+            margin-bottom: 20px;
         }
 
         thead {
-            background-color:  #5f52aa;
+            background-color: #5f52aa;
             color: white;
         }
 
@@ -38,14 +47,12 @@
             word-wrap: break-word;
         }
 
-        /* Ensure responsiveness */
         @media (max-width: 768px) {
             .table th, .table td {
                 font-size: 14px;
                 padding: 10px;
             }
 
-            /* Stack table rows for very small screens */
             .table-responsive {
                 display: block;
                 width: 100%;
@@ -54,7 +61,6 @@
             }
         }
 
-        /* Additional styling for buttons */
         .btn {
             color: white;
             border-radius: 5px;
@@ -64,46 +70,41 @@
         }
 
         .btn-primary {
-            background-color: #173f5e; /* Light shade of violet */
+            background-color: #173f5e;
         }
 
-        
-       
-
-        
-
-        /* Styling for the space between tables */
         .table-container {
             margin-top: 30px;
             margin-bottom: 30px;
         }
 
         .back-button {
-    margin-top: 20px; /* Adds some space above the button */
-    display: flex; /* Flexbox layout for better alignment */
-    justify-content: flex-end; /* Aligns the button to the right */
-}
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
 
-.back-button .btn-primary {
-    padding: 12px 25px; /* Increases the padding for a larger button */
-    font-size: 18px; /* Increases the font size for better readability */
-    background-color: #5244a3; /* Adjust the color to match your overall theme */
-    border-radius: 8px; /* Adds a smooth, rounded corner */
-    transition: background-color 0.3s ease; /* Adds smooth color transition */
-}
+        .back-button .btn-primary {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #5244a3;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
 
-.back-button .btn-primary:hover {
-    background-color: #4729a8; /* Darker shade for hover effect */
-}
-
+        .back-button .btn-primary:hover {
+            background-color: #4729a8;
+        }
     </style>
 </head>
 <body>
-    
     <div class="container">
         <div class="table-responsive">
             <div class="table-container">
                 <h2>Subscription Details</h2>
+                <div class="expiration-date">
+                    Expiration Date: {{ expiration_date|default:"Not paid" }}
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -114,71 +115,96 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ get_stud_count }}</td>
-                            <td>{{ get_trainer_count }}</td>
-                            <td>{{ get_subs }}</td>
+                            <td>{{ get_stud_count|default:"Not Available" }}</td>
+                            <td>{{ get_trainer_count|default:"Not Available" }}</td>
+                            <td>{{ get_subs|default:"Not Available" }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <table class="table">
-                <h2>Courses created by  {{ tenant.organization_name }}</h2>
+                <h2>Courses created by {{ tenant.organization_name }}</h2>
                 <thead>
                     <tr>
                         <th style="width: 25%;">Course Name</th>
-                        <th style="width: 25%;">Trainer name</th>
+                        <th style="width: 25%;">Trainer Name</th>
                         <th style="width: 25%;">Asana Name</th>
-                        <th style="width: 25%;">No of postures</th>
+                        <th style="width: 25%;">No of Postures</th>
+                       
+        </tr>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for courses in courses %}
-                    <tr>
-                        <td>{{ courses.course_name }}</td>
-                        <td>{{ courses.user.username }}</td>
-                        {% for asana in courses.asanas_by_trainer.all %}
-                        <td>{{ asana.name }}</td>
-                        <td>{{ asana.no_of_postures }}</td>
+                    {% if courses %}
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.course_name|default:"Not Available" }}</td>
+                            <td>{{ course.user.username|default:"Not Available" }}</td>
+                            {% for asana in course.asanas_by_trainer.all %}
+                            <td>{{ asana.name|default:"Not Available" }}</td>
+                            <td>{{ asana.no_of_postures|default:"Not Available" }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No Courses Available</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
             <table class="table">
-                <h2>Asanas created by  {{ tenant.organization_name }}</h2>
+                <h2>Asanas created by {{ tenant.organization_name }}</h2>
                 <thead>
                     <tr>
                         <th style="width: 25%;">Asana Name</th>
                         <th style="width: 25%;">No. of Postures</th>
                         <th style="width: 25%;">Created At</th>
+                        <th style="width: 25%;">Posture Images</th>  <!-- Add a column for images -->
                         <th style="width: 25%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for asana in asanas %}
-                    <tr>
-                        <td>{{ asana.name }}</td>
-                        <td>{{ asana.no_of_postures }}</td>
-                        <td>{{ asana.created_at }}</td>
-                        <td>
-                            <a href="{% url 'remove_asana_view' asana_id=asana.id %}" class="btn btn-danger">Remove Asana</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    {% if asana_postures %}
+                        {% for asana, images in asana_postures %}
+                        <tr>
+                            <td>{{ asana.name|default:"Not Available" }}</td>
+                            <td>{{ asana.no_of_postures|default:"Not Available" }}</td>
+                            <td>{{ asana.created_at|default:"Not Available" }}</td>
+                            <td>
+                                <div>
+                                    <input type="hidden" name="asana_id" value="{{ asana.id }}">
+                                    {% if images %}
+                                        {% for image in images %}
+                                            <img src="{{ image }}" alt="Posture Image" style="width: 50px; height: 50px; margin: 5px;">
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>No Images Available</p>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_asana_view' asana_id=asana.id %}" class="btn btn-danger">Remove Asana</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No Asanas Available</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
+            
+
         </div>
 
-        <!-- Back Button -->
         <div class="back-button">
-            <a href="{% url 'organization_list' %}" class="btn btn-primary">Back</a> <!-- Adjust the URL as necessary -->
+            <a href="{% url 'organization_list' %}" class="btn btn-primary">Back</a>
         </div>
     </div>
-    </div>
 
-    <!-- Include Bootstrap JS (optional) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+

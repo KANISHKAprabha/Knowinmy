@@ -1,36 +1,111 @@
 <!-- templates/admin/review_slug_changes.html -->
-    
-
+{% extends 'users/staff_dashboard.html' %}
 {% block content %}
-  <h2>Pending Slug Change Requests</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #5f52aa;">Pending Slug Change Requests</h2>
 
-  {% if tenants %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Organization Name</th>
-          <th>Requested Slug</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tenant in tenants %}
-          <tr>
-            <td>{{ tenant.organization_name }}</td>
-            <td>{{ tenant.slug_change_requested }}</td>
-            <td>
-              <form method="post" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="tenant_id" value="{{ tenant.id }}">
-                <button name="action" value="approve" class="btn btn-success">Approve</button>
-                <button name="action" value="reject" class="btn btn-danger">Reject</button>
-              </form>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No pending slug changes.</p>
-  {% endif %}
+    {% if tenants %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped shadow-sm">
+                <thead style="background-color: #5f52aa; color: white;">
+                    <tr>
+                        <th style="font-weight: bold;">Organization Name</th>
+                        <th style="font-weight: bold;">Requested Slug</th>
+                        <th style="font-weight: bold;" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tenant in tenants %}
+                        <tr>
+                            <td style="font-weight: bold;">{{ tenant.organization_name }}</td>
+                            <td style="font-weight: bold;">{{ tenant.slug_change_requested }}</td>
+                            <td class="text-center">
+                                <form method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tenant_id" value="{{ tenant.id }}">
+                                    <button name="action" value="approve" class="btn btn-success btn-custom-small me-2">Approve</button>
+                                    <button name="action" value="reject" class="btn btn-danger btn-custom-small">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No pending slug changes.</p>
+    {% endif %}
+</div>
+
+<!-- Custom CSS for Styling -->
+<style>
+    /* Heading Styling */
+    h2 {
+        font-size: 2rem; /* Increased font size */
+        color: #5f52aa; /* Custom color */
+        font-weight: bold;
+    }
+
+    /* Table Styling */
+    .table-bordered {
+        border: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        font-weight: 500;
+        text-align: center;
+        font-size: 1.1rem; /* Increased font size for readability */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9; /* Light background for alternate rows */
+    }
+
+    /* Button Styling */
+    .btn-success {
+        background-color: #5cb85c; /* Green for success */
+        border-color: #5cb85c;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-danger {
+        background-color: #d9534f; /* Red for danger */
+        border-color: #d9534f;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-custom-small {
+        padding: 10px 16px; /* Consistent button size */
+        font-size: 1rem; /* Consistent font size */
+        border-radius: 5px; /* Slightly rounded corners */
+    }
+
+    /* Responsive Table */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        h2 {
+            font-size: 1.5rem; /* Adjust heading size for small screens */
+        }
+
+        th, td {
+            padding: 10px; /* Adjust padding for small screens */
+            font-size: 0.9rem; /* Adjust font size for small screens */
+        }
+
+        .btn {
+            font-size: 0.85rem; /* Adjust button font size for small screens */
+            padding: 8px 12px; /* Adjust button padding for small screens */
+        }
+    }
+</style>
+
 {% endblock %}

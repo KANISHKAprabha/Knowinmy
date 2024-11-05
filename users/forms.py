@@ -246,9 +246,11 @@ class UserOnboardingForm(forms.ModelForm):
             self.fields['mentor'] = forms.ModelChoiceField(
                 queryset=TrainerLogDetail.objects.filter(tenant=self.tenant, onboarded_by=self.user),
                 widget=forms.Select,  # Change to a dropdown
-                empty_label="Select a mentor"  # Optional placeholder
+                empty_label="Select a mentor" ,
+                 required=False # Optional placeholder
             )
         else:
+           
             print("User or tenant is missing. Mentor field not added.")
         
     def save(self, commit=True):

@@ -1,31 +1,115 @@
-<h2>Subscription Change Requests</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Client Name</th>
-            <th>Request Type</th>
-            <th>Reason</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for request in requests %}
-            <tr>
-                <td>{{ request.tenant.client_name }}</td>
-                <td>{{ request.request_type }}</td>
-                <td>{{ request.reason }}</td>
-                <td>
-                    <form method="post" action="{% url 'approve_subscription_change' request.id %}">
-                        {% csrf_token %}
-                        <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
-                        <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="4">No pending requests.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% extends 'users/staff_dashboard.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #5f52aa;">Subscription Change Requests</h2>
+    
+    <!-- Responsive Table Section -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
+                <tr>
+                    <th style="font-weight: bold;" scope="col">Client Name</th>
+                    <th style="font-weight: bold;" scope="col">Request Type</th>
+                    <th style="font-weight: bold;" scope="col">Reason</th>
+                    <th style="font-weight: bold;" scope="col" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                    <tr>
+                        <td style="font-weight: bold;">{{ request.tenant.client_name }}</td>
+                        <td style="font-weight: bold;">{{ request.request_type }}</td>
+                        <td style="font-weight: bold;">{{ request.reason }}</td>
+                        <td class="text-center">
+                            <form method="post" action="{% url 'approve_subscription_change' request.id %}" class="d-inline-block">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="approve" class="btn btn-success btn-custom-small me-2">Approve</button>
+                              
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No pending requests.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Custom CSS for Styling -->
+<style>
+    /* Heading Styling */
+    h2 {
+        font-size: 2rem; /* Increased font size */
+        color: #5f52aa;
+        font-weight: bold;
+    }
+
+    /* Table Styling */
+    .table-bordered {
+        border: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        font-weight: 500;
+        text-align: center;
+        font-size: 1.1rem; /* Increased font size for readability */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9; /* Light background for alternate rows */
+    }
+
+    /* Button Styling */
+    .btn-success {
+        background-color: #5cb85c; /* Green for success */
+        border-color: #5cb85c;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-danger {
+        background-color: #d9534f; /* Red for danger */
+        border-color: #d9534f;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-custom-small {
+        padding: 10px 16px; /* Consistent button size */
+        font-size: 1rem; /* Consistent font size */
+        border-radius: 5px; /* Slightly rounded corners */
+    }
+
+    /* Responsive Table */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        th, td {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+    }
+</style>
+
+{% endblock %}

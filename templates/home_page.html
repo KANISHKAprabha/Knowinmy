@@ -38,49 +38,75 @@
         margin: 0 auto;
         padding: 0 20px;
       }
-
       /* Navbar */
-      .navbar {
-        background: linear-gradient(45deg, #ffffff, #f3f3f3);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        padding: 15px 0;
-        border-bottom: 2px solid var(--violet-3);
-      }
+.navbar {
+    background: linear-gradient(45deg, #ffffff, #f3f3f3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--violet-3);
+}
 
-      .navbar .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+/* Container layout */
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-      .navbar-brand {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--violet-2);
-        text-decoration: none;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
+/* Navbar brand */
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--violet-2);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-      .nav-links {
-        display: flex;
-        gap: 20px;
-      }
+/* Nav links */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between nav items */
+}
 
-      .nav-links a {
-        color: var(--violet-2);
-        text-decoration: none;
-        font-weight: 500;
-        padding: 10px 15px;
-        border-radius: 4px;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
+/* Individual nav items */
+.nav-links a {
+    color: var(--violet-2);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-      .nav-links a:hover {
-        background-color: black;
-        color: #ffffff;
-        transform: translateY(-2px);
-      }
+/* Conditional item */
+.conditional-nav-item a, .conditional-nav-item p {
+    margin: 0;
+    padding: 10px 15px;
+    color: var(--violet-2);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect */
+.nav-links a:hover, .conditional-nav-item a:hover {
+    background-color: black;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Responsive alignment */
+.conditional-nav-item {
+    display: flex;
+    align-items: center;
+}
+
+
+
+
 
       /* Hero Section */
       .hero {
@@ -344,7 +370,7 @@
       }
 
       .social-links a:hover {
-        color: #0073e6;
+        color:black;
       }
 
       @media (max-width: 768px) {
@@ -468,6 +494,7 @@
   .btn.custom-btn:hover {
     background-color: #4527a0; /* Darker shade on hover */
   }
+  
 
 
 
@@ -488,19 +515,21 @@
           <div><a href="{% url 'login' %}">Login</a></div>
           <div><a href="{% url 'register' %}">Signup</a></div>
          
-          <div>
+          <div class="conditional-nav-item">
+            {{get_transaction }}
             {% for group in request.user.groups.all %}
                 {% if group.name == 'Client' %}
                     {% if get_transaction %}
-                        {% if  not  get_tenant %}
-                            <a href="{% url 'register_organization' %}">Create an Organization</a>
-                        {% else %}
-                            <p>You already have an organization.</p>
-                        {% endif %}
-                    {% else %}
-                      <p></p>
+
+                       
+                      <a href="{% url 'register_organization' %}">Create an Organization</a>
+                        
+                           
                     {% endif %}
-                {% endif %}
+                    {% else %}
+                      <p>hello</p>
+                    {% endif %}
+               
             {% endfor %}
         </div>
         
@@ -552,25 +581,20 @@
     </section>
 
     <section>
-      <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Pricing Plans</title>
-</head>
-<body>
+      
     <div class="container">
-        <h2>Pricing Plans</h2>
+        <h2 style="text-align: center;">Pricing Plans</h2>
         <div class="price-options">
             <!-- Start of static subscription block -->
             <div class="price-option">
                 <i class="fas fa-crown"></i>
                 <h3>Basic Plan</h3>
                 <p><strong>Ideal for individuals</strong></p>
-                <p class="price">$19.99</p>
+                <p class="price">Rs.1000</p>
                 <p>Access to all basic features</p>
                 <p><strong>No. of Asanas:</strong> 10</p>
                 <p><strong>No. of Persons:</strong> 1</p>
+                <p><strong>Duration:</strong> 3 monthe</p>
 
                 <!-- Payment buttons -->
                 <form action="{% url 'subscription-payment' %}" method="POST">
@@ -585,10 +609,11 @@
                 <i class="fas fa-crown"></i>
                 <h3>Standard Plan</h3>
                 <p><strong>Great for small teams</strong></p>
-                <p class="price">$49.99</p>
+                <p class="price">Rs.2000</p>
                 <p>Access to all basic and premium features</p>
                 <p><strong>No. of Asanas:</strong> 20</p>
                 <p><strong>No. of Persons:</strong> 5</p>
+                <p><strong>Duration:</strong> 9 months</p>
 
                 <div class="payment-button">
                     <form action="{% url 'subscription-payment' %}" method="POST">
@@ -604,29 +629,28 @@
                 <i class="fas fa-crown"></i>
                 <h3>Premium Plan</h3>
                 <p><strong>Best for large organizations</strong></p>
-                <p class="price">$99.99</p>
+                <p class="price">Based on your choice</p>
                 <p>Access to all features</p>
-                <p><strong>No. of Asanas:</strong> Unlimited</p>
-                <p><strong>No. of Persons:</strong> 20</p>
+                <p><strong>No. of Asanas:</strong> Based on your choice</p>
+                <p><strong>No. of Persons:</strong>Based on your choice </p>
 
                 <div class="payment-button">
                     <form action="{% url 'subscription-payment' %}" method="POST">
                       {% csrf_token %}
                         <input type="hidden" name="subscription_id" value="8" />
                         <br><br><br><br><br>
-                        <button type="submit" class="btn-pay">Pay Now</button>
+                        <div class="back-link">
+                          <a href="{% url 'dynamic' %}" class="btn-primary">Fill this!</a>
+                      </div>
                     </form>
                 </div>
             </div>
 
             <!-- Contact Sales button for all plans -->
-            <div class="back-link">
-                <a href="{% url 'dynamic' %}" class="btn-primary">Contact Sales</a>
-            </div>
+            
         </div>
     </div>
-</body>
-</html>
+
 
       </div>
       <section class="ftco-section bg-light" id="feature">

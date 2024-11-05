@@ -16,7 +16,6 @@
                     <th>Student Name</th>
                     <th>Enrolled Courses</th>
                     <th>Asanas</th>
-                   
                 </tr>
             </thead>
             <tbody>
@@ -49,11 +48,10 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center no-content">No students available.</td>
+                    <td colspan="3" class="text-center no-content">No students available.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -66,7 +64,6 @@
             Back to Dashboard
         </a>
     </div>
-
 </div>
 
 <!-- Modal for Course Creation/Update -->
@@ -108,4 +105,3 @@
     }
 </script>
 {% endblock %}
-    

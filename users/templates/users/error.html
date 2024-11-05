@@ -1,4 +1,6 @@
+{% load static %}
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,6 +47,26 @@
         .back-button:hover {
             background-color: #7a24d9;
         }
+      
+        
+        .alert {
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: green;
+            border-color: #d4edda;
+            background-color: #d4edda;
+        }
+        .alert-error {
+            color: red;
+            border-color: #f8d7da;
+            background-color: #f8d7da;
+        }
+    
+
     </style>
 </head>
 <body>
@@ -56,9 +78,12 @@
         {% if error_detail %}
             <p class="details"><strong>Details:</strong> {{ error_detail }}</p>
         {% endif %}
+        
+
 
         <button class="back-button" onclick="window.history.back()">Go Back</button>
     </div>
+    
 
 </body>
 </html>

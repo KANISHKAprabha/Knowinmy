@@ -1,14 +1,112 @@
-<h2>Request Subscription Change</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <h3>Current Subscription Details</h3>
-    {% if current_user_in_order %}
-        <p>{{ current_subs }}</p>  <!-- Adjust based on your subscription model -->
-    {% else %}
-        <p>No current subscription details found.</p>
+
+{% block content %}
+
+<div class="container">
+    <div class="card shadow-lg border-light rounded mx-auto" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4" style="color: #5f52aa;">Request Subscription Change</h2>
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group mb-4">
+                    <label for="{{ form.request_type.id_for_label }}">{{ form.request_type.label }}</label>
+                    {{ form.request_type }}
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="{{ form.reason.id_for_label }}">{{ form.reason.label }}</label>
+                    {{ form.reason }}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4" style="background-color: #5f52aa; border-color: #5f52aa;">
+                    Submit Request
+                </button>
+                <br>
+                <button onclick="window.history.back()" class="btn btn-primary btn-block mt-4" style="background-color: #5f52aa; border-color: #5f52aa;">
+                    Back
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message display -->
+    {% if messages %}
+    <div class="alert alert-success mt-4 text-center"> <!-- Center message display -->
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
     {% endif %}
-    
-    <button type="submit">Submit Request</button>
-</form>
+</div>
+
+<style>
+    /* Full height container to center card */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Full viewport height */
+        padding: 20px; /* Padding around the container */
+        background-color: #f9f9f9; /* Light background for contrast */
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 15px; /* Rounded corners */
+        border: 1px solid #e0e0e0; /* Light border */
+        max-width: 600px; /* Limit card width */
+        width: 100%; /* Make card responsive */
+        transition: transform 0.3s ease; /* Smooth transition for hover effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+
+    .card:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+    }
+
+    .card-body {
+        background-color: #ffffff; /* White background */
+        padding: 2rem; /* Inner padding */
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.5rem; /* Spacing between form groups */
+    }
+
+    label {
+        font-weight: bold; /* Bold label text */
+        color: #333; /* Dark color for readability */
+        display: block; /* Block display for labels */
+        margin-bottom: 0.5rem; /* Space below label */
+    }
+
+    /* Button Styling */
+    .btn {
+        display: block; /* Full width button */
+        width: 100%; /* Full width */
+        background-color: #5f52aa; /* Custom button color */
+        border: none; /* Remove border */
+        color: #ffffff; /* White text */
+        font-size: 1rem; /* Button text size */
+        padding: 10px; /* Padding for button */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Transition effects */
+    }
+
+    .btn:hover {
+        background-color: #4a438d; /* Darker shade on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+
+    /* Message Display Styles */
+    .alert {
+        background-color: #d4edda; /* Light green background */
+        border-color: #c3e6cb; /* Border color */
+        color: #155724; /* Dark green text */
+        border-radius: 5px; /* Rounded corners */
+        padding: 10px; /* Padding for message */
+    }
+</style>
+
+{% endblock %}

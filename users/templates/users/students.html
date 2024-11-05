@@ -21,7 +21,7 @@
                 {% for student, enrollments in student_enrollment_map.items %}
                 <tr>
                     <td>{{ student.username }}</td>
-                    {{student.id }}
+                  
                     <td>
                         <ul class="nested-list">
                             {% for enrollment in enrollments %}
@@ -29,7 +29,6 @@
                                 {% for course in enrollment.students_added_to_courses.all %}
                                     <li>{{ course.course_name }}</li>
                                 {% empty %}
-                                {{student.id }}
                                     <li class="no-content">No courses enrolled.</li>
                                 {% endfor %}
                             {% endfor %}
@@ -60,7 +59,7 @@
                             {% endif %}
                         </form>
                         <!-- Debugging to check the ID passed to the form -->
-<p>Debug student_id: {{ student.id }}</p>
+
 
                         <form id="disable-form-{{ student.id }}" method="POST" style="display:inline;">
                             {% csrf_token %}
