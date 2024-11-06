@@ -52,7 +52,7 @@
 <div class="custom-form-container">
     <h2>Tenant Form</h2>
     {% if form %}
-        <form method="post">
+        <form method="post" id="organization_form">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-custom mt-3 w-100">Submit</button>
@@ -61,7 +61,15 @@
         <p>No form to display.</p>
     {% endif %}
 </div>
+{% endif %}
+<script>
+    
+        function submit_form() {
+        $("#organization_form").submit();
 
+    }
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

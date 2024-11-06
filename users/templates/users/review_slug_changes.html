@@ -20,7 +20,7 @@
                             <td style="font-weight: bold;">{{ tenant.organization_name }}</td>
                             <td style="font-weight: bold;">{{ tenant.slug_change_requested }}</td>
                             <td class="text-center">
-                                <form method="post" style="display:inline;">
+                                <form method="post" id="approve_form" style="display:inline;">
                                     {% csrf_token %}
                                     <input type="hidden" name="tenant_id" value="{{ tenant.id }}">
                                     <button name="action" value="approve" class="btn btn-success btn-custom-small me-2">Approve</button>
@@ -107,5 +107,13 @@
         }
     }
 </style>
+{% endif %}
+<script>
+    
+        function submit_form() {
+        $("#approve_form").submit();
 
+    }
+
+</script>
 {% endblock %}

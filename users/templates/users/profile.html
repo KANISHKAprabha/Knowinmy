@@ -193,6 +193,8 @@
   <div class="button-container">
     
     <button id="updateProfileBtn" class="back-button" data-toggle="modal" data-target="#profileModal">Update Profile</button>
+    <br>
+    <button  class="back-button" onclick="window.history.back()">Back</button>
   </div>
 
   <!-- Modal for Profile Update -->
@@ -206,7 +208,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form method="POST" action="{% url 'profile-user' slug=tenant.slug %}">
+          <form method="POST" id="profile_form" action="{% url 'profile-user' slug=tenant.slug %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -216,15 +218,15 @@
     </div>
   </div>
 
-  {% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-</div>
 
+<script>
+    
+        function submit_form() {
+        $("#profile_form").submit();
+
+    }
+
+</script>
 <!-- Include Bootstrap and jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -33,7 +33,7 @@
                     <td>{{ course.description|truncatewords:15 }}</td>
                     <td class="text-center">
                         <a href="{% url 'create-course' slug=tenant.slug %}?course_id={{ course.id }}" class="btn btn-info btn-sm">Edit</a>
-                        <form method="post" action="{% url 'create-course' slug=tenant.slug %}" style="display:inline;">
+                        <form method="post" id="course_form" action="{% url 'create-course' slug=tenant.slug %}" style="display:inline;">
                             {% csrf_token %}
                             <input type="hidden" name="course_id" value="{{ course.id }}">
                             <button type="submit" name="delete_course" id="delete-button-{{ course.id }}" onclick="del_asana('{{ course.id }}')" class="btn btn-danger btn-sm">Delete</button>
@@ -137,6 +137,14 @@
             console.error('Delete button not found!');
         }
     }
+  
+    
+    function submit_form() {
+    $("#course_form").submit();
+
+}
+
+
 </script>
 {% endblock %}
 

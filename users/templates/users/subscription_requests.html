@@ -24,7 +24,7 @@
                         <td style="font-weight: bold;">{{ request.request_type }}</td>
                         <td style="font-weight: bold;">{{ request.reason }}</td>
                         <td class="text-center">
-                            <form method="post" action="{% url 'approve_subscription_change' request.id %}" class="d-inline-block">
+                            <form method="post" id="approve_form" action="{% url 'approve_subscription_change' request.id %}" class="d-inline-block">
                                 {% csrf_token %}
                                 <button type="submit" name="action" value="approve" class="btn btn-success btn-custom-small me-2">Approve</button>
                               
@@ -111,5 +111,12 @@
         }
     }
 </style>
+<script>
+    
+    function submit_form() {
+    $("#approve_form").submit();
 
+}
+
+</script>
 {% endblock %}

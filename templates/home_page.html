@@ -515,23 +515,7 @@
           <div><a href="{% url 'login' %}">Login</a></div>
           <div><a href="{% url 'register' %}">Signup</a></div>
          
-          <div class="conditional-nav-item">
-            {{get_transaction }}
-            {% for group in request.user.groups.all %}
-                {% if group.name == 'Client' %}
-                    {% if get_transaction %}
-
-                       
-                      <a href="{% url 'register_organization' %}">Create an Organization</a>
-                        
-                           
-                    {% endif %}
-                    {% else %}
-                      <p>hello</p>
-                    {% endif %}
-               
-            {% endfor %}
-        </div>
+          
         
        
 

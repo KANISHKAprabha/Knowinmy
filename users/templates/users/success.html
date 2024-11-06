@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,31 +6,96 @@
     <title>Payment</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS (if needed) -->
+    <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #5f52aa;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
         .alert {
             border-radius: 0.5rem;
             padding: 1.5rem;
             font-size: 1.1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .alert-heading {
             font-size: 1.5rem;
             font-weight: bold;
+            color: var(--primary-color);
         }
+
+        .alert-success {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .alert-danger {
+            background-color: #aa5260;
+            color: white;
+        }
+
         .btn-lg {
             font-size: 1.2rem;
             padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
         }
-        .container {
-            max-width: 800px;
+
+        .btn-lg:hover {
+            background-color: #473f84;
+        }
+
+        a {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #473f84;
+            text-decoration: none;
+        }
+
+        @media (max-width: 576px) {
+            .alert-heading {
+                font-size: 1.3rem;
+            }
+
+            .alert {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .btn-lg {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
         }
     </style>
 </head>
+<body>
 
-
-
-    <!-- Payment Status -->
-    <div class="container mt-5">
+    <div class="container">
         {% if order.status == 'ACCEPT' %}
         <div class="alert alert-success" role="alert">
             <h4 class="alert-heading">Payment Successful!</h4>
@@ -44,13 +109,16 @@
             <h4 class="alert-heading">Payment Failed!</h4>
             <p>Unfortunately, your payment was not successful. Please try again.</p>
             <hr>
-            <p class="mb-0"><strong>Transaction ID:</strong> {{ order.payment_id }}</p>
-            <p class="mb-0"><strong>Order ID:</strong> {{ order.provider_order_id }}</p>
+            <p class="mb-0"><strong>Transaction ID:</strong> {{ order.payment_id|default:"Not Available" }}</p>
+            <p class="mb-0"><strong>Order ID:</strong> {{ order.provider_order_id|default:"Not Available" }}</p>
             <p class="mb-0"><strong>Amount:</strong> ${{ order.amount }}</p>
             <p class="mb-0"><strong>Status:</strong> {{ order.status }}</p>
         </div>
         {% endif %}
-        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Go home</a>
+       
+        <div class="text-center mt-4">
+            <a href="{% url 'register_organization' %}" class="btn btn-lg">Create an Organization</a>
+        </div>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

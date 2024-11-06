@@ -174,7 +174,8 @@ def   profile_view(request, slug=None):
               
           })
     except Exception as e:
-        return render(request, 'error.html')
+        print(e,"hello")
+        return render(request, 'users/error.html')
 
 
 @login_required
@@ -875,7 +876,7 @@ def role_based_dashboard(request):
   except Exception as e:
       print("error",e)
     
-      return render(request,'users/info.html')
+      return render(request,'users/error.html')
 
   
       
@@ -1670,8 +1671,10 @@ def subscription_plans(request):
 @login_required
 def trainer_dashboard(request, slug):
     try:
+        current_user=request.user
         tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
-        trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name')
+        trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name').first()
+        email=trainers.trainer_name.email
 
         course_counts = {}
         enrollment_counts = {}
@@ -1697,10 +1700,23 @@ def trainer_dashboard(request, slug):
             if trainer_to_update:
                 if action == 'enable':
                     print("it got enabled")
+                    send_mail(
+                    subject=f"Message from {current_user}",
+                    message="You got enabled in this website",
+                    from_email='prabhaprasath07@gmail.com',
+                    recipient_list=email,
+               )
+
                     trainer_to_update.is_active = True
                 elif action == 'disable':
                     print("it got disabled")
                     trainer_to_update.is_active = False
+                    send_mail(
+                    subject=f"Message from {current_user}",
+                    message="You got disabled in this website.Contact your client",
+                    from_email='prabhaprasath07@gmail.com',
+                    recipient_list=email,
+               )
                 trainer_to_update.save()
 
         return render(request, 'users/trainers.html', {
@@ -1922,28 +1938,25 @@ def edit_user(request, user_id,slug):
 def register_organisation(request):
  try:
     print(request.user)
-    get_tenant=Tenant.objects.filter(client_name=request.user).exists()
-    print(get_tenant)
-    if get_tenant:
-             print("Already created Tenant")
-    else:
+    
 
-        if request.method == 'POST':
+    if request.method == 'POST':
         
         
             # form = OrganisationForm(request.POST,user=request.user)
-            form = formset_factory(OrganisationForm, extra=1, max_num=1, validate_max=True, absolute_max=1)
+            form = OrganisationForm(request.POST)
             if form.is_valid():
                 form.save()  
                 print("Form is valid. Redirecting to login.")
                 return redirect("home")
             else:
                print("Form is invalid. Errors:", form.errors)
-        else:
+    else:
              form = OrganisationForm(user=request.user)
 
     return render(request, 'users/register_organization.html', {'form': form})
  except Exception as e:
+      print(e)
       return render(request,'users/error.html')
 
 

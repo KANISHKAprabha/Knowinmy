@@ -114,7 +114,7 @@
             <h4>Send Email</h4>
         </div>
         <div class="card-body">
-            <form method="POST">
+            <form method="POST" id="email_form">
                 {% csrf_token %}
                 <textarea name="message" placeholder="Write your query" required></textarea>
                 <button type="submit">Send Email</button>
@@ -123,6 +123,15 @@
         </div>
     </div>
 </div>
+{% endif %}
+<script>
+    
+        function submit_form() {
+        $("#email_form").submit();
+
+    }
+
+</script>
 
     <!-- Include Bootstrap JS (optional) -->
     

@@ -63,13 +63,21 @@
         </div>
         <div class="card-body text-center">
             <h5>Are you sure you want to remove "{{ asana.name }}"?</h5>
-            <form method="POST">
+            <form method="POST" id="asana_form" >
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Yes, Remove</button>
                 <a href="{% url 'organization_list' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>
+    <script>
+    
+        function submit_form() {
+        $("#asana_form").submit();
+
+    }
+
+</script>
 
     <!-- Include Bootstrap JS (optional) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

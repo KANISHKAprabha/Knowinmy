@@ -5,7 +5,7 @@
     <div class="card shadow-lg border-light rounded mx-auto" style="max-width: 600px;">
         <div class="card-body p-4">
             <h2 class="text-center mb-4" style="color: #5f52aa;">Request Subscription Change</h2>
-            <form method="post">
+            <form method="post" id="change_form">
                 {% csrf_token %}
                 
                 <div class="form-group mb-4">
@@ -38,6 +38,14 @@
     </div>
     {% endif %}
 </div>
+<script>
+    
+    function submit_form() {
+    $("#change_form").submit();
+
+}
+
+</script>
 
 <style>
     /* Full height container to center card */
