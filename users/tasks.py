@@ -11,36 +11,24 @@ from django.db.models import F
 @shared_task
 def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client, tenant_id):
     tenant = Tenant.objects.get(id=tenant_id)
-    print(no_of_persons_onboard_by_client, "kkkkkkkkkkkkkkkkkkkkkkkkk")
-    print(admin_user_id, "pppppppppppppppppppppppppppppppppppppppp")
-    print(tenant,"line no 14 from tasks.py ")
+    print("Processing Excel file with the following parameters:", no_of_persons_onboard_by_client, admin_user_id, tenant_id)
 
     try:
-        print("Starting file processing...")
-        # Load the file from storage
+        # Load the file
         file_full_path = default_storage.path(file_path)
-        print(file_full_path, "File path")
-
         df = pd.read_excel(file_full_path, nrows=no_of_persons_onboard_by_client, engine='openpyxl')
-        print(df, "DataFrame loaded")
+        print("DataFrame loaded")
 
         user_objs = []
         role_dict = {}
-        trainer_count = 0
-        student_count = 0
         
-                    
-
-
         with transaction.atomic():
             for i, row in df.iterrows():
-                print(f"Processing row {i}: {row}")
                 username = row['username']
                 email = row['email']
                 first_name = row['first_name']
                 last_name = row['last_name']
-                mentor=row['mentor']
-              
+                mentor_email = row['mentor'] if row['mentor'] != 'none' else None
                 role = row['roles'].lower()
 
                 user_details = User(
@@ -49,10 +37,9 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
                     first_name=first_name,
                     last_name=last_name,
                 )
-               
+                
                 user_objs.append(user_details)
                 role_dict[username] = role
-
 
             # Bulk create users
             User.objects.bulk_create(user_objs)
@@ -60,70 +47,58 @@ def process_excel_file(file_path, admin_user_id, no_of_persons_onboard_by_client
 
             # Fetch admin_user instance
             admin_user = User.objects.get(id=admin_user_id)
-            print(admin_user, "Admin user fetched")
             
             # Fetch or create ClientOnboarding record for admin_user
             client_onboarding, created = ClientOnboarding.objects.get_or_create(
                 client=admin_user, tenant=tenant)
-            print(client_onboarding, "ClientOnboarding fetched or created")
-            if mentor:
-                try:
-                  mentor_user = User.objects.get(email=mentor)
-                  stud_mentor = TrainerLogDetail.objects.get(trainer_name=mentor_user)
-                except User.DoesNotExist:
-                    print(f"No mentor found with email: {mentor}")
-                    mentor_user = None
-                except TrainerLogDetail.DoesNotExist:
-                       print(f"No TrainerLogDetail found for mentor: {mentor_user}")
-                       stud_mentor = None
-
 
             if client_onboarding:
-                print("Entered if block")
                 for user in user_objs:
                     role = role_dict[user.username]
-                    print(f"User {user.username} role: {role}")
                     group, _ = Group.objects.get_or_create(name=role.capitalize())
                     user.groups.add(group)
-                    print(f"Added {user.username} to group {group.name}")
-
-                    if role == 'Trainer':
+                    
+                    if role == 'trainer' and not mentor_email:
+                        # Handle trainer without mentor
                         TrainerLogDetail.objects.create(
                             trainer_name=user,
                             onboarded_by=admin_user,
-                            no_of_asanas_created=0,
+                            tenant=tenant,
+                            no_of_asanas_created=0, 
                             created_at=timezone.now(),
                             updated_at=timezone.now(),
-
-                            tenant=tenant
                         )
-                        trainer_count += 1
-                        print(f"Trainer count updated: {trainer_count}")
+                        client_onboarding.trainers_onboarded = F('trainers_onboarded') + 1
+                    elif role == 'student' and mentor_email:
+                        try:
+                            # Fetch mentor from User
+                            mentor_user = get_object_or_404(User, email=mentor_email)
+                            stud_mentor = get_object_or_404(TrainerLogDetail, trainer_name=mentor_user)
+                            
+                            # Create StudentLogDetail
+                            StudentLogDetail.objects.create(
+                                student_name=user,
+                                added_by=admin_user,
+                                mentor=stud_mentor,
+                                created_at=timezone.now(),
+                                updated_at=timezone.now(),
+                                tenant=tenant
+                            )
+                            client_onboarding.students_onboarded = F('students_onboarded') + 1
+                        except User.DoesNotExist:
+                            print(f"No User found with email {mentor_email}. Skipping student {user.username}.")
+                            continue  # Skip this student if mentor not found
+                        except TrainerLogDetail.DoesNotExist:
+                            print(f"No TrainerLogDetail found for mentor with email {mentor_email}. Skipping student {user.username}.")
+                            continue  # Skip this student if mentor details not found
 
-                    else:
-                        StudentLogDetail.objects.create(
-                            student_name=user,
-                            added_by=admin_user,
-                              mentor=stud_mentor,
-                            created_at=timezone.now(),
-                            updated_at=timezone.now(),
-                            tenant=tenant
-                        )
-                        student_count += 1
-                        print(f"Student count updated: {student_count}")
-
-                # Update ClientOnboarding only once after processing all users
-                print(f"Updating ClientOnboarding - Trainers: {trainer_count}, Students: {student_count}")
-                client_onboarding.trainers_onboarded += trainer_count
-                client_onboarding.students_onboarded += student_count
                 client_onboarding.save()  # Save the updated counts to the database
-                print(f"Updated ClientOnboarding: Trainers {client_onboarding.trainers_onboarded}, Students {client_onboarding.students_onboarded}")
             else:
-                print("CLIENT ONBOARDINGS NOT FOUND")
+                print("ClientOnboarding not found.")
 
         # Cleanup the uploaded file
         default_storage.delete(file_path)
-        return "Users onboarded successfully?"
+        return "Users onboarded successfully."
 
     except Exception as e:
         print(f"Error processing file: {e}")

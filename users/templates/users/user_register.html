@@ -29,55 +29,110 @@
 
     <style>
       body {
-        background: linear-gradient(to bottom, #553cdf, #553cdf);
+          background: linear-gradient(135deg, #b9a1d6, #d3b0e2, #5f52aa, #4a438d);
+          margin: 0;
+          font-family: 'Nunito', sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          padding: 10px;
       }
-
+  
       .bg-gradient-primary {
-        background: linear-gradient(to right, #553cdf, #553cdf) !important;
+          background: linear-gradient(to right, #5f52aa, #9b72b0) !important;
       }
-
-      /* Styling for card, buttons, and form controls */
+  
+      /* Styling for the card */
       .card {
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
-
-      .form-control-user {
-        border-radius: 15px;
-        padding: 20px;
-        border: 1px solid #ddd;
+  
+      h2 {
+          color: #4a438d;
+          font-weight: 700;
+          margin-bottom: 20px;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
       }
-
-      .btn-primary,
-      .btn-google,
-      .btn-facebook {
-        border-radius: 15px;
-        padding: 10px 25px;
+  
+      /* Form fields */
+      .form-group {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
       }
-
+  
+      .form-control {
+          width: 100%;
+          padding: 12px;
+          border-radius: 15px;
+          border: 1px solid #ddd;
+          font-size: 16px;
+          outline: none;
+          transition: border-color 0.3s ease;
+      }
+  
+      .form-control:focus {
+          border-color: #553cdf;
+      }
+  
+      .form-control::placeholder {
+          color: #888;
+          font-style: italic;
+      }
+  
+      /* Error message styling */
+      .custom-error {
+          color: #d9534f;
+          font-size: 0.9rem;
+      }
+  
+      /* Primary button */
       .btn-primary {
-        background-color: #553cdf !important;
-        border-color: #553cdf !important;
+          background-color: #553cdf;
+          border: none;
+          border-radius: 15px;
+          color: #ffffff;
+          padding: 12px 25px;
+          font-size: 16px;
+          width: 100%;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.2s;
       }
-
+  
+      .btn-primary:hover {
+          background-color: #432bbf;
+          transform: translateY(-2px);
+      }
+  
+      /* Buttons */
       .btn-google {
-        background-color: #db4437;
-        border: none;
+          background-color: #db4437;
+          border: none;
+          border-radius: 15px;
+          padding: 10px 25px;
       }
-
-      .btn-facebook {
-        background-color: #3b5998;
-        border: none;
+  
+      .btn-secondary {
+          background-color: #6c757d;
+          border-color: #6c757d;
+          border-radius: 15px;
+          padding: 10px 25px;
       }
-
-      /* Add space between buttons */
-      .btn-user {
-        margin-top: 10px;
+  
+      .reset-btn {
+          margin-top: 20px;
+          padding: 10px 25px;
+          background-color: #553cdf;
+          border-color: #553cdf;
+          border-radius: 15px;
       }
-
+  
       .reset-btn:hover {
-        background-color: #432bbf;
-        border-color: #432bbf;
+          background-color: #432bbf;
+          border-color: #432bbf;
       }
 
       .text-center .small {
@@ -91,22 +146,79 @@
 
       /* Center card */
       .row.justify-content-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
       }
-
+  
+      .col-lg-6 {
+          margin: auto;
+      }
+  
+      .text-center {
+          text-align: center;
+      }
+  
+      .small:hover {
+          color: #432bbf;
+          text-decoration: underline;
+      }
+  
       hr {
-        border-top: 1px solid #eaeaea;
+          border-top: 1px solid #eaeaea;
       }
-    </style>
+  
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+          .card {
+              padding: 30px 20px;
+          }
+  
+          h2 {
+              font-size: 1.75rem;
+          }
+  
+          .btn-primary {
+              padding: 12px 20px;
+              font-size: 15px;
+          }
+  
+          .form-control {
+              padding: 10px;
+              font-size: 15px;
+          }
+      }
+  
+      @media (max-width: 600px) {
+          .card {
+              padding: 20px;
+          }
+  
+          h2 {
+              font-size: 1.5rem;
+          }
+  
+          .btn-primary,
+          .btn-google,
+          .btn-secondary {
+              padding: 10px 20px;
+              font-size: 14px;
+          }
+  
+          .form-control {
+              padding: 8px;
+              font-size: 14px;
+          }
+      }
+  </style>
+  
   </head>
 
   <body class="bg-gradient-primary">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-xl-5 col-lg-6 col-md-8">
+        <div class="col-xl-7 col-lg-8 col-md-9">
           <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
               <!-- Nested Row within Card Body -->
@@ -125,7 +237,7 @@
                     >
                       {% csrf_token %}
                       <div class="form-group row">
-                        <div class="col-sm-6 mb-3 mb-sm-0">
+                        <div class="form-group">
                           <input
                             type="text"
                             class="form-control form-control-user"
@@ -135,7 +247,7 @@
                             name="first_name"
                           />
                         </div>
-                        <div class="col-sm-6">
+                        <div class="form-group">
                           <input
                             type="text"
                             class="form-control form-control-user"
@@ -145,19 +257,20 @@
                             name="last_name"
                           />
                         </div>
+                        <div class="form-group">
+                          <input
+                            type="email"
+                            class="form-control form-control-user"
+                            id="exampleInputEmail"
+                            placeholder="Email Address"
+                            required
+                            name="email"
+                          />
+                        </div>
                       </div>
-                      <div class="form-group">
-                        <input
-                          type="email"
-                          class="form-control form-control-user"
-                          id="exampleInputEmail"
-                          placeholder="Email Address"
-                          required
-                          name="email"
-                        />
-                      </div>
+                     
                       <div class="form-group row">
-                        <div class="col-sm-6 mb-3 mb-sm-0">
+                        <div class="form-group">
                           <input
                             type="password"
                             class="form-control form-control-user"
@@ -166,7 +279,7 @@
                             name="password"
                           />
                         </div>
-                        <div class="col-sm-6">
+                        <div class="form-group">
                           <input
                             type="password"
                             class="form-control form-control-user"
@@ -200,6 +313,8 @@
                         >Already have an account? Login!</a
                       >
                     </div>
+                    <br>
+                    <br>
                     <div class="text-center">
                       <a
                         class="btn btn-secondary btn-user btn-block"

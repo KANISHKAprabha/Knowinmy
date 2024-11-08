@@ -1,9 +1,8 @@
-
 {% block content %}
 
 <div class="container">
-    <div class="card shadow-lg border-light rounded mx-auto" style="max-width: 600px;">
-        <div class="card-body p-4">
+    <div class="card shadow-lg border-light rounded mx-auto" style="max-width: 800px;">
+        <div class="card-body p-3">
             <h2 class="text-center mb-4" style="color: #5f52aa;">Request Subscription Change</h2>
             <form method="post" id="change_form">
                 {% csrf_token %}
@@ -12,11 +11,13 @@
                     <label for="{{ form.request_type.id_for_label }}">{{ form.request_type.label }}</label>
                     {{ form.request_type }}
                 </div>
+                <br>
 
                 <div class="form-group mb-4">
                     <label for="{{ form.reason.id_for_label }}">{{ form.reason.label }}</label>
                     {{ form.reason }}
                 </div>
+                <br>
 
                 <button type="submit" class="btn btn-primary btn-block mt-4" style="background-color: #5f52aa; border-color: #5f52aa;">
                     Submit Request
@@ -38,82 +39,166 @@
     </div>
     {% endif %}
 </div>
+
 <script>
-    
     function submit_form() {
-    $("#change_form").submit();
-
-}
-
+        $("#change_form").submit();
+    }
 </script>
 
 <style>
     /* Full height container to center card */
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh; /* Full viewport height */
-        padding: 20px; /* Padding around the container */
-        background-color: #f9f9f9; /* Light background for contrast */
-    }
+   
+    body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(139deg, #cda1d6, #d3b0e2, #594c9f, #9a5cbf);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-    /* Card Styling */
-    .card {
-        border-radius: 15px; /* Rounded corners */
-        border: 1px solid #e0e0e0; /* Light border */
-        max-width: 600px; /* Limit card width */
-        width: 100%; /* Make card responsive */
-        transition: transform 0.3s ease; /* Smooth transition for hover effect */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    }
+        .card {
+            max-width: 500px;
+            margin: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+            text-align: center;
+            padding: 40px;
+            color: #333333;
+        }
 
-    .card:hover {
-        transform: translateY(-5px); /* Lift effect on hover */
-    }
+        h2 {
+            margin-bottom: 20px;
+            color: #4a438d; /* Dark violet for header */
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
 
-    .card-body {
-        background-color: #ffffff; /* White background */
-        padding: 2rem; /* Inner padding */
-    }
+        p {
+            color: #555555; /* Slightly darker grey for better contrast */
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    /* Form Styling */
-    .form-group {
-        margin-bottom: 1.5rem; /* Spacing between form groups */
-    }
+        /* Primary button */
+        .btn-primary {
+            background-color: #6533c9;
+            border-color: #553cdf;
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
 
+        .btn-primary:hover {
+            background-color: #432bbf;
+            transform: translateY(-2px);
+        }
+
+        /* Placeholder styling */
+        .form-control::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Small link styling */
+        .small {
+            color: #553cdf;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .text-center .small:hover {
+            color: #432bbf;
+            text-shadow: 1px 1px 3px rgba(67, 43, 191, 0.4);
+            text-decoration: underline;
+        }
+
+        .row.justify-content-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
     label {
-        font-weight: bold; /* Bold label text */
-        color: #333; /* Dark color for readability */
-        display: block; /* Block display for labels */
-        margin-bottom: 0.5rem; /* Space below label */
+        font-weight: bold;
+        color: #333;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Textarea Styling */
+    textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: vertical;
+        min-height: 50px; /* Reduced height */
+        transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+        border-color: #5f52aa;
+        outline: none;
+        box-shadow: 0 0 5px rgba(95, 82, 170, 0.2);
+    }
+    select {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        appearance: none; /* Remove default arrow */
+        background-color: #ffffff;
+        background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgba(95,82,170,1)" d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        transition: border-color 0.3s ease;
+    }
+
+    select:focus {
+        border-color: #5f52aa;
+        outline: none;
+        box-shadow: 0 0 5px rgba(95, 82, 170, 0.2);
     }
 
     /* Button Styling */
     .btn {
-        display: block; /* Full width button */
-        width: 100%; /* Full width */
-        background-color: #5f52aa; /* Custom button color */
-        border: none; /* Remove border */
-        color: #ffffff; /* White text */
-        font-size: 1rem; /* Button text size */
-        padding: 10px; /* Padding for button */
-        cursor: pointer; /* Pointer cursor on hover */
-        transition: background-color 0.3s ease, transform 0.3s ease; /* Transition effects */
+        display: block;
+        width: 100%;
+        background-color: #5f52aa;
+        border: none;
+        color: #ffffff;
+        font-size: 1rem;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        border-radius: 5px;
     }
 
     .btn:hover {
-        background-color: #4a438d; /* Darker shade on hover */
-        transform: scale(1.05); /* Slightly enlarge on hover */
+        background-color: #4a438d;
+        transform: scale(1.05);
     }
 
     /* Message Display Styles */
     .alert {
-        background-color: #d4edda; /* Light green background */
-        border-color: #c3e6cb; /* Border color */
-        color: #155724; /* Dark green text */
-        border-radius: 5px; /* Rounded corners */
-        padding: 10px; /* Padding for message */
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        border-radius: 5px;
+        padding: 10px;
     }
 </style>
 

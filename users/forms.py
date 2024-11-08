@@ -2,6 +2,7 @@ from dataclasses import field
 from pyexpat import model
 from django.forms import Form,ModelForm,Textarea
 from .models import *
+from django.contrib.auth.forms import SetPasswordForm
 # import the standard Django Forms
 # from built-in library
 from django import forms 
@@ -327,3 +328,31 @@ class SubscriptionChangeForm(forms.Form):
     )
     reason = forms.CharField(widget=forms.Textarea, required=True, label="Reason for Request")
 
+
+
+
+
+
+
+
+
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomSetPasswordForm, self).__init__(*args, **kwargs)
+        
+        # Customizing each field in the form
+        self.fields['new_password1'].widget.attrs.update({
+            'class': 'form-control custom-input',  # Add your CSS classes
+            'placeholder': 'Enter new password',
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'class': 'form-control custom-input',
+            'placeholder': 'Confirm new password',
+        })
+        
+    # Custom error messages
+    error_messages = {
+        'password_mismatch': "The two password fields didn’t match.",
+    }

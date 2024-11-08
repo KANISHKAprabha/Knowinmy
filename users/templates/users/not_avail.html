@@ -3,14 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reset Your Password</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>KnowInMyt</title>
 
-    <!-- Custom Fonts -->
+    <!-- Custom fonts for this template -->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet" />
 
     <style>
-        /* Base styling */
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(139deg, #cda1d6, #d3b0e2, #594c9f, #9a5cbf);
@@ -43,38 +44,12 @@
         p {
             color: #555555; /* Slightly darker grey for better contrast */
             font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
+            line-height: 1.6;
         }
 
-        /* Primary button */
-        .btn-primary {
-            background-color: #6533c9;
-            border-color: #553cdf;
-            border-radius: 10px;
-            color: #ffffff;
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s, transform 0.2s;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background-color: #432bbf;
-            transform: translateY(-2px);
-        }
-
-        /* Placeholder styling */
-        .form-control::placeholder {
-            color: #888;
-            font-style: italic;
-        }
-
-        /* Small link styling */
-        .small {
-            color: #553cdf;
-            font-size: 0.9rem;
+        .text-center .small {
+            color: #5f52aa;
+            font-weight: 600;
             text-decoration: none;
             transition: color 0.3s ease, text-shadow 0.3s ease;
         }
@@ -91,23 +66,46 @@
             align-items: center;
             height: 100vh;
         }
+        .back-button {
+            background-color: #8a2be2;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #7a24d9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <h2>Reset Your Password</h2>
-            <form method="post" id="send_email_form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Send Password Reset Email</button>
-            </form>
-            <hr />
-            <a href="{% url 'login' %}" class="small">Back to Login</a>
+        <div class="row justify-content-center">
+            <div class="col-xl-7 col-lg-8 col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            
+                            <p>You did not onboarded the users</p>
+                        </div>
+                        <hr />
+                        <button class="back-button" onclick="window.history.back()">Go Back</button>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Bootstrap core JavaScript -->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Core plugin JavaScript -->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages -->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
 </body>
 </html>

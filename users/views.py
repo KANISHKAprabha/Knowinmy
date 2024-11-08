@@ -108,7 +108,7 @@ def register(request):
             message="Welcome to our website to enchance your tutor skills in  AI assisted website",
             from_email="prabhaprasath07@gmail.com",
             recipient_list=[email],
-            fail_silently=False,
+            
 
 
                    )
@@ -117,9 +117,12 @@ def register(request):
         return redirect('login')
     return render(request , "users/user_register.html")
  except IntegrityError:
-     messages.error(request,"A user with this email already exist")
+     print("innnnnnnnn")
+     django_messages.error(request,"A user with this email already exist")
+     return render(request,'users/error.html')
  except  Exception as e:
-      return render(request,'error.html')
+      print(e,'he')
+      return render(request,'users/error.html')
 
 
 
@@ -227,15 +230,15 @@ def send_payment_invoice(request,order):
     Thank you for your payment. Here are the details of your transaction:
 
     Order ID: {order.provider_order_id}
-    Payment ID: {order.payment_id}
-    Amount: {order.amount}  # Assuming there's an amount field in your Order model
+   
+    Amount: {order.amount} 
     Status: {order.status}
     Date: {order.created_at}
 
     We appreciate your business!
 
     Best regards,
-    Your Company Name
+       Knowinmy.
     """
     from_email = settings.DEFAULT_FROM_EMAIL  # Make sure to set this in your settings.py
     recipient_list = [get_email]  # Replace with the actual field containing the customer's email
@@ -322,7 +325,8 @@ def subscription_payment(request):
         print(name,"line no 111")
         subscription_id = request.session.get('subscription_id')
         print(subscription_id,"llllllllll")
-        subscription = Subscription.objects.get(id=subscription_id)
+        subscription = Subscription.objects.get_or_create(id=subscription_id,name=request.user)
+    
         amount = Decimal(subscription.price)
        
         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -495,15 +499,15 @@ def Trainer_approval_function(request,slug):
             message="You have onboarded the users successfully ",
             from_email="prabhaprasath07@gmail.com",
             recipient_list=[get_name_email],
-            fail_silently=False,
+         
 
 
                    )
                 
 
-                django_messages.success(request, "Users are being onboarded, you'll be notified once done.", button="OK")
+                django_messages.success(request, "Users are being onboarded, you'll be notified once done.")
             else:
-                django_messages.error(request, "No file uploaded!", button="OK")
+                django_messages.error(request, "No file uploaded!")
 
             return render(request, 'users/Trainer_approval_Page.html',{'tenant': tenant,"slug":tenant.slug})
 
@@ -599,49 +603,48 @@ def onboarding_view(request,slug):
                 role = form.cleaned_data.get('role')
                 print(role,"jinreeeeeeeeeeeeee")    
                 mentor=form.cleaned_data.get('mentor')
+                group, _ = Group.objects.get_or_create(name=role.capitalize())
+                user.groups.add(group)
                 print(mentor,"oooooooooooooooooooooooooo")
-                if mentor:
-                  try:
-                    mentor_user = get_object_or_404(User, email=mentor)
+                if role == 'trainer' and not mentor:
+                        # Handle trainer without mentor
+                        TrainerLogDetail.objects.create(
+                            trainer_name=user,
+                            onboarded_by=admin_user,
+                            tenant=tenant,
+                            no_of_asanas_created=0, 
+                            created_at=timezone.now(),
+                            updated_at=timezone.now(),
+                        )
+                        client_onboarding.trainers_onboarded = F('trainers_onboarded') + 1
+                        continue
+                elif role == 'student' and mentor:
+                        try:
+                            # Fetch mentor from User
+                            mentor_user = get_object_or_404(User, username=mentor)
+                            stud_mentor = get_object_or_404(TrainerLogDetail, trainer_name=mentor_user)
+                            
+                            # Create StudentLogDetail
+                            StudentLogDetail.objects.create(
+                                student_name=user,
+                                added_by=admin_user,
+                                mentor=stud_mentor,
+                                created_at=timezone.now(),
+                                updated_at=timezone.now(),
+                                tenant=tenant
+                            )
+                            client_onboarding.students_onboarded = F('students_onboarded') + 1
+                        except User.DoesNotExist:
+                            print(f"No User found with email {mentor}. Skipping student {user.username}.")
+                            continue  # Skip this student if mentor not found
+                        except TrainerLogDetail.DoesNotExist:
+                            print(f"No TrainerLogDetail found for mentor with email {mentor}. Skipping student {user.username}.")
+                            continue  # Skip this student if mentor details not found
 
-        # Now use the mentor_user to fetch the related TrainerLogDetail
-                    stud_mentor = get_object_or_404(TrainerLogDetail, trainer_name=mentor_user)
-                  except TrainerLogDetail.DoesNotExist:
-                    print(f"No mentor found with email: {mentor}")
-                    continue  # Skip to the next form if the mentor doesn't exist
-                else:
-                    print("Mentor is not provided")
-                    continue
-
-
-                if role == 'trainer':
-                    TrainerLogDetail.objects.create(
-                        trainer_name=user,
-                        onboarded_by=admin_user,
-                        tenant=tenant,  # Associate with the tenant
-                        no_of_asanas_created=0, 
-                        created_at=timezone.now(),
-                         updated_at=timezone.now(),
-                        
-                    )
-                    # Update ClientOnboarding model
-                    django_messages.success(request,"Trainer onboarded successfully")
-                    client_onboarding.trainers_onboarded = F('trainers_onboarded') + 1
-                else:
+               
+                
                   
-                    StudentLogDetail.objects.create(
-                        student_name=user,
-                        added_by=admin_user,
-                       mentor=stud_mentor,
-                         created_at=timezone.now(),
-                        updated_at=timezone.now(),
-                        
-                        tenant=tenant  # Associate with the tenant
-                    )
-                    # Update ClientOnboarding model
-                    django_messages.success(request,"Student onboarded successfully")
-                    client_onboarding.students_onboarded = F('students_onboarded') + 1
-
+                   
             # Save the updated counts to the database
             client_onboarding.save()
             remaining_forms -= len(formset)
@@ -683,11 +686,13 @@ def user_login(request):
         user = authenticate(username=user_obj.username, password=password)
         if user is not None:
             auth_login(request, user)  # Log in the user
-            sweetify.success(request, 'You successfully logged in ')
+            django_messages.success(request, 'You successfully logged in ')
             return redirect("role_based_dashboard")
         else:
             
+            django_messages.error(request, 'An error occured! ')
             return render(request, "users/login.html")
+            
 
     return render(request, "users/login.html")
  except IntegrityError:
@@ -706,10 +711,12 @@ def role_based_dashboard(request):
         return redirect('login')  # Redirect to login if not authenticated
 
     current_user = request.user
+    get_fn=User.objects.get(username=current_user)
     print("Current user:", current_user)
     is_trainer = TrainerLogDetail.objects.filter(trainer_name=current_user).exists()
     is_student = StudentLogDetail.objects.filter(student_name=current_user).exists()
-    is_client=Order.objects.filter(name=current_user).exists()
+    is_client=Order.objects.filter(name=get_fn.first_name).exists()
+    is_admin=User.objects.filter(email=request.user,is_staff=True)
     print(is_client,"lllllllllllll")
     print(is_student,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
     # is_client = User.objects.filter(username=current_user).exists()
@@ -865,7 +872,7 @@ def role_based_dashboard(request):
             'tenant': tenant,
             'slug': tenant.slug
         })
-    else:
+    elif is_admin:
         print("entered knowinmy part")
         get_knowinmy=User.objects.get(username =request.user)
         print(get_knowinmy,"ppppppppppppppppppppppppppp")
@@ -873,6 +880,8 @@ def role_based_dashboard(request):
         return render(request,'users/organization_list.html',{
 
         })
+    else:
+        return render(request,'home_page.html')
   except Exception as e:
       print("error",e)
     
@@ -1673,8 +1682,11 @@ def trainer_dashboard(request, slug):
     try:
         current_user=request.user
         tenant = get_object_or_404(Tenant, client_name=request.user, slug=slug)
-        trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name').first()
-        email=trainers.trainer_name.email
+        trainers = TrainerLogDetail.objects.filter(tenant=tenant).select_related('trainer_name')
+        if not trainers:
+            return render(request,'users/not_avail.html')
+        trainers_email = TrainerLogDetail.objects.filter(tenant=tenant).first()
+        email=trainers_email.trainer_name.email
 
         course_counts = {}
         enrollment_counts = {}
@@ -1826,6 +1838,8 @@ def  student_dashboard(request, slug):
     
     enrollments = EnrollmentDetails.objects.filter(tenant=tenant).prefetch_related('students_added_to_courses', 'students_added_to_courses__asanas_by_trainer') 
     print(enrollments,"skdjfffffffffffffffffff")
+    if not enrollments:
+            return render(request,'users/not_avail.html')
 
 
     student_enrollment_map = {}
@@ -1933,14 +1947,16 @@ def edit_user(request, user_id,slug):
 
 
 
-@login_required
-@user_passes_test(check_client)
+
 def register_organisation(request):
  try:
     print(request.user)
     
 
     if request.method == 'POST':
+            domain_name = request.POST.get("domain_name")
+           
+
         
         
             # form = OrganisationForm(request.POST,user=request.user)
@@ -1948,6 +1964,16 @@ def register_organisation(request):
             if form.is_valid():
                 form.save()  
                 print("Form is valid. Redirecting to login.")
+                
+                print("created successfully")
+                tenant = Tenant.objects.filter(domain_name=domain_name).first() 
+                create=ClientOnboarding.objects.create(
+                    tenant=tenant,
+                    client=request.user,
+                    trainers_onboarded =0 ,
+                    students_onboarded=0
+
+                )
                 return redirect("home")
             else:
                print("Form is invalid. Errors:", form.errors)
@@ -2176,20 +2202,23 @@ def organization_list_view(request):
 @login_required
 @user_passes_test(check_knowinmy)
 def  asanas_view(request, tenant_id):
+ print("entered ")
  try:
     tenant = get_object_or_404(Tenant, id=tenant_id)
     print(tenant,"pppppppppppppppppppppp")
     if tenant:
+         print(tenant,"hello")
          get_deat=ClientOnboarding.objects.get(tenant=tenant)
          get_trainer_count=get_deat.trainers_onboarded
          get_stud_count=get_deat.students_onboarded
          get_client=get_deat.client
+         print(get_client,"nooo")
          print(get_client,"oooooooooooooooooooooooooooooo")
          get_tenant=Order.objects.get(name=get_client.first_name,status='ACCEPT')
          print(get_tenant,"looooooooooooooooooo")
          get_subs=get_tenant.subscription.name
          print(get_subs,"ouuuuuuuuuuuuuuuuu")
-         get_name=User.objects.filter(email=get_client).first()
+         get_name=User.objects.filter(username=get_client).first()
          get_order=Order.objects.filter(name=get_name.first_name).first()
          print(get_order,"popopop")
          get_subs=get_order.subscription
@@ -2338,7 +2367,7 @@ def get_subscription_details_for_client(request,slug):
     print(get_status,"ppppppppppppppppppppp")
     print(get_time,"oooooooooo")
     expiration_date=get_time + timedelta(days=get_status)
-    print(expiration_date,"oooooooooooooooooooooooooooppppppppppppppp")
+    print(expiration_date,"kanishka")
 
 
 
@@ -2422,7 +2451,7 @@ def renew_subscription(request):
 
 
 
-
+@login_required
 def dynamic_subscription_payment(request):
     if request.method == 'POST':
         form = SubscriptionForm(request.POST)
@@ -2463,7 +2492,8 @@ def dynamic_subscription_payment(request):
             return redirect('subscription-payment')
         
         else:
-            print(form.errors)  # Print form errors for debugging
+            print(form.errors)
+            return render(request,"users/error.html")  # Print form errors for debugging
     else:
         form = SubscriptionForm()
 

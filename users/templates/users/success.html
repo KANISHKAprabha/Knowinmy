@@ -8,90 +8,121 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        :root {
-            --primary-color: #5f52aa;
-            --background-color: #f8f9fa;
-            --text-color: #333333;
-        }
-
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: Arial, sans-serif;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(139deg, #cda1d6, #d3b0e2, #594c9f, #9a5cbf);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-
+    
         .container {
-            max-width: 800px;
-            margin-top: 50px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
             padding: 20px;
         }
-
+    
+        .card {
+            max-width: 400px;
+            margin: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+            text-align: center;
+            padding: 40px;
+            color: #333333;
+        }
+    
+        h2 {
+            margin-bottom: 20px;
+            color: #4a438d; /* Dark violet for header */
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+    
+        p {
+            color: #555555; /* Slightly darker grey for better contrast */
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    
+        .text-center .small {
+            color: #5f52aa;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+    
+        .text-center .small:hover {
+            color: #432bbf;
+            text-shadow: 1px 1px 3px rgba(67, 43, 191, 0.4);
+            text-decoration: underline;
+        }
+    
         .alert {
             border-radius: 0.5rem;
             padding: 1.5rem;
             font-size: 1.1rem;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
+    
         .alert-heading {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--primary-color);
+            color: #1b1b1b;
         }
-
-        .alert-success {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
+    
+      
+    
         .alert-danger {
-            background-color: #aa5260;
+            background-color: #aa5260; /* Soft red for failure alert */
             color: white;
         }
-
+    
         .btn-lg {
             font-size: 1.2rem;
             padding: 0.75rem 1.5rem;
-            background-color: var(--primary-color);
+            background-color: #553CDF; /* Primary color for the button */
             color: white;
             border: none;
             border-radius: 8px;
             transition: background-color 0.3s ease;
         }
-
+    
         .btn-lg:hover {
-            background-color: #473f84;
+            background-color: #432bbf; /* Darker shade on hover */
         }
-
+    
         a {
-            color: var(--primary-color);
+            color: #5f52aa;
             font-weight: bold;
         }
-
+    
         a:hover {
-            color: #473f84;
+            color: #432bbf;
             text-decoration: none;
         }
-
+    
+        /* Media queries for smaller devices */
         @media (max-width: 576px) {
             .alert-heading {
                 font-size: 1.3rem;
             }
-
+    
             .alert {
                 padding: 1rem;
                 font-size: 1rem;
             }
-
+    
             .btn-lg {
                 font-size: 1rem;
                 padding: 0.5rem 1rem;
             }
         }
     </style>
+    
 </head>
 <body>
 
@@ -101,7 +132,8 @@
             <h4 class="alert-heading">Payment Successful!</h4>
             <p>Thank you for your payment. Your transaction was successful.</p>
             <hr>
-            <p class="mb-0"><strong>Amount:</strong> ${{ order.amount }}</p>
+            <p class="mb-0"><strong>Name:</strong> {{ order.name }}</p>
+            <p class="mb-0"><strong>Amount:</strong> Rs.{{ order.amount }}</p>
             <p class="mb-0"><strong>Status:</strong> {{ order.status }}</p>
         </div>
         {% elif order.status == 'REJECT' %}

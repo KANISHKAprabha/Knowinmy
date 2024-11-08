@@ -91,7 +91,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
    
-    #  'users.middleware.ExceptionHandlingMiddleware',
+     'users.middleware.ExceptionHandlingMiddleware',
 ]
 
 ROOT_URLCONF = 'yoga.urls'
@@ -137,6 +137,9 @@ else:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
             'ATOMIC_REQUESTS': True,
+            'OPTIONS': {
+            'timeout': 200,  # Increase timeout to 20 seconds
+        }
         }   
     }
 
