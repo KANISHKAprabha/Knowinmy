@@ -88,4 +88,35 @@ Subscriptions are **flexible and dynamic**, based on:
 - Admin can **dynamically customize plans** to suit the needs of each client.
 
 ---
+## 📦 Technologies Used
+
+### 🖥️ Languages
+- Python
+- JavaScript
+
+### 🧰 Backend
+- Django
+
+### 🎨 Frontend
+- HTMX
+- HTML, CSS, JavaScript
+- (Optional: React for future versions)
+
+### 🗄️ Database
+- MySQL
+- PostgreSQL
+
+### 🤖 AI / ML
+- Pose detection using body keypoints
+- Powered by MediaPipe or OpenCV
+
+### 💳 Payment Gateway
+- Razorpay
+
+### 📦 Containerization
+- Docker
+- Docker Compose
+
+### 🔄 Version Control
+- Git
 
