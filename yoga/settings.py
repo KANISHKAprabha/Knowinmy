@@ -38,7 +38,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 IS_PRODUCTION = os.environ.get('IS_PRODUCTION', False)
 DEBUG = not IS_PRODUCTION
 
-ALLOWED_HOSTS = ['*']
+if IS_PRODUCTION:
+    ALLOWED_HOSTS = ["knowinmy.com", "test1.knowinmy.com", "staging.knowinmy.com"]
+else:
+    ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -178,7 +181,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, '/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -280,62 +284,40 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Don't expire the session when the bro
 SESSION_SAVE_EVERY_REQUEST = True  # Save the session to extend its expiry on every request
 
 
-sentry_sdk.init(
-    
-    dsn="https://28471d1821c73d7bd3d41744c4f43765@o4507736382636032.ingest.us.sentry.io/4507736387616768",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    # We recommend adjusting this value in production.
-    profiles_sample_rate=1.0,
-)
+
+
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), CeleryIntegration()],
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 
 
 
-
-
-
-
-
-sentry_sdk.init(
-    # same as above
-    integrations=[
-        CeleryIntegration(
-            monitor_beat_tasks=True,
-            exclude_beat_tasks=[
-                "unimportant-task",
-                "payment-check-.*"
-            ],
-        ),
-    ],
-)
-
-
-
-
-
-
-
-
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+CELERY_REDIS_DB = os.getenv("CELERY_REDIS_DB", "1")
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6380/1",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/{CELERY_REDIS_DB}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
 
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 
 
-CELERY_BROKER_URL = "redis://localhost:6380"
-CELERY_RESULT_BACKEND='django-db'
+
+
 
 
 
