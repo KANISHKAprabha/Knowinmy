@@ -103,7 +103,6 @@ Subscriptions are **flexible and dynamic**, based on:
 - (Optional: React for future versions)
 
 ### 🗄️ Database
-- MySQL
 - PostgreSQL
 
 ### 🤖 AI / ML
