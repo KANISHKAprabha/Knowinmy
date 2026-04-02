@@ -62,5 +62,3 @@ js mediapipe
 backup.py
 .cph/
 .env/
-CLAUDE.md
-context_skills.md
