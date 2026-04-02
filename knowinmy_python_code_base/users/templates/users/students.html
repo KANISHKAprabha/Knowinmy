@@ -1,0 +1,144 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2  class="text-center" style="color: #5f52aa;">Student Dashboard - {{ tenant.client_name }}</h2>
+    <br>
+    <br>
+    
+    {% if students %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead style="background-color: #5f52aa; color: white;">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Enrollments and Courses</th>
+                        <th>Asanas</th>
+                        <th>Status</th>
+                        <th>Mentor</th>
+                        <th>Actions</th>
+                        <th>Remove</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for student_data in student_enrollment_list %}
+                   
+
+                        <tr>
+                            <td>{{ student_data.student.student_name.username }}</td>
+                            <td>{{ student_data.student.student_name.email }}</td>
+                            
+                            <!-- Enrollments and Courses -->
+                            <td>
+                                
+                                {% if student_data.enrollments %}
+                                    <ul>
+                                        {% for enrollment in student_data.enrollments %}
+                                            {% if enrollment.students_added_to_courses.exists %}
+                                                {% for course in enrollment.students_added_to_courses.all %}
+                                                    <li>{{ course.course_name }}</li>
+                                                {% endfor %}
+                                            {% else %}
+                                                <li>No courses enrolled.</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No enrollments available.</p>
+                                {% endif %}
+                            </td>
+
+                            <!-- Asanas -->
+                            <td>
+                                {% if student_data.enrollments %}
+                                    <ul>
+                                        {% for enrollment in student_data.enrollments %}
+                                            {% for course in enrollment.students_added_to_courses.all %}
+                                                {% if course.asanas_by_trainer.exists %}
+                                                    <ul>
+                                                        {% for asana in course.asanas_by_trainer.all %}
+                                                            <li>{{ asana.name }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% else %}
+                                                    <li>No asanas available for this course.</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No asanas available.</p>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                
+                                {% if student_data.student.is_active %}
+                              
+                                    <span >Active</span>
+                                {% else %}
+                                    <span >Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{student_data.student.mentor}}
+                            </td>
+
+                            <!-- Actions -->
+                            <td>
+                            <div class="d-flex justify-content-center">
+                                <form method="POST" action="{% url 'student_dashboard' tenant.slug %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="student_id" value="{{ student_data.student.student_name.id }}">
+                                    
+                                    
+                                    {% if student_data.student.is_active %}
+                                    
+                                        <button type="submit" name="action" value="disable" class="btn btn-sm btn-danger">Disable</button>
+                                    {% else %}
+                                        <button type="submit" name="action" value="enable" class="btn btn-sm btn-success">Enable</button>
+                                    {% endif %}
+                                </form>
+                            <!-- Remove user -->
+                               
+                            </div>
+                            
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'student_dashboard' tenant.slug %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="student_id" value="{{ student_data.student.student_name.id }}">
+                                
+                                    
+                                    
+                                        <button type="submit" name="action" value="remove" class="btn btn-sm btn-danger">Remove</button>
+                                    
+                                        
+                                    
+                                </form>
+                                
+                            </td>
+                            <td>
+                                
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No students available.</p>
+    {% endif %}
+</div>
+{% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

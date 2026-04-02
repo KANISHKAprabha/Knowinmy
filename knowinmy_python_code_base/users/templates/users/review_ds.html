@@ -1,0 +1,158 @@
+{% extends 'users/staff_dashboard.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #5f52aa;">Pending Subscription Change Requests</h2>
+
+    {% if pending_request_for_subscription %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped shadow-sm">
+                <thead style="background-color: #5f52aa; color: white;">
+                    <tr>
+                        <th style="font-weight: bold;">Name</th>
+                        <th style="font-weight: bold;">No. of Trainers</th>
+                        <th style="font-weight: bold;">No. of Asanas</th>
+                        <th style="font-weight: bold;">No. of Students</th>
+                        <th style="font-weight: bold;">Duration (Months)</th>
+                        <th style="font-weight: bold;">Created at</th>
+                        <th style="font-weight: bold;">Updated at</th>
+                        <th style="font-weight: bold;">Description</th>
+                        <th style="font-weight: bold; width: 150px;">Price</th> <!-- Increased width for price -->
+                        <th style="font-weight: bold;" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subscription in pending_request_for_subscription %}
+                        <tr>
+                            <form method="post" action="{% url 'review_ds' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="subscription_id" value="{{ subscription.id }}">
+                                <td>{{ subscription.name }}</td>
+                                <td><input type="number" name="no_of_trainers" value="{{ subscription.no_of_trainers }}" class="form-control" required></td>
+                                <td><input type="number" name="no_of_trainers" value="{{ subscription.permitted_asanas }}" class="form-control" required></td>
+                                <td><input type="number" name="no_of_students" value="{{ subscription.no_of_students }}" class="form-control" required></td>
+                                <td><input type="number" name="duration_in_months" value="{{ subscription.duration_in_months }}" class="form-control" required></td>
+                                <td><input type="datetime-local" name="created_at" value="{{ subscription.created_at|date:'Y-m-d\\TH:i' }}" class="form-control" required></td>
+                                <td><input type="datetime-local" name="updated_at" value="{{ subscription.updated_at|date:'Y-m-d\\TH:i' }}" class="form-control" required></td>
+                                <td><input type="text" name="description" value="{{ subscription.description }}" class="form-control" required></td>
+                                <td><input type="number" name="price" style=" width: 150px;" value="{{ subscription.price }}" class="form-control" required></td>
+                                <td class="text-center">
+                                    <button type="submit" name="action" value="edit" class="btn btn-primary btn-custom-small me-2">Save</button>
+                                    <button type="submit" name="action" value="approve" class="btn btn-success btn-custom-small me-2">Approve</button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-danger btn-custom-small">Reject</button>
+                                </td>
+                            </form>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No pending subscription change requests.</p>
+    {% endif %}
+</div>
+
+ 
+    {% if messages %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Custom CSS for Styling -->
+<style>
+    /* Heading Styling */
+    h2 {
+        font-size: 2rem; /* Increased font size */
+        color: #5f52aa; /* Custom color */
+        font-weight: bold;
+    }
+
+    /* Table Styling */
+    .table-bordered {
+        border: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        font-weight: 500;
+        text-align: center;
+        font-size: 1.1rem; /* Increased font size for readability */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9; /* Light background for alternate rows */
+    }
+
+    /* Button Styling */
+    .btn-success {
+        background-color: #5cb85c; /* Green for success */
+        border-color: #5cb85c;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-danger {
+        background-color: #d9534f; /* Red for danger */
+        border-color: #d9534f;
+        font-weight: bold; /* Bold text for better visibility */
+    }
+
+    .btn-custom-small {
+        padding: 10px 16px; /* Consistent button size */
+        font-size: 1rem; /* Consistent font size */
+        border-radius: 5px; /* Slightly rounded corners */
+    }
+
+    /* Responsive Table */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        h2 {
+            font-size: 1.5rem; /* Adjust heading size for small screens */
+        }
+
+        th, td {
+            padding: 10px; /* Adjust padding for small screens */
+            font-size: 0.9rem; /* Adjust font size for small screens */
+        }
+
+        .btn {
+            font-size: 0.85rem; /* Adjust button font size for small screens */
+            padding: 8px 12px; /* Adjust button padding for small screens */
+        }
+    }
+</style>
+<script>
+    function submit_form_approve(subscription_id) {
+        var deleteButton = document.getElementById('approve_form_approve-' +subscription_id);
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                deleteButton.disabled = true;
+                e.preventDefault();
+            }, { once: true });
+        } else {
+            console.error('Delete button not found!');
+        }
+    }
+    function submit_form_reject(subscription_id) {
+        var deleteButton = document.getElementById('approve_form_reject-' +subscription_id);
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                deleteButton.disabled = true;
+                e.preventDefault();
+            }, { once: true });
+        } else {
+            console.error('Delete button not found!');
+        }
+    }
+</script>
+{% endblock %}

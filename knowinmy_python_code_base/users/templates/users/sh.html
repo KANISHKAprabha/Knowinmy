@@ -1,0 +1,102 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="color: #5f52aa;">
+        {{ tenant.client_name }} - Student Enrollment Dashboard
+    </h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Enrolled Courses</th>
+                    <th>Asanas</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student, enrollments in student_enrollment_map.items %}
+                <tr>
+                    <td>{{ student }}</td>
+                    <td>
+                        {% if enrollments %}
+                            <ul>
+                                {% for enrollment in enrollments %}
+                                    {% if enrollment.students_added_to_courses.exists %}
+                                        {% for course in enrollment.students_added_to_courses.all %}
+                                            <li>{{ course.course_name }}</li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li>No courses enrolled.</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No courses enrolled.</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if enrollments %}
+                            <ul>
+                                {% for enrollment in enrollments %}
+                                    {% for course in enrollment.students_added_to_courses.all %}
+                                        {% if course.asanas_by_trainer.exists %}
+                                            <ul>
+                                                {% for asana in course.asanas_by_trainer.all %}
+                                                    <li>{{ asana.name }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <ul>
+                                                <li>No asanas available for this course.</li>
+                                            </ul>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No asanas available.</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for s in enrollments %}
+                            <form id="enable-form-{{ s.student.id }}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="student_id" value="{{ s.student.id }}">
+                                <input type="hidden" name="action" value="enable">
+                                {% if not s.student.is_active %}
+                                    <button type="submit" class="btn btn-success btn-sm">Enable</button>
+                                {% endif %}
+                            </form>
+
+                            <form id="disable-form-{{ s.student.id }}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="student_id" value="{{ s.student.id }}">
+                                <input type="hidden" name="action" value="disable">
+                                {% if s.student.is_active %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Disable</button>
+                                {% endif %}
+                            </form>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No students available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+
+{% endblock %}

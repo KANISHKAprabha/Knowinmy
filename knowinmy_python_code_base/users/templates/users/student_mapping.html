@@ -1,0 +1,193 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load static %}
+
+{% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>KnowInMy - Dashboard</title>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Meta viewport for responsiveness -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="container mt-5">
+    <!-- Buttons and Heading Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
+        <!-- Create Enrollment Button -->
+        <button class="btn btn-primary text-white shadow-sm mb-2 mb-md-0" data-toggle="modal" data-target="#enrollmentModal" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Create Enrollment
+        </button>
+        <!-- Enrollment Details Heading -->
+        <h2 class="text-center mb-0" style="color: #5f52aa;">Enrollment Details</h2>
+    </div>
+
+    <!-- Enrollment Details Table Section -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Enrolled Courses</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Last Modified At</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollment_details %}
+                <tr>
+                    <td>{{ enrollment.user.username }}</td>
+                    <td>
+                        <div class="d-flex flex-wrap">
+                            {% for course in enrollment.students_added_to_courses.all %}
+                            <span>{{ course.course_name }},</span>
+                            {% empty %}
+                            <span class="text-muted">No courses enrolled.</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>{{ enrollment.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ enrollment.updated_at|date:"Y-m-d H:i" }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'student-mapp-courses' slug=tenant.slug %}?enrollment_id={{ enrollment.id }}" class="btn btn-info btn-sm">Edit</a>
+                        <form method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
+                            <button type="submit" name="delete_course_map_form" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this enrollment?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No enrollment details available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+        <a href="{% url 'create-course' slug=tenant.slug %}" class="btn btn-secondary shadow-sm" style="background-color: #5f52aa; border-color: #5f52aa;">Back</a>
+    </div>
+</div>
+
+<!-- Modal for Enrollment Creation/Update -->
+<div class="modal fade" id="enrollmentModal" tabindex="-1" role="dialog" aria-labelledby="enrollmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5f52aa; color: white;">
+                <h5 class="modal-title" id="enrollmentModalLabel">Create Enrollment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="enrollment_form" method="POST" action="{% url 'student-mapp-courses' slug=tenant.slug %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary" style="background-color: #5f52aa; border-color: #5f52aa;">Create Enrollment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Custom Script for Form Handling -->
+
+<!-- Custom CSS for Responsive Design and Styling -->
+<style>
+    /* Table Styling */
+    table.table-bordered {
+        border: 1px solid #ddd;
+        background-color: #fff;
+        font-size: 1rem;
+    }
+
+    table.table-bordered th, table.table-bordered td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* Headings Styling */
+    h2 {
+        font-size: 2.5rem;
+        color: #5f52aa;
+        font-weight: 600;
+    }
+
+    /* Button Styling */
+    .btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .btn-primary {
+        background-color: #5f52aa;
+        border-color: #5f52aa;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f7f7f7;
+    }
+
+    /* Responsive Table for Smaller Devices */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+        }
+
+        .btn {
+            font-size: 0.85rem;
+            padding: 8px 15px;
+        }
+
+        th, td {
+            padding: 8px;
+        }
+    }
+
+    .alert {
+        padding: 20px;
+        margin: 15px 0;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: green;
+        border-color: #d4edda;
+        background-color: #d4edda;
+    }
+    .alert-error {
+        color: red;
+        border-color: #f8d7da;
+        background-color: #f8d7da;
+    }
+</style>
+{% endblock %}

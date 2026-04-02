@@ -1,0 +1,102 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+.instructor-grid-style1 .instructor-item {
+  overflow: visible;
+  text-align: center;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .image-wrap img {
+  width: 100%;
+  border-radius: 6px;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content {
+  margin: 0;
+  padding: 20px 0 20px;
+  position: unset;
+  opacity: 1;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .instructor-name {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  text-transform: capitalize;
+  margin: 0 0 5px;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .instructor-name a {
+  text-decoration: none;
+  color: var(--titleColor);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .instructor-name a:hover {
+  color: var(--primaryColor);
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content span.instructor-title {
+  font-size: 16px;
+  margin-bottom: 3px;
+  display: block;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a {
+  height: 34px;
+  width: 34px;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a:hover {
+  background: var(--primaryColor);
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a:hover:before, .instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a:hover i {
+  color: #fff;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a:nth-of-type(1) {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons a.social-icon {
+  position: absolute;
+}
+.instructor-grid-style1 .instructor-item .instructor-inner-wrap .instructor-content .social-icons:hover .social-icon {
+  position: relative;
+  z-index: 1;
+  margin-top: 10px;
+}/*# sourceMappingURL=instructor-grid.css.map */

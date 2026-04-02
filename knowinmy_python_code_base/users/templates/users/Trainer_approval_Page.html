@@ -1,0 +1,118 @@
+{% extends 'users/staff_dashboard.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Upload User Data</h1>
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{% url 'csv' %}" class="btn btn-secondary btn-sm" style="background-color: #6c62a3; border-color: #553CDF;">
+            Download EXCEL Format
+        </a>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- File upload form -->
+            <form method="post" id="course-creation-form" enctype="multipart/form-data" action="{% url 'Trainer-approval' slug=tenant.slug %}" class="p-4 border rounded shadow" onsubmit="return validateFile()">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="excel_file" class="font-weight-bold">Choose Excel File</label>
+                    <input type="file" name="excel_file" id="excel_file" class="form-control-file" required>
+                </div>
+                
+                <!-- Reduced size upload button -->
+                <button type="submit" class="btn btn-primary btn-sm btn-block mt-4" style="background-color: #7762ef; border-color: #553CDF;">
+                    Upload Users
+                </button>
+            </form>
+
+            <br>
+            
+           
+            <!-- Reduced size manual onboarding button -->
+                <a href="{% url 'onboard-users-form' slug=tenant.slug %}" class="btn btn-secondary btn-sm btn-block mt-4" style="background-color: #6c62a3; border-color: #553CDF;">
+                    Onboard Users Manually
+                </a>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="row-count">Rows in file:</label>
+        <span id="row-count">0</span>
+        <p></p>
+        <p id="row-count-display">Number of rows will be displayed here</p>
+
+    </div>
+    <br>
+
+    <!-- Message display -->
+    {% if messages %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div>
+        {% if processing %}
+        <p>Your file is being processed. Please refresh the page later for updates.</p>
+        {% endif %}
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+<script>
+    function validateFile() {
+        // Get the file input element and the selected file
+        const fileInput = document.getElementById("excel_file");
+        const filePath = fileInput.value;
+        
+        // Define the allowed file extensions
+        const allowedExtensions = /(\.xlsx|\.xls)$/i;
+        
+        // Check if the file extension is valid
+        if (!allowedExtensions.exec(filePath)) {
+            alert("Please upload a valid Excel file with .xlsx or .xls extension.");
+            fileInput.value = ''; // Clear the input
+            return false; // Prevent form submission
+        }
+        return true; // Allow form submission if valid
+    }
+
+document.getElementById('excel_file').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    if (file) {
+        console.log("File selected:", file.name); // Debugging log
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const data = e.target.result;
+            console.log("File read successfully"); // Debugging log
+
+            const workbook = XLSX.read(data, { type: 'binary' });
+            console.log("Workbook parsed:", workbook); // Debugging log
+
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            console.log("Parsed JSON data:", jsonData); // Debugging log
+
+            let row_count=document.getElementById('row-count').innerText = jsonData.length;
+            let row_count_display=row_count-1;
+            document.getElementById('row-count-display').innerText = `You have   ${row_count_display} users in the file.Check with the subscription status and count before onboarding the users`;
+        };
+
+        reader.readAsBinaryString(file);
+    } else {
+        console.log("No file selected");
+        document.getElementById('row-count').innerText = '0';
+    }
+});
+
+
+    function submit_form() {
+        $("#course-creation-form").submit();
+    }
+</script>
+{% endblock %}

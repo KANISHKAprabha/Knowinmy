@@ -1,0 +1,9 @@
+{% block content %}
+<h2>Edit User: {{ user.username }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Renders the form fields -->
+    <button type="submit">Save Changes</button>
+</form>
+<a href="{% url 'student_dashboard' slug=slug %}">Cancel</a>  <!-- Link back to dashboard -->
+{% endblock %}      

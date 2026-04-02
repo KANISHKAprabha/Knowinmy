@@ -1,0 +1,211 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #553CDF;
+        }
+
+        .expiration-date {
+            text-align: center;
+            font-size: 16px;
+            color: #5f52aa;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .table {
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
+            margin-bottom: 20px;
+        }
+
+        thead {
+            background-color: #5f52aa;
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .table th, .table td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        .btn {
+            color: white;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #173f5e;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .back-button .btn-primary {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #5244a3;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button .btn-primary:hover {
+            background-color: #4729a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="table-responsive">
+            <div class="table-container">
+                <h2>Subscription Details</h2>
+                <div class="expiration-date">
+                    Expiration Date: {{ expiration_date|default:"None" }}
+                </div>
+               
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 33%;">Number of Students</th>
+                            <th style="width: 33%;">Number of Trainers</th>
+                            <th style="width: 33%;">Subscription Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ get_stud_count|default:"Not Available" }}</td>
+                            <td>{{ get_trainer_count|default:"Not Available" }}</td>
+                            <td>{{ get_subs|default:"Not Available" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table class="table">
+                <h2>Courses created by {{ tenant.organization_name }}</h2>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Course Name</th>
+                        <th style="width: 25%;">Trainer Name</th>
+                        <th style="width: 25%;">Asana Name</th>
+                        <th style="width: 25%;">No of Postures</th>
+                       
+        </tr>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if courses %}
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.course_name|default:"Not Available" }}</td>
+                            <td>{{ course.user.username|default:"Not Available" }}</td>
+                            {% for asana in course.asanas_by_trainer.all %}
+                            <td>{{ asana.name|default:"Not Available" }}</td>
+                            <td>{{ asana.no_of_postures|default:"Not Available" }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No Courses Available</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <table class="table">
+                <h2>Asanas created by {{ tenant.organization_name }}</h2>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Asana Name</th>
+                        <th style="width: 25%;">No. of Postures</th>
+                        <th style="width: 25%;">Created At</th>
+                        <th style="width: 25%;">Posture Images</th>  <!-- Add a column for images -->
+                        <th style="width: 25%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if asana_postures %}
+                        {% for asana, images in asana_postures %}
+                        <tr>
+                            <td>{{ asana.name|default:"Not Available" }}</td>
+                            <td>{{ asana.no_of_postures|default:"Not Available" }}</td>
+                            <td>{{ asana.created_at|default:"Not Available" }}</td>
+                            <td>
+                                <div>
+                                    <input type="hidden" name="asana_id" value="{{ asana.id }}">
+                                    {% if images %}
+                                        {% for image in images %}
+                                            <img src="{{ image }}" alt="Posture Image" style="width: 50px; height: 50px; margin: 5px;">
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>No Images Available</p>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_asana_view' asana_id=asana.id %}" class="btn btn-danger">Remove Asana</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No Asanas Available</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+
+        </div>
+
+        <div class="back-button">
+            <a href="{% url 'organization_list' %}" class="btn btn-primary">Back</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+

@@ -1,0 +1,96 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Page Title -->
+    <h1 class="text-center" style="color: #5f52aa;">{{ tenant.client_name }} - Subscription Details</h1>
+    <br>
+    <h3>
+        <span style="color: #5f52aa;">Subscription expires on</span> - <span>{{ expiration_date }}</span>
+
+    </h3>
+    
+    
+
+    <!-- Edit Slug Button and Expiration Date -->
+    <div class="d-flex justify-content-between align-items-center my-3">
+        
+        <a href="{% url 'pdf' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Payment Invoice
+        </a>
+        <a href="{% url 'renew' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Renew Subscription
+        </a>
+        
+         <p>
+            <strong style="color: #5f52aa;">Tenant Slug:</strong> <span>{{ slug }}</span>
+        </p>
+        <a href="{% url 'request_slug_change' %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Edit Slug
+        </a>
+        
+    </div>
+
+    <!-- Subscription Information Table -->
+    <h2 style="color: #5f52aa;">Subscription Information</h2>
+    {% if get_order %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead style="background-color: #5f52aa; color: white;">
+                    <tr>
+                        <th>Order Name</th>
+                        <th>Status</th>
+                        <th>Number of Asanas</th>
+                        <th>Number of trainers Onboarded</th>
+                        <th>Number of students Onboarded</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ get_order }}</td>
+                        <td>{{ get_subs }}</td>
+                        <td>{{ get_asana_count }}</td>
+                        <td>{{ get_no_of_trainers_onboard }}</td>
+                        <td>{{ get_no_of_students_onboard }}</td>
+                        <td>{{ get_order.amount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No subscription information available.</p>
+    {% endif %}
+    <br>
+
+    <!-- Existing Details Table -->
+    <h2 style="color: #5f52aa;">Existing Details</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead style="background-color: #5f52aa; color: white;">
+                <tr>
+                    <th>Trainers Count</th>
+                    <th>Students Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ get_count_trainer }}</td>
+                    <td>{{ get_count_stud }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'Trainer-approval' slug=tenant.slug %}" class="btn btn-primary btn-lg" style="background-color: #5f52aa; border-color: #5f52aa;">
+            Back 
+        </a>
+    </div>
+
+</div>
+{% endblock %}

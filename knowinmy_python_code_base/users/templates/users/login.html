@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>KnowInMy - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #b9a1d6, #d3b0e2, #5f52aa, #4a438d);
+        }
+     
+
+        .bg-gradient-primary {
+            background: linear-gradient(to right, #5f52aa, #9b72b0) !important;
+        }
+
+        /* Styling for card, buttons, and button spacing */
+        .card {
+            border-radius: 15px; /* Rounded corners for the card */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-height: 1000px;
+        }
+
+        .form-control-user {
+            border-radius: 15px; /* Rounded corners for input fields */
+            padding: 20px;
+            border: 1px solid #ddd;
+            
+        }
+
+        .btn-primary, .btn-google, .btn-secondary {
+            border-radius: 15px; /* Rounded corners for buttons */
+            padding: 10px 25px;
+        }
+
+        .btn-primary {
+            background-color: #553cdf !important;
+            border-color: #553cdf !important;
+        }
+
+        .btn-google {
+            background-color: #db4437;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        /* Space between buttons */
+        .btn-user {
+            margin-top: 10px; /* Adds space between buttons */
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #553cdf;
+            border-color: #553cdf;
+        }
+
+        .reset-btn:hover {
+            background-color: #432bbf;
+            border-color: #432bbf;
+        }
+
+        /* Centering the card */
+        .row.justify-content-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .col-lg-6 {
+            margin: auto;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .small:hover {
+            color: #432bbf;
+            text-decoration: underline;
+        }
+
+        hr {
+            border-top: 1px solid #eaeaea;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-7 col-lg-8 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                    </div>
+                                    <form class="user" id="login_form"method="post" action=""   >
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <input type="email" class="form-control form-control-user"
+                                                id="exampleInputEmail" aria-describedby="emailHelp"
+                                                placeholder="Enter Email Address..." name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user"
+                                                name="password" id="exampleInputPassword" placeholder="Password"
+                                                required>
+                                        </div>
+                                       
+                                        <button
+                        type="submit"
+                        class="btn btn-primary btn-user btn-block"
+                        onclick="register_button()"
+                        id="register"
+                        value="Register Account"
+                      >Login</button>
+                                        <hr>
+                                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"
+                                            class="btn btn-google btn-user btn-block">
+                                            <i class="fab fa-google fa-fw"></i> Login with Google
+                                        </a>
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <a href="{% url 'password_reset' %}"
+                                            class="btn btn-primary btn-user btn-block reset-btn">Reset Password</a>
+                                    </div>
+                                    <div class="text-center">
+                                        <a href="{% url 'home' %}" class="btn btn-secondary btn-user btn-block">Return to Home</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    
+        function submit_form() {
+        $("#login_form").submit();
+
+    }
+    
+      function register_button(course_id) {
+        var deleteButton = document.getElementById('register' );
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                deleteButton.disabled = true;
+                e.preventDefault();
+            }, { once: true });
+        } else {
+            console.error('Delete button not found!');
+        }
+    }
+  
+
+
+</script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+</body>
+
+</html>

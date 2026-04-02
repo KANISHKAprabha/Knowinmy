@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscription Payment</title>
+    <!-- Include Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Basic styling for layout and readability */
+        body {
+            font-family: 'Nunito', sans-serif;;
+            background: linear-gradient(135deg, #b9a1d6, #d3b0e2, #5f52aa, #4a438d);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            max-width: 700px; /* Increased width for a more rectangular form */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+
+        }
+
+        h1 {
+            color: #5f52aa;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Form styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #5f52aa;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label i {
+            margin-right: 10px; /* Space between icon and label text */
+        }
+        .head{
+            color: #575555; /* Slightly darker grey for better contrast */
+            font-size: 2rem;
+            line-height: 1.6;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #5f52aa;
+            box-shadow: 0 0 5px rgba(95, 82, 170, 0.3);
+            outline: none;
+        }
+
+        /* Button Styling */
+        .btn-pay {
+            background-color: #5f52aa;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-pay:hover {
+            background-color: #4a438d;
+            transform: translateY(-2px);
+        }
+
+        /* Back link styling */
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #5f52aa;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="head">Manage Your Subscription</h1>
+
+        <!-- Subscription Form -->
+        <form  id="subscription_form"method="post" action="{% url 'dynamic' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="permitted_asanas"><i class="fas fa-users"></i>{{ form.name.label }}</label>
+                {{ form.name}}
+                <div class="invalid-feedback">Please enter your first name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="permitted_asanas"><i class="fas fa-users"></i>{{ form.permitted_asanas.label }}</label>
+                {{ form.permitted_asanas }}
+                <div class="invalid-feedback">Please enter a valid count greater than 0.</div>
+            </div>
+           
+
+            <!-- <div class="form-group">
+                <label for="no_of_persons_onboard"><i class="fas fa-user-plus"></i>{{ form.no_of_persons_onboard.label }}</label>
+                {{ form.no_of_persons_onboard }}
+                
+                <div class="invalid-feedback">Please enter a valid count greater than 0.</div>
+            </div> -->
+            <div class="form-group">
+                
+                <label for="no_of_persons_onboard"><i class="fas fa-user-plus"></i>{{ form.no_of_trainers.label }}</label>
+                
+                
+                {{ form.no_of_trainers }}
+                <div class="invalid-feedback">Please enter a valid count greater than 0.</div>
+               
+            </div>
+            <div class="form-group">
+                <label for="no_of_persons_onboard"><i class="fas fa-user-plus"></i>{{ form.no_of_students.label }}</label>
+                {{ form.no_of_students }}
+                
+                <div class="invalid-feedback">Please enter a valid count greater than 0.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="duration_in_months">
+                    <i class="fas fa-calendar-alt"></i> Duration (in months)
+                    {{form.duration_in_months}}
+                </label>
+               
+               
+                <div class="invalid-feedback">Please enter a valid duration greater than 0.</div>
+            </div>
+            <div class="form-group">
+                <div id="price-display">Calculated Price: 0 |{{form.price}}</div>
+            </div>
+            
+            <!-- Pay Now Button -->
+            <button type="submit"onclick="register_button()"
+            id="register" class="btn-pay">Confim subscription</button>
+        </form>
+
+        <!-- Back to Home Link -->
+        <div class="back-link">
+            <a href="{% url 'home' %}">Back to home</a>
+        </div>
+    </div>
+</body>
+<script>
+    function register_button() {
+        var deleteButton = document.getElementById('register' );
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                deleteButton.disabled = true;
+                e.preventDefault();
+            }, { once: true });
+        } else {
+            console.error('Delete button not found!');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('subscription_form');
+        const priceDisplay = document.querySelector('#price-display');
+
+        form.addEventListener('input', function() {
+            const formData = new FormData(form);
+
+            fetch("{% url 'dynamic' %}", {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                priceDisplay.textContent = `Calculated Price: ${data.price}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+
+
+  
+
+</script>
+</html>

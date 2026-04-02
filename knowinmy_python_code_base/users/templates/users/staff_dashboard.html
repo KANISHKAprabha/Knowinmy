@@ -1,0 +1,378 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>KnowInMy - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    {% block head %}
+    {% endblock %}
+
+    <style>
+        :root {
+            --background: #eeedf4;
+            --navbar-width: 256px;
+            --navbar-dark-primary: #18283b;
+            --navbar-dark-secondary: #2c3e50;
+            --navbar-light-primary: #f5f6fa;
+            --navbar-light-secondary: #8392a5;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            padding-left: var(--navbar-width); /* Add padding to body to account for the nav bar */
+            overflow-x: hidden;
+            transition: padding-left 0.3s; /* Smooth transition for responsive nav */
+        }
+
+        #nav-bar {
+            position: fixed; /* Fixed to prevent scrolling with content */
+            left: 0;
+            top: 0;
+            width: var(--navbar-width);
+            height: 100vh; /* Full height */
+            background: var(--navbar-dark-primary);
+            color: var(--navbar-light-primary);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000; /* Ensure it stays above other content */
+            border-right: 2px solid #6d5ccf;
+            transition: width 0.3s; /* Smooth transition for nav */
+        }
+
+        #nav-bar hr {
+            margin: 0;
+            width: calc(100% - 32px);
+            border: none;
+            border-top: solid 1px var(--navbar-dark-secondary);
+        }
+
+        #nav-bar a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        #nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+        }
+
+        #nav-content {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--navbar-dark-secondary);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--navbar-light-secondary);
+            transition: background 0.3s, transform 0.3s; /* Smooth hover effects */
+        }
+
+        .nav-button:hover {
+            background: var(--navbar-light-primary);
+            transform: scale(1.05);
+        }
+
+        /* Footer styling */
+        #nav-footer {
+            padding: 10px;
+            background: var(--navbar-dark-primary);
+            border-top: solid 1px var(--navbar-dark-secondary);
+            display: flex;
+            align-items: center; /* Align avatar and text vertically */
+        }
+
+        #nav-footer-avatar img {
+            width: 40px;
+            border-radius: 50%;
+        }
+
+        #nav-footer-title {
+            font-weight: bold;
+            color: var(--navbar-light-secondary);
+        }
+
+        #nav-footer-subtitle {
+            color: var(--navbar-light-secondary);
+            font-size: 0.9rem; /* Slightly smaller font for the username */
+        }
+
+        /* Main content area styling */
+        .container {
+            padding: 2rem;
+            margin-left: auto; /* Ensure the main content does not overlap with the nav */
+            margin-right: auto;
+            transition: margin-left 0.3s; /* Smooth transition for responsive layout */
+        }
+
+        /* Media Queries for Responsiveness */
+        @media only screen and (max-width: 768px) {
+            body {
+                padding-left: 0; /* Remove padding on smaller screens */
+            }
+
+            #nav-bar {
+                width: 100%; /* Full width on mobile */
+                height: auto; /* Adjust height */
+                position: static; /* Allow scrolling with content */
+            }
+
+            .container {
+                padding: 1rem; /* Reduce padding on smaller screens */
+            }
+        }
+
+        /* Additional styling as needed */
+    </style>
+</head>
+
+<body>
+    <div id="nav-bar">
+        <input type="checkbox" id="nav-toggle">
+        <div id="nav-header">
+            <a id="nav-title" href="#">KNOWINMY</a>
+            <label for="nav-toggle">
+                <span id="nav-toggle-burger"></span>
+            </label>
+            <hr>
+        </div>
+        <div id="nav-content">
+            <div class="nav-container">
+                <!-- Home Link -->
+                {% for group in request.user.groups.all %}
+                {% if group.name == 'Knowinmy' %}
+                    <a href="{% url 'home'  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+          
+            
+           
+            
+            
+            
+                {% for group in request.user.groups.all %}
+                    {% if group.name == 'Trainer' %}
+                    <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'view-trained' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Create Asanas</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'create-course' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Trainer Dashboard</span>
+                        </div>
+                    </a>
+                
+                    <a href="{% url 'student_dashboard_trainer' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            
+                            <i class="fas fa-palette"></i>
+                            <span>Student Enrollment</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% if group.name == 'Student' %}
+                    <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'user-view-asana' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Trained Asanas</span>
+                        </div>
+                    </a>
+                    
+                    {% endif %}
+                    
+                    {% if group.name == 'Client' %}
+                    <a href="{% url 'home-slug' slug=tenant.slug  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'Trainer-approval' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Trainer Approval</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'trainer_dashboard' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Alter Trainers info</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'student_dashboard' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Alter Students info</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'get-subs-for-client' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Subscription Details</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'edit_mentor' slug=tenant.slug %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Edit mentor for students</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'subscription_change_request'  %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Subscription change request</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                    
+
+                    {% if group.name == 'Knowinmy' %}
+                    <a href="{% url 'organization_list' %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>List of Organizations </span>
+                        </div>
+                    </a>
+                    <a href="{% url 'list_subscription_requests' %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Requset for change in subscription</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'review_slug_changes' %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Requset for change in slug</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'review_ds' %}">
+                        <div class="nav-button">
+                            <i class="fas fa-palette"></i>
+                            <span>Review Dynamic Subscription</span>
+                        </div>
+                    </a>
+                    
+                    {% endif %}
+                    
+                {% endfor %}
+                
+            </div>
+        </div>
+
+        <div id="nav-footer">
+            <div id="nav-footer-heading">
+                {% for group in request.user.groups.all %}
+                {% if group.name in 'Client Trainer Student' %}
+
+                <div id="nav-footer-avatar">
+                    <img src="{% static 'img/undraw_profile.svg' %}" alt="Avatar">
+                </div>
+                <div id="nav-footer-titlebox">
+                  
+                        <a id="nav-footer-title" href="{% url 'profile-user' slug=tenant.slug %}">Profile</a>
+                      
+                        
+                    <span id="nav-footer-subtitle">{{ request.user.username }}</span>
+                </div>
+                {% endif %}
+                {% endfor %}
+                
+            </div>
+        </div>
+
+        <!-- Logout Button near profile -->
+        <a href="#" data-toggle="modal" data-target="#logoutModal">
+            <div class="nav-button">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    {% if tenant.slug %}
+                    <a class="btn btn-primary" style="background-color: #6d5ccf; border-color: #6d5ccf;" href="{% url 'log_out' slug=tenant.slug %}">Logout</a>
+                    {% else %}
+                    <a class="btn btn-primary" style="background-color: #6d5ccf; border-color: #6d5ccf;" href="{% url 'log_out'  %}">Logout</a>
+                    {% endif %}
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

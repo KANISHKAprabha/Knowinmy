@@ -1,0 +1,106 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+.category-area {
+  cursor: pointer;
+  padding: 20px 0;
+}
+.category-area .react-category-button {
+  padding: 6px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #BBB1F2;
+  background: #FBFAFF;
+  gap: 8px;
+  position: relative;
+  color: var(--primaryColor);
+}
+.category-area .react-category-button svg {
+  width: 25px;
+}
+.category-area .react-category-button i {
+  font-size: 20px;
+}
+.category-area .react-category-button span {
+  font-weight: 500;
+  font-size: 17px;
+}
+.category-area .category-sub-menu {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+  background: var(--whiteColor);
+  transform: translateZ(0) translateY(30px);
+  border-radius: 4px;
+  transition: all 0.4s;
+  box-shadow: 0px 7px 18px rgba(24, 16, 16, 0.0509803922);
+  min-width: 410px;
+  padding: 17px 10px;
+  -moz-column-count: 2;
+       column-count: 2;
+  z-index: 10;
+}
+.category-area .category-sub-menu li {
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+.category-area .category-sub-menu li a {
+  color: var(--secondaryColor);
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin: 2px 10px;
+  transition: all 0.3s;
+  border-radius: 4px;
+  background: transparent;
+  width: 100%;
+}
+.category-area .category-sub-menu li a:hover {
+  background: #EEEBFF;
+}
+.category-area .category-sub-menu li a img {
+  width: 45px;
+}
+.category-area .category-sub-menu li a h4 {
+  color: currentColor;
+  font-weight: 500;
+  margin-bottom: 4px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+.category-area .category-sub-menu li a p {
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.category-area:hover .category-sub-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: translateZ(0) translateY(20px);
+}/*# sourceMappingURL=button.css.map */

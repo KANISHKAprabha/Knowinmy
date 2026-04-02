@@ -1,0 +1,743 @@
+:root {
+  --bodyFont: "Inter", sans-serif;
+  --titleFont: "Hind", sans-serif;
+  --transition: 0.3s;
+  --primaryColor: #553CDF;
+  --secondaryColor: #1F1F25;
+  --whiteColor: #ffffff;
+  --titleColor: #110C2D;
+  --hoverColor: #553CDF;
+  --bodyColor: #737477;
+  --btnColor: #553CDF;
+  --blackColor2: #191B1E;
+  --darkdeep4: #949392;
+  --darkblack: #0C0E2B;
+  --naveBlue: #17093e;
+}
+
+.react-heading,
+.rs-dual-heading {
+  position: relative;
+}
+.react-heading.title-border-yes .title,
+.rs-dual-heading.title-border-yes .title {
+  border-bottom: 1px solid #BCBCFF;
+  padding-bottom: 20px;
+}
+.react-heading .title-inner,
+.rs-dual-heading .title-inner {
+  position: relative;
+  z-index: 1;
+}
+.react-heading .title-inner > span,
+.rs-dual-heading .title-inner > span {
+  font-size: 16px;
+  font-family: var(--titleFont);
+  line-height: 24px;
+  color: var(--primaryColor);
+}
+.react-heading .title-inner .sub-text,
+.rs-dual-heading .title-inner .sub-text {
+  margin: 0 0 16px;
+  display: inline-block !important;
+  color: var(--primaryColor);
+  font-size: 16px;
+  line-height: 16px;
+  font-family: var(--bodyFont);
+  font-weight: 500;
+  z-index: 1;
+}
+.react-heading .title-inner .sub-text.title-upper,
+.rs-dual-heading .title-inner .sub-text.title-upper {
+  text-transform: uppercase;
+}
+.react-heading .title-inner.yes .title,
+.rs-dual-heading .title-inner.yes .title {
+  color: rgba(0, 0, 0, 0.5);
+  color: #333;
+  -webkit-text-stroke: 1px #BCBCFF;
+  -webkit-text-fill-color: #F2F2FF;
+}
+.react-heading .title-inner .title,
+.rs-dual-heading .title-inner .title {
+  color: var(--titleColor);
+  margin-top: 8px;
+  margin-bottom: 10px;
+  z-index: 1;
+}
+.react-heading .title-inner .title.title-upper,
+.rs-dual-heading .title-inner .title.title-upper {
+  text-transform: uppercase;
+}
+.react-heading .title-inner .title span,
+.rs-dual-heading .title-inner .title span {
+  font-weight: 100;
+  position: relative;
+  z-index: 1;
+}
+.react-heading span.watermark,
+.rs-dual-heading span.watermark {
+  font-size: 150px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  text-transform: uppercase;
+  font-family: var(--titleFont);
+  font-weight: 700;
+  background: linear-gradient(180deg, #0C0A0A 0%, rgba(12, 10, 10, 0) 100%);
+  opacity: 0.06;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  height: 95px;
+  display: flex;
+  align-items: center;
+  -webkit-text-stroke: 1px #000000;
+}
+.react-heading .rt-button,
+.rs-dual-heading .rt-button {
+  margin-top: 40px;
+}
+.react-heading .rt-button a,
+.rs-dual-heading .rt-button a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: -moz-max-content;
+  min-width: max-content;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  padding: 14px 34px;
+  border-radius: 4px;
+  transition: 0.3s;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--whiteColor);
+  background: var(--primaryColor);
+  border: 1px solid transparent;
+  transition: all 0.3s ease 0s;
+}
+.react-heading .rt-button a:hover,
+.rs-dual-heading .rt-button a:hover {
+  color: var(--primaryColor);
+  background: transparent;
+  border: 1px solid var(--primaryColor);
+}
+.react-heading .rt-button a i,
+.rs-dual-heading .rt-button a i {
+  display: inline-block;
+  margin-left: 10px;
+}
+.react-heading .rt-button a svg,
+.rs-dual-heading .rt-button a svg {
+  fill: var(--whiteColor);
+  margin-left: 10px;
+  height: 27px;
+  width: 27px;
+}
+.react-heading.big .description p,
+.rs-dual-heading.big .description p {
+  font-size: 20px;
+  line-height: 32px;
+}
+.react-heading.style4 .title-inner .title,
+.rs-dual-heading.style4 .title-inner .title {
+  margin-bottom: 8px;
+}
+.react-heading.style4 .title-inner .title-img,
+.rs-dual-heading.style4 .title-inner .title-img {
+  margin-bottom: 12px;
+}
+.react-heading.style5 .sub-text,
+.rs-dual-heading.style5 .sub-text {
+  display: inline-block;
+}
+.react-heading.style2,
+.rs-dual-heading.style2 {
+  position: relative;
+  padding-bottom: 15px;
+}
+.react-heading.style2:after,
+.rs-dual-heading.style2:after {
+  content: "";
+  position: absolute;
+  background: var(--secondaryColor);
+  width: 60px;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  transition: all 0.3s ease 0s;
+}
+.react-heading.style2.center:after,
+.rs-dual-heading.style2.center:after {
+  transform: translateX(-50%);
+  left: 50%;
+}
+.react-heading.style2.right:after,
+.rs-dual-heading.style2.right:after {
+  left: auto;
+  right: 0;
+}
+.react-heading.style2 h2,
+.rs-dual-heading.style2 h2 {
+  margin-bottom: 12px;
+}
+.react-heading.style2 .description p,
+.rs-dual-heading.style2 .description p {
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.react-heading.style2.Lite:after,
+.rs-dual-heading.style2.Lite:after {
+  background: #fff !important;
+}
+.react-heading.style3,
+.rs-dual-heading.style3 {
+  position: relative;
+  padding-bottom: 12px;
+}
+.react-heading.style3 h2,
+.rs-dual-heading.style3 h2 {
+  margin-bottom: 12px;
+}
+.react-heading.style3 .description,
+.rs-dual-heading.style3 .description {
+  position: relative;
+  padding-left: 80px;
+}
+.react-heading.style3 .description:after,
+.rs-dual-heading.style3 .description:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  left: 0;
+  top: 14px;
+}
+.react-heading.style3 .description p,
+.rs-dual-heading.style3 .description p {
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.react-heading.style3.Lite .description:after,
+.rs-dual-heading.style3.Lite .description:after {
+  background: #fff !important;
+}
+.react-heading.style1,
+.rs-dual-heading.style1 {
+  position: relative;
+  padding-bottom: 12px;
+}
+.react-heading.style1 h2,
+.rs-dual-heading.style1 h2 {
+  margin-bottom: 12px;
+}
+.react-heading.style1 .description,
+.rs-dual-heading.style1 .description {
+  position: relative;
+  padding-right: 80px;
+}
+.react-heading.style1 .description:after,
+.rs-dual-heading.style1 .description:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  right: 0;
+  top: 14px;
+}
+.react-heading.style1 .description p,
+.rs-dual-heading.style1 .description p {
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.react-heading.style1.Lite .description:after,
+.rs-dual-heading.style1.Lite .description:after {
+  background: #fff !important;
+}
+.react-heading.style8,
+.rs-dual-heading.style8 {
+  position: relative;
+  padding-bottom: 12px;
+  margin-bottom: 10px;
+}
+.react-heading.style8 .title-inner,
+.rs-dual-heading.style8 .title-inner {
+  padding-left: 25px;
+  position: relative;
+  display: inline-block;
+}
+.react-heading.style8 .title-inner .sub-text,
+.rs-dual-heading.style8 .title-inner .sub-text {
+  margin-bottom: 5px;
+}
+.react-heading.style8 .title-inner:after,
+.rs-dual-heading.style8 .title-inner:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  left: 0;
+  top: 0;
+}
+.react-heading.style8 .description,
+.rs-dual-heading.style8 .description {
+  padding-left: 25px;
+  position: relative;
+}
+.react-heading.style8 .description:after,
+.rs-dual-heading.style8 .description:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  left: 0;
+  top: 0;
+}
+.react-heading.style8 h2,
+.rs-dual-heading.style8 h2 {
+  margin-bottom: 5px;
+}
+.react-heading.style8.text-center .description,
+.rs-dual-heading.style8.text-center .description {
+  padding-top: 15px;
+  padding-left: 0px;
+}
+.react-heading.style8.text-center .description:after,
+.rs-dual-heading.style8.text-center .description:after {
+  display: none;
+}
+.react-heading.style8.Lite .title-inner:after,
+.rs-dual-heading.style8.Lite .title-inner:after {
+  background: #fff;
+}
+.react-heading.style8.Lite .description:after,
+.rs-dual-heading.style8.Lite .description:after {
+  background: #fff !important;
+}
+.react-heading.style6 .title-inner,
+.rs-dual-heading.style6 .title-inner {
+  position: relative;
+  padding-bottom: 12px;
+}
+.react-heading.style6 .title-inner h2,
+.rs-dual-heading.style6 .title-inner h2 {
+  margin-bottom: 12px;
+}
+.react-heading.style6 .title-inner .sub-text,
+.rs-dual-heading.style6 .title-inner .sub-text {
+  position: relative;
+  padding-left: 14px;
+}
+.react-heading.style6 .title-inner .sub-text:after,
+.rs-dual-heading.style6 .title-inner .sub-text:after {
+  content: "";
+  position: absolute;
+  background: var(--primaryColor);
+  width: 2px;
+  height: 14px;
+  left: 0;
+  top: 1px;
+  z-index: 1;
+}
+.react-heading.style6 .title-inner .sub-text p,
+.rs-dual-heading.style6 .title-inner .sub-text p {
+  margin-bottom: 12px;
+}
+.react-heading.style6.text-center .title-inner .sub-text, .react-heading.style6.text-right .title-inner .sub-text,
+.rs-dual-heading.style6.text-center .title-inner .sub-text,
+.rs-dual-heading.style6.text-right .title-inner .sub-text {
+  display: inline-block;
+}
+.react-heading.style6.text-center .sub-text,
+.rs-dual-heading.style6.text-center .sub-text {
+  position: relative;
+  padding-left: 0px;
+  padding-top: 60px;
+  color: var(--secondaryColor);
+}
+.react-heading.style6.text-center .sub-text:after,
+.rs-dual-heading.style6.text-center .sub-text:after {
+  content: "";
+  width: 77px;
+  height: 2px;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin-top: -1px;
+  width: 2px;
+  height: 50px;
+}
+.react-heading.style6.Lite .sub-text:after,
+.rs-dual-heading.style6.Lite .sub-text:after {
+  background: #fff !important;
+}
+.react-heading.style6.dark .sub-text:after,
+.rs-dual-heading.style6.dark .sub-text:after {
+  background: #232023 !important;
+}
+.react-heading.style4.left .title-inner .sub-text,
+.rs-dual-heading.style4.left .title-inner .sub-text {
+  padding-left: 43px;
+}
+.react-heading.style4.left .title-inner .sub-text:before,
+.rs-dual-heading.style4.left .title-inner .sub-text:before {
+  left: 0;
+}
+.react-heading.style4.right .title-inner .sub-text,
+.rs-dual-heading.style4.right .title-inner .sub-text {
+  padding-right: 43px;
+}
+.react-heading.style4.right .title-inner .sub-text:after,
+.rs-dual-heading.style4.right .title-inner .sub-text:after {
+  right: 0;
+}
+.react-heading.style4 .title-inner,
+.rs-dual-heading.style4 .title-inner {
+  position: relative;
+  padding-bottom: 12px;
+}
+.react-heading.style4 .title-inner h2,
+.rs-dual-heading.style4 .title-inner h2 {
+  margin-bottom: 12px;
+  display: block;
+}
+.react-heading.style4 .title-inner .sub-text,
+.rs-dual-heading.style4 .title-inner .sub-text {
+  position: relative;
+  color: var(--secondaryColor);
+  display: inline-block;
+}
+.react-heading.style4 .title-inner .sub-text:before, .react-heading.style4 .title-inner .sub-text:after,
+.rs-dual-heading.style4 .title-inner .sub-text:before,
+.rs-dual-heading.style4 .title-inner .sub-text:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 35px;
+  height: 2px;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  left: -20px;
+  top: 12px;
+}
+.react-heading.style4 .title-inner .sub-text:before,
+.rs-dual-heading.style4 .title-inner .sub-text:before {
+  left: -40px;
+}
+.react-heading.style4 .title-inner .sub-text:after,
+.rs-dual-heading.style4 .title-inner .sub-text:after {
+  left: auto;
+  right: -40px;
+}
+.react-heading.style4 .title-inner .sub-text p,
+.rs-dual-heading.style4 .title-inner .sub-text p {
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.react-heading.style4.Lite .sub-text:before, .react-heading.style4.Lite .sub-text:after,
+.rs-dual-heading.style4.Lite .sub-text:before,
+.rs-dual-heading.style4.Lite .sub-text:after {
+  background: #fff !important;
+}
+.react-heading.style4.text-center .title-inner .sub-text, .react-heading.style4.text-right .title-inner .sub-text,
+.rs-dual-heading.style4.text-center .title-inner .sub-text,
+.rs-dual-heading.style4.text-right .title-inner .sub-text {
+  display: inline-block;
+}
+.react-heading.style7 .title-inner,
+.rs-dual-heading.style7 .title-inner {
+  position: relative;
+  padding-bottom: 12px;
+}
+.react-heading.style7 .title-inner h2,
+.rs-dual-heading.style7 .title-inner h2 {
+  margin-bottom: 12px;
+}
+.react-heading.style7 .title-inner .sub-text,
+.rs-dual-heading.style7 .title-inner .sub-text {
+  position: relative;
+  padding-right: 65px;
+  display: inline-block;
+  color: var(--secondaryColor);
+}
+.react-heading.style7 .title-inner .sub-text:after,
+.rs-dual-heading.style7 .title-inner .sub-text:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 50px;
+  height: 2px;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  right: 0;
+  top: 12px;
+}
+.react-heading.style7 .title-inner .sub-text p,
+.rs-dual-heading.style7 .title-inner .sub-text p {
+  margin-bottom: 12px;
+}
+.react-heading.style7 .title-inner.Lite .sub-text:after,
+.rs-dual-heading.style7 .title-inner.Lite .sub-text:after {
+  background: #fff !important;
+}
+.react-heading.style7 .title-inner.text-center .title-inner .sub-text, .react-heading.style7 .title-inner.text-right .title-inner .sub-text,
+.rs-dual-heading.style7 .title-inner.text-center .title-inner .sub-text,
+.rs-dual-heading.style7 .title-inner.text-right .title-inner .sub-text {
+  display: inline-block;
+}
+.react-heading.style9 .title-img img,
+.rs-dual-heading.style9 .title-img img {
+  position: relative;
+}
+.react-heading.style9 .title-inner .title-img.top,
+.rs-dual-heading.style9 .title-inner .title-img.top {
+  margin-bottom: 15px;
+}
+.react-heading.style9 .title-upper,
+.rs-dual-heading.style9 .title-upper {
+  margin-bottom: 5px;
+}
+.react-heading.style9 .bottom-line .title,
+.rs-dual-heading.style9 .bottom-line .title {
+  margin-bottom: 8px;
+  position: relative;
+  padding-bottom: 20px;
+}
+.react-heading.style9 .bottom-line .title:after,
+.rs-dual-heading.style9 .bottom-line .title:after {
+  content: "";
+  position: absolute;
+  border: 0;
+  width: 80px;
+  height: 2px;
+  background: var(--primaryColor);
+  z-index: 9;
+  margin-left: 0;
+  bottom: 0;
+  left: 0;
+}
+.react-heading.style9.text-center .bottom-line .title:after,
+.rs-dual-heading.style9.text-center .bottom-line .title:after {
+  transform: translateX(-50%);
+  left: 50%;
+}
+.react-heading.style10.text-center,
+.rs-dual-heading.style10.text-center {
+  text-align: left !important;
+}
+.react-heading.style10.text-center .title-inner,
+.rs-dual-heading.style10.text-center .title-inner {
+  text-align: center;
+}
+.react-heading.style10.text-right,
+.rs-dual-heading.style10.text-right {
+  text-align: left !important;
+}
+.react-heading.style10.text-right .title-inner,
+.rs-dual-heading.style10.text-right .title-inner {
+  text-align: right;
+}
+.react-heading.style10 .title-inner,
+.rs-dual-heading.style10 .title-inner {
+  transform: rotate(-90deg) translatex(-50%);
+  display: inline-block;
+  transform-origin: left center 0;
+}
+.react-heading.style10 .title-inner .title,
+.rs-dual-heading.style10 .title-inner .title {
+  white-space: nowrap;
+  position: relative;
+  top: 40px;
+  left: 10px;
+  margin-bottom: 0;
+}
+.react-heading.style10 .description,
+.rs-dual-heading.style10 .description {
+  transform: rotate(-90deg);
+  display: inline-block;
+}
+.react-heading.style11,
+.rs-dual-heading.style11 {
+  text-align: right !important;
+}
+.react-heading.style11.text-center,
+.rs-dual-heading.style11.text-center {
+  text-align: right !important;
+}
+.react-heading.style11.text-center .title-inner,
+.rs-dual-heading.style11.text-center .title-inner {
+  text-align: center;
+}
+.react-heading.style11.text-right,
+.rs-dual-heading.style11.text-right {
+  text-align: right !important;
+}
+.react-heading.style11.text-right .title-inner,
+.rs-dual-heading.style11.text-right .title-inner {
+  text-align: right;
+}
+.react-heading.style11 .title-inner,
+.rs-dual-heading.style11 .title-inner {
+  transform: rotate(90deg);
+  display: inline-block;
+}
+.react-heading.style11 .description,
+.rs-dual-heading.style11 .description {
+  transform: rotate(90deg);
+  display: inline-block;
+}
+.react-heading.style12 .sub-text,
+.rs-dual-heading.style12 .sub-text {
+  display: inline-block;
+  position: relative;
+}
+.react-heading.style12 .sub-text:before,
+.rs-dual-heading.style12 .sub-text:before {
+  content: "";
+  position: absolute;
+  background: #086ad8;
+  left: -15px;
+  top: 0px;
+  z-index: 1;
+  width: 2px;
+  height: 14px;
+}
+.react-heading.style12 .sub-text:after,
+.rs-dual-heading.style12 .sub-text:after {
+  content: "";
+  position: absolute;
+  background: #086ad8;
+  right: -15px;
+  top: 0px;
+  z-index: 1;
+  width: 2px;
+  height: 14px;
+}
+.react-heading.style13 .title-inner .sub-content,
+.rs-dual-heading.style13 .title-inner .sub-content {
+  display: inline-flex;
+  align-items: center;
+}
+.react-heading.style13 .title-inner .sub-text,
+.rs-dual-heading.style13 .title-inner .sub-text {
+  position: relative;
+  display: unset;
+  padding: 0 10px;
+  margin-bottom: 0;
+}
+.react-heading.style13 .title-inner .title span.watermark,
+.rs-dual-heading.style13 .title-inner .title span.watermark {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #777777;
+  opacity: 0.1;
+}
+
+.rs-animated-heading .title span,
+.rs-dual-heading .title span {
+  display: inline;
+}
+
+.rs-animated-heading .title-inner .title,
+.rs-animated-heading .title-inner .title .cd-headline {
+  color: var(--titleColor);
+  line-height: 52px;
+}
+.rs-animated-heading .title-inner .title {
+  margin-bottom: 10px;
+}
+.rs-animated-heading .title-inner .title.title-upper {
+  text-transform: uppercase;
+}
+.rs-animated-heading .title-inner .title .cd-headline {
+  font-weight: 700;
+  margin-left: 10px;
+  color: var(--secondaryColor);
+}
+.rs-animated-heading .title-inner .title .cd-headline p {
+  margin-bottom: 0;
+}
+.rs-animated-heading .cd-words-wrapper {
+  text-align: center;
+}
+
+.title-no-margin h4.title {
+  margin-bottom: 5px;
+}
+
+.title-no-margin h3.title {
+  margin-bottom: 3px !important;
+  font-size: 20px;
+}
+
+.list-style {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.list-style li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 5px;
+}
+.list-style li:before {
+  content: "\f0a9";
+  font-family: FontAwesome;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 20px;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.rt-features-list.separator_yes {
+  position: relative;
+}
+
+.rt-features-list.separator_yes:after {
+  position: absolute;
+  content: "";
+  width: 1px;
+  height: 14px;
+  background: #F36464;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+span.title_underline {
+  position: relative;
+}
+span.title_underline::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 7px;
+  background: #f2277e;
+  bottom: 22px;
+  left: 0;
+  z-index: -1;
+}/*# sourceMappingURL=heading.css.map */

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(139deg, #cda1d6, #d3b0e2, #a69cdd, #9a5cbf);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .custom-form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #6d5ccf;
+            display: flex;
+            flex-direction: column;  /* Keeps the form elements stacked vertically by default */
+            gap: 20px; 
+            justify-content: space-between; /* Add space between form elements */
+        }
+
+        .custom-form-container h2 {
+            color: #6d5ccf;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Style for each form element, aligning in the same row */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Space between form elements in a row */
+        }
+
+        .form-row .form-group {
+            flex: 1; /* This makes each field take equal width */
+        }
+
+        .form-group label {
+            font-size: 1.1rem;
+            color: #6d5ccf;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #6d5ccf;
+            width: 100%;  /* Make sure inputs fill the available width */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #6d5ccf;
+            box-shadow: 0px 0px 5px rgba(109, 92, 207, 0.5);
+        }
+        
+        .text-center .small {
+            color: #5f52aa;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .text-center .small:hover {
+            color: #432bbf;
+            text-shadow: 1px 1px 3px rgba(67, 43, 191, 0.4);
+            text-decoration: underline;
+        }
+
+        .btn-custom {
+            background-color: #6d5ccf;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn-custom:hover {
+            background-color: #5a4ab3;
+        }
+        .custom-form-container .form-group:first-child {
+    display: none;
+}
+.row.justify-content-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .back-button {
+            background-color: #8a2be2;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #7a24d9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="custom-form-container">
+    <h2>Tenant Form</h2>
+    {% if form %}
+    <p>Ensure that client name must be username</p>
+    <form method="post" action="{% url 'register_organization' %}">
+        {% csrf_token %}
+        
+        <!-- Render visible fields dynamically -->
+        {% for field in form %}
+        {% if field.name == "client_name" %}
+            {{ field.as_hidden }}
+        {% else %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="invalid-feedback" style="color: red;">
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+    <br>
+    <div class="text-center">
+        <button type="submit"style="align-items:center" class="back-button">Submit</button>
+
+    </div>
+
+      
+    </form>
+    {% else %}
+        <p>No form to display.</p>
+    {% endif %}
+    <div class="text-center">
+        <button class="back-button" onclick="window.history.back()">Go Back</button>
+    </div>
+</div>
+
+<script>
+    function submit_form() {
+        $("#organization_form").submit();
+    }
+    function register_button() {
+        var deleteButton = document.getElementById('register' );
+        if (deleteButton) {
+            deleteButton.addEventListener('click', function(e) {
+                deleteButton.disabled = true;
+                e.preventDefault();
+            }, { once: true });
+        } else {
+            console.error('Delete button not found!');
+        }
+    }
+    document.getElementById('organization_form').addEventListener('submit', function(event) {
+        // Remove hidden fields if form has errors
+        const hiddenFields = document.querySelectorAll('.hidden-field');
+        hiddenFields.forEach(field => field.remove());
+    });
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

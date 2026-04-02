@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ tenant.organization_name }} - Client Details</title>
+</head>
+<body>
+    <h1>Organization: {{ tenant.organization_name }}</h1>
+    <p>Domain: {{ tenant.domain_name }}</p>
+
+    <h2>Client Details</h2>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Subscription Name</th>
+            <th>Subscription Status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        <tr>
+            <td>{{ client_data.username }}</td>
+            <td>{{ client_data.subscription_name }}</td>
+            <td>{{ client_data.subscription_status }}</td>
+            <td>{{ client_data.start_date }}</td>
+            <td>{{ client_data.end_date }}</td>
+        </tr>
+    </table>
+
+    <a href="{% url 'approve_subscription_change' tenant.id %}">Approve Subscription Change</a>
+    <a href="{% url 'toggle_organization' tenant.id %}">
+        {% if tenant.is_active %} Disable {% else %} Enable {% endif %} Organization
+    </a>
+</body>
+</html>

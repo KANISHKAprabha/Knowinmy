@@ -1,0 +1,42 @@
+{% extends 'users/staff_dashboard.html' %}
+{% load crispy_forms_tags %}
+{% load sweetify %}
+{% block content %}
+
+
+<div class="container">
+  
+    {% sweetify %}
+
+    <form method="post" id="asana_form" action="">
+        {% sweetify %}
+        {% csrf_token %}
+        
+        {{ formset.management_form }}
+        {% for form in formset %}
+      
+            {{ form|crispy }}
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary" onclick="this.disabled=true;submit_form(); " style="background-color: #6d5ccf; border-color: #6d5ccf;" id="submit-button">Submit</button>
+    </form>
+   
+
+</div>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<script>
+    
+        function submit_form() {
+        $("#asana_form").submit();
+
+    }
+
+</script>
+
+{% endblock %}

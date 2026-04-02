@@ -1,0 +1,330 @@
+{% load static %}
+{% block style %}
+
+<!-- Styles for the profile page and modal -->
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(139deg, #cda1d6, #d3b0e2, #a69cdd, #9a5cbf);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    color: #333;
+    margin: 0 auto;
+  }
+
+  h2 {
+    margin-bottom: 25px;
+    color: #171718; /* Dark violet for header */
+    font-weight: 600;
+    font-size: 26px;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  p {
+    color: #070707;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .profile-info {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+  }
+
+  .profile-info p {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .profile-info p strong {
+    font-weight: 500;
+    color: #0b0a0f; /* Dark grey for labels */
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 10px;
+  }
+
+  .back-button {
+    flex: 1;
+    padding: 10px 18px;
+    background-color: #553CDF;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .back-button:hover {
+    background-color: #4330b5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 10px;
+    width: 450px;
+    max-width: 80%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    color: #553CDF;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #553CDF;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    color: #fff;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: #101011;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Styling for links */
+  .small {
+    color: #553CDF;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .small:hover {
+    color: #432bbf;
+    text-shadow: 1px 1px 3px rgba(67, 43, 191, 0.4);
+    text-decoration: underline;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .card {
+      width: 100%;
+      padding: 30px;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    .btn-primary {
+      font-size: 13px;
+    }
+
+    .back-button {
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .card {
+      padding: 25px;
+      width: 100%;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .btn-primary,
+    .back-button {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Personal Information</h2>
+  <div class="profile-info">
+    <div>
+      {% if profile.image %}
+        <img src="{{ profile.image.url }}" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid #553cdf; display: block; margin: 0 auto;" alt="Profile Image">
+      {% else %}
+        <img src="{% static 'img/undraw_profile.svg' %}" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid #553cdf; display: block; margin: 0 auto;" alt="Avatar">
+      {% endif %}
+    </div>
+    <p><strong>Username:</strong> <span>{{ user.username }}</span></p>
+    <p><strong>Email:</strong> <span>{{ user.email }}</span></p>
+    <p><strong>First Name:</strong> <span>{{ user.first_name }}</span></p>
+    <p><strong>Last Name:</strong> <span>{{ user.last_name }}</span></p>
+    <p><strong>Role:</strong> <span>
+        {% for group in request.user.groups.all %}
+          {{ group.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          No groups
+        {% endfor %}
+      </span></p>
+    {% if profile.address %}
+      <p><strong>Address:</strong> <span>{{ profile.address }}</span></p>
+    {% else %}
+      <p><strong>Address:</strong> <span>Profile is not updated</span></p>
+    {% endif %}
+
+    {% if profile.city %}
+      <p><strong>City:</strong> <span>{{ profile.city }}</span></p>
+    {% else %}
+      <p><strong>City:</strong> <span>Profile is not updated</span></p>
+    {% endif %}
+    
+    {% if profile.state %}
+      <p><strong>State:</strong> <span>{{ profile.state }}</span></p>
+    {% else %}
+      <p><strong>State:</strong> <span>Profile is not updated</span></p>
+    {% endif %}
+    
+    {% if profile.country %}
+      <p><strong>Country:</strong> <span>{{ profile.country }}</span></p>
+    {% else %}
+      <p><strong>Country:</strong> <span>Profile is not updated</span></p>
+    {% endif %}
+    
+    {% if profile.phone_number %}
+      <p><strong>Phone Number:</strong> <span>{{ profile.phone_number }}</span></p>
+    {% else %}
+      <p><strong>Phone Number:</strong> <span>Profile is not updated</span></p>
+    {% endif %}
+  </div>
+
+  <div class="button-container">
+    <button id="updateProfileBtn" class="back-button">Update Profile</button>
+    <br>
+    <button class="back-button" onclick="window.history.back()">Back</button>
+  </div>
+
+  <!-- Modal for Profile Update -->
+  <div id="profile-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4 class="modal-title">Update Profile</h4>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'profile-user' slug=tenant.slug %}" id="update-profile-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ profile.address }}">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ profile.phone_number }}">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{ profile.city }}">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="state">State:</label>
+            <input type="text" class="form-control" id="state" name="state" value="{{ profile.state }}">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="state">Country:</label>
+            <input type="text" class="form-control" id="country" name="country" value="{{ profile.country}}">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="image">Profile Image:</label>
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+    
+    </div>
+  </div>
+</div>
+
+<script>
+  // Show modal when update button is clicked
+  document.getElementById('updateProfileBtn').addEventListener('click', function() {
+    document.getElementById('profile-modal').style.display = 'block';
+  });
+
+  // Close modal when X is clicked
+  document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('profile-modal').style.display = 'none';
+  });
+
+  // Close modal if clicked outside of the modal content
+  window.onclick = function(event) {
+    if (event.target === document.getElementById('profile-modal')) {
+      document.getElementById('profile-modal').style.display = 'none';
+    }
+  };
+</script>
+
+{% endblock %}

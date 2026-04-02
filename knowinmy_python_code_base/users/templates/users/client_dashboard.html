@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ tenant.organization_name }} Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{{ tenant.organization_name }} Dashboard</h1>
+        <hr>
+        
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Subscription Type</th>
+                    
+                    <th>No. of Trainers</th>
+                    <th>No. of Students</th>
+                    <th>No. of Asanas Created</th>
+                    <th>No. of courses created</th>
+                    <th>No. of enrollments created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ tenant.client_name.username }}</td>
+                    <td>{{subscription_details}}</td>
+
+                    <td>{{ trainers_onboarded }}</td>
+                    <td>{{ students_onboarded }}</td>
+                    <td>{{ total_asanas_created }}</td>
+                    <td>{{ courses_count}}</td>
+                    <td>{{ enrollments_count }}</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
