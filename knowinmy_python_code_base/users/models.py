@@ -157,6 +157,7 @@ class Subscription(models.Model):
     no_of_students=models.PositiveIntegerField(default=0,null=True)
 
     price = models.FloatField(default=0.0)
+    is_active = models.BooleanField(default=True)  # False = pending admin approval (dynamic plans)
     highlight_status = models.BooleanField(default=False)
     created_at = models.DateTimeField(verbose_name='Created at', null=True,default=now,blank=True)
     updated_at = models.DateTimeField(verbose_name='Last modified at', null=True,default=now,blank=True)

@@ -386,12 +386,33 @@ def callback(request):
 
                 send_payment_invoice_task.delay(order.id)
 
-                return render(request, "users/success.html", {"order": order})
+                # Activate tenant if one already exists (renewal path).
+                # New clients have no Tenant yet — they create it in register_organisation.
+                from datetime import timedelta
+                tenant = Tenant.objects.filter(client_name=order.user).first()
+                if tenant:
+                    start_date = timezone.now()
+                    end_date = start_date + timedelta(days=order.subscription.duration_in_months)
+                    TenantSubscription.objects.create(
+                        tenant=tenant,
+                        plan=order.subscription,
+                        order=order,
+                        start_date=start_date,
+                        end_date=end_date,
+                        is_active=True,
+                    )
+                    # TenantSubscription.save() syncs Tenant.is_active = True
+                    order.tenant = tenant
+                    order.save(update_fields=['tenant'])
+                    return redirect('role_based_dashboard')
+
+                # No Tenant yet — new client must create their organisation first
+                return redirect('register_organization')
 
             else:
                 order.status = 'REJECT'
                 order.save()
-                print("FAILURE: Signature verification failed.")
+                logger.warning("Razorpay signature verification failed for order %s", order.id)
                 return render(request, "users/callback.html", {"status": 'REJECT'})
 
         else:
@@ -1024,8 +1045,12 @@ def role_based_dashboard(request):
      
         
         
-        get_tenant_for_client = Tenant.objects.get(client_name=current_user,is_active=True)
+        get_tenant_for_client = Tenant.objects.filter(client_name=current_user, is_active=True).first()
         if not get_tenant_for_client:
+            # Tenant doesn't exist yet or is inactive — send to org creation / info page
+            has_tenant = Tenant.objects.filter(client_name=current_user).exists()
+            if not has_tenant:
+                return redirect('register_organization')
             return render(request, 'users/info_active.html')
 
 
@@ -2890,86 +2915,86 @@ def  student_dashboard_for_trainer(request, slug):
 
 @login_required
 def dynamic_subscription_payment(request):
-    current_user=request.user
-    get_subs=Subscription.objects.filter(name=current_user.first_name).first()
-    print(get_subs,"line 2489")
-    if get_subs:
-         print(get_subs.duration_in_months,"line 2491")
-         form = SubscriptionForm(instance=get_subs)
-         for field in form.fields.values():
-            field.widget.attrs['readonly'] = 'readonly'
-              # Make fields readonly
-         if request.method == 'POST':
-            
-            get_subs.save()
-            # Redirect to the payment page after submission
-            return redirect('subscription-payment')  # Replace 'payment_page' with your URL name
+    try:
+        subscription_id = request.session.get('subscription_id')
+        existing_sub = None
+        if subscription_id:
+            existing_sub = Subscription.objects.filter(
+                id=subscription_id,
+                description="Dynamic subscription"
+            ).first()
 
-         
-         
-        #  print(form,"ijjjjjjjj")
-         return render(request, 'users/subscription_detail.html', {'form': form})
-    else:
-        pass
+        # CASE 1: Admin approved — show pre-filled readonly form with "Proceed to Payment" button
+        if existing_sub and existing_sub.is_active:
+            form = SubscriptionForm(instance=existing_sub)
+            for field in form.fields.values():
+                field.widget.attrs['readonly'] = 'readonly'
+                field.widget.attrs['disabled'] = 'disabled'
+            if request.method == 'POST':
+                request.session['subscription_id'] = existing_sub.id
+                return redirect('subscription-payment')
+            return render(request, 'users/subscription_detail.html', {
+                'form': form,
+                'approved': True,
+                'subscription': existing_sub,
+            })
 
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Extract form data for price calculation
-        no_of_students = int(request.POST.get('no_of_students', 0))
-        no_of_trainers = int(request.POST.get('no_of_trainers', 0))
-        permitted_asanas = int(request.POST.get('permitted_asanas', 0))
-        duration_in_months = int(request.POST.get('duration_in_months', 0))
+        # CASE 2: Submitted but still awaiting admin approval
+        if existing_sub and not existing_sub.is_active:
+            return render(request, 'users/subscription_detail.html', {
+                'pending': True,
+                'subscription': existing_sub,
+            })
 
-        # Calculate price
-        price = (
-            (permitted_asanas * 10) +
-            (no_of_students * 50) +
-            (no_of_trainers * 100) +
-            (duration_in_months * 200)
-        )
-
-        # Return the calculated price as JSON
-        return JsonResponse({'price': price})
-
-    elif request.method == 'POST':
-        form = SubscriptionForm(request.POST)
-        if form.is_valid():
-            # Extract form data
+        # CASE 3: No submission yet — show blank form
+        if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             no_of_students = int(request.POST.get('no_of_students', 0))
             no_of_trainers = int(request.POST.get('no_of_trainers', 0))
             permitted_asanas = int(request.POST.get('permitted_asanas', 0))
             duration_in_months = int(request.POST.get('duration_in_months', 0))
-
-            # Calculate price
             price = (
                 (permitted_asanas * 10) +
                 (no_of_students * 50) +
                 (no_of_trainers * 100) +
                 (duration_in_months * 200)
             )
-            no_of_persons_onboard = no_of_trainers + no_of_students
+            return JsonResponse({'price': price})
 
-            # Create a subscription instance without saving it yet
-            form_data = form.save(commit=False)
-            form_data.price = price
-            form_data.is_active=False
-            form_data.no_of_persons_onboard = no_of_persons_onboard
-            form_data.created_at=timezone.now()
-            form_data.updated_at=timezone.now()
-            form_data.description="Dynamic subscription"
-            form_data.save()
-
-            # Store data in session and redirect
-            request.session['subscription_id'] = form_data.id
-            request.session['subscription_price'] = price
-            return redirect('home')
-
+        elif request.method == 'POST':
+            form = SubscriptionForm(request.POST)
+            if form.is_valid():
+                no_of_students = int(request.POST.get('no_of_students', 0))
+                no_of_trainers = int(request.POST.get('no_of_trainers', 0))
+                permitted_asanas = int(request.POST.get('permitted_asanas', 0))
+                duration_in_months = int(request.POST.get('duration_in_months', 0))
+                price = (
+                    (permitted_asanas * 10) +
+                    (no_of_students * 50) +
+                    (no_of_trainers * 100) +
+                    (duration_in_months * 200)
+                )
+                form_data = form.save(commit=False)
+                form_data.price = price
+                form_data.is_active = False
+                form_data.no_of_persons_onboard = no_of_trainers + no_of_students
+                form_data.created_at = timezone.now()
+                form_data.updated_at = timezone.now()
+                form_data.description = "Dynamic subscription"
+                form_data.save()
+                request.session['subscription_id'] = form_data.id
+                request.session['subscription_price'] = price
+                return redirect('home')
+            else:
+                logger.exception("SubscriptionForm errors: %s", form.errors)
+                return render(request, 'users/subscription_detail.html', {'form': form})
         else:
-            print(form.errors)
-            return render(request, "users/error.html")
-    else:
-        form = SubscriptionForm()
+            form = SubscriptionForm()
 
-    return render(request, 'users/subscription_detail.html', {'form': form})
+        return render(request, 'users/subscription_detail.html', {'form': form})
+
+    except Exception as e:
+        logger.exception(str(e))
+        return render(request, 'users/error.html')
     
     
 
@@ -3081,72 +3106,57 @@ def review_slug_changes(request):
 import pytz
 
 from datetime import datetime
-def     review_dynamic_subscription(request):
- try:
-    pending_request_for_subscription = Subscription.objects.filter(active=False)
+@login_required
+@user_passes_test(check_knowinmy)
+def review_dynamic_subscription(request):
+    try:
+        pending_request_for_subscription = Subscription.objects.filter(is_active=False)
 
+        if request.method == "POST":
+            subscription_id = request.POST.get("subscription_id")
+            action = request.POST.get("action")
+            subscription = get_object_or_404(Subscription, id=subscription_id)
 
-    if request.method == "POST":
-        subscription_id = request.POST.get("subscription_id")
-        action = request.POST.get("action")
-        subscription = get_object_or_404(Subscription, id=subscription_id)
+            if action == "edit":
+                try:
+                    subscription.no_of_trainers = int(request.POST.get("no_of_trainers", subscription.no_of_trainers))
+                    subscription.no_of_students = int(request.POST.get("no_of_students", subscription.no_of_students))
+                    subscription.duration_in_months = int(request.POST.get("duration_in_months", subscription.duration_in_months))
+                    subscription.price = float(request.POST.get("price", subscription.price))
+                    subscription.updated_at = timezone.now()
+                    subscription.full_clean()
+                    subscription.save()
+                    django_messages.success(request, "Subscription updated.")
+                except (ValueError, TypeError) as e:
+                    django_messages.error(request, f"Type conversion failed: {e}")
+                    logger.exception(str(e))
+                except ValidationError as e:
+                    django_messages.error(request, f"Validation error: {e}")
+                    logger.exception(str(e))
+                except Exception as e:
+                    django_messages.error(request, f"An unexpected error occurred: {e}")
+                    logger.exception(str(e))
 
-       
-        if action == "edit":
-            # Handle edits to subscription fields
-           try:
-                   subscription.no_of_trainers = int(request.POST.get("no_of_trainers", subscription.no_of_trainers))
-                   subscription.no_of_students = int(request.POST.get("no_of_students", subscription.no_of_students))
-                   subscription.duration_in_months = int(request.POST.get("duration_in_months", subscription.duration_in_months))
-                   subscription.price = float(request.POST.get("price", subscription.price))
-                   timezone = pytz.utc  # Replace with any other timezone if needed, e.g., pytz.timezone('Asia/Kolkata')
+            elif action == "approve":
+                # Mark the Subscription plan as active so the user can proceed to payment
+                subscription.is_active = True
+                subscription.save()
+                django_messages.success(request, "Subscription approved. User can now proceed to payment.")
 
-# Get the 'created_at' and 'updated_at' from the POST data (with defaults)
-                   created_at_str = request.POST.get("created_at", subscription.created_at.isoformat())
-                   updated_at_str = request.POST.get("updated_at", subscription.updated_at.isoformat())
-                   subscription.created_at = datetime.fromisoformat(created_at_str).astimezone(timezone)
-                   subscription.updated_at = datetime.fromisoformat(updated_at_str).astimezone(timezone)
-                 
+            elif action == "reject":
+                # Soft-delete: keep the record but leave is_active=False permanently
+                subscription.description = "rejected"
+                subscription.save()
+                django_messages.error(request, "Subscription request rejected.")
 
-                   print(f"Before saving: {subscription.no_of_students}, {subscription.no_of_trainers}, {subscription.duration_in_months}, {subscription.price}, {subscription.created_at}, {subscription.updated_at}")
+        pending_request_for_subscription = Subscription.objects.filter(
+            is_active=False
+        ).exclude(description="rejected")
+        return render(request, 'users/review_ds.html', {'pending_request_for_subscription': pending_request_for_subscription})
 
-                   subscription.full_clean()
-                   print(f"full clean: {subscription.no_of_students}, {subscription.no_of_trainers}, {subscription.duration_in_months}, {subscription.price}, {subscription.created_at}, {subscription.updated_at}")
-                  
-                   
-                   print(f"AFTER refresh: {subscription.no_of_students}, {subscription.no_of_trainers}, {subscription.duration_in_months}, {subscription.price}, {subscription.created_at}, {subscription.updated_at}")
-
-                   subscription.save(force_insert=False, force_update=True) # Save the updated subscription
-                   print(f"AFTER saving: {subscription.no_of_students}, {subscription.no_of_trainers}, {subscription.duration_in_months}, {subscription.price}, {subscription.created_at}, {subscription.updated_at}")
-         
-             
-           except (ValueError, TypeError) as e:
-            django_messages.error(request, f"Type conversion failed: {e}")
-            print(subscription.no_of_students, subscription.no_of_trainers, subscription.duration_in_months, subscription.price, "wooooooooooooo")
-           except ValidationError as e:
-            django_messages.error(request, f"Validation error: {e}")
-            logger.exception(str(e))
-           except Exception as e:
-
-            django_messages.error(request, f"An unexpected error occurred: {e}")
-            logger.exception(str(e))
-            
-        if action == "approve":
-            subscription.active = False
-            subscription.save()
-          
-            django_messages.success(request, "Subscription request accepted.")
-            return redirect('organization_list')
-        if action == "reject":
-            subscription.delete()
-            django_messages.error(request, "Subscription request rejected.")
-            return redirect('organization_list')
-
-       
-
-    return render(request, 'users/review_ds.html', {'pending_request_for_subscription': pending_request_for_subscription})
- except Exception as e:
-     logger.exception(str(e))
+    except Exception as e:
+        logger.exception(str(e))
+        return render(request, 'users/error.html')
 
 
 

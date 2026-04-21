@@ -162,10 +162,8 @@ class SubscriptionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.tenant = kwargs.pop('tenant', None)
         super(SubscriptionForm, self).__init__(*args, **kwargs)
-        self.fields['subscription_id'] = forms.CharField(widget=forms.HiddenInput(), required=False)
-        self.fields['price'].widget.attrs['readonly'] = True 
-        self.fields['price'].required = False 
-        # self.fields['no_of_persons_onboar'] = forms.CharField(widget=forms.HiddenInput(), required=False)
+        self.fields['price'].widget.attrs['readonly'] = True
+        self.fields['price'].required = False
     def save(self, commit=True):
         instance = super(SubscriptionForm, self).save(commit=False)
         if not instance.id:
