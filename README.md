@@ -43,7 +43,7 @@ Initially designed to allow yoga trainers to train an AI model using body keypoi
 ### 🔧 Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/knowinmy.git
+git clone https://github.com/KANISHKAprabha/knowinmy.git
 cd knowinmy
 pip install -r requirements.txt
 ```
@@ -118,4 +118,24 @@ Subscriptions are **flexible and dynamic**, based on:
 
 ### 🔄 Version Control
 - Git
+
+## 🏗️ System Architecture
+
+- **Role-based access control** — separate views, permissions, and dashboards for Client, Trainer, and Student roles
+- **Async task processing** — Celery + Redis handles background jobs (pose analysis, notifications) without blocking requests
+- **Subscription engine** — dynamic plan creation based on asana count, trainer/student count, and duration
+- **Payment flow** — Razorpay webhook integration for subscription activation post-payment
+- **Pose detection pipeline** — MediaPipe keypoint extraction → stored reference poses → real-time similarity comparison
+
+
+
+
+
+
+
+## 👩‍💻 Author
+
+**Kanishka Prabha M**  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/kanishka06/)
+[![GitHub](https://img.shields.io/badge/GitHub-black?style=flat&logo=github)](https://github.com/KANISHKAprabha)
 
